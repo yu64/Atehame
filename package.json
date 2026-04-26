@@ -1,0 +1,26 @@
+{
+  "name": "flontend-template",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test:setup": "npm install & npx playwright install --with-deps",
+    "test:web": "playwright test",
+    "test:web:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^24.10.1",
+    "@unocss/vite": "^66.5.10-beta.1",
+    "typescript": "^5.9.3",
+    "unocss": "^66.5.10-beta.1",
+    "vite": "^7.2.6",
+    "vite-tsconfig-paths": "^5.1.4"
+  }
+}

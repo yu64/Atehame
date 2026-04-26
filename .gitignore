@@ -1,0 +1,8 @@
+node_modules/
+dist/
+build/
+temp/
+output/
+.env
+.DS_Store
+test-results/
