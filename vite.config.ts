@@ -8,7 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
   root: path.resolve(__dirname, "src"),
-  base: (process.env.IC ? "./Deepscatter_Demo" : "./"),
+  base: (process.env.IC ? "./Atehame" : "./"),
   plugins: [
     UnoCSS(), 
     tsconfigPaths()

@@ -1,5 +1,5 @@
 {
-  "name": "flontend-template",
+  "name": "atehame",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -14,11 +14,21 @@
     "test:web": "playwright test",
     "test:web:ui": "playwright test --ui"
   },
+  "dependencies": {
+    "i18next": "^26.0.8",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "jotai": "^2.19.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-i18next": "^17.0.6"
+  },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@unocss/vite": "^66.5.10-beta.1",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "unocss": "^66.5.10-beta.1",
     "vite": "^7.2.6",
     "vite-tsconfig-paths": "^5.1.4"
