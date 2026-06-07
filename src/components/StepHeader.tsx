@@ -9,9 +9,11 @@ export function StepHeader(props: Props)
 {
   return <div>
 
-    <nav>
-      <h1></h1>
-    </nav>
+    <div className={`
+      flex flex-row
+    `}>
+      {props.children}      
+    </div>
 
   </div>
 }

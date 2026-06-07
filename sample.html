@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pipeline Logic Engine - Template Builder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { 
+      font-family: 'Noto Sans JP', sans-serif; 
+      background-color: #020617; 
+      color: #e2e8f0; 
+      font-size: 14px; 
+    }
+    
+    .hidden { display: none !important; }
+    .vertical-text { writing-mode: vertical-rl; text-orientation: upright; }
+    
+    .font-mono-code { 
+      font-family: 'Fira Code', monospace; 
+      font-size: 13px; 
+    }
+    
+    .nav-btn { font-size: 12px; }
+    .nav-btn.active { background: #1e293b; color: #818cf8; border-color: #334155; }
+    
+    .step-item { transition: all 0.15s; border: 1px solid #1e293b; font-size: 13px; }
+    .step-item.active { background: #1e293b; border-color: #6366f1; color: #fff; }
+    
+    .module-row { transition: all 0.15s; font-size: 13px; }
+    .module-row:hover { background: #1e293b; border-color: #4f46e5; }
+
+    .meta-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+
+    @keyframes slideIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: slideIn 0.2s ease-out; }
+    
+    .mode-toggle { font-size: 11px; }
+    .mode-toggle.active { background: #4f46e5; color: white; }
+
+    input, select, textarea {
+      font-size: 14px !important;
+    }
+
+    /* Layout Editor specific styles */
+    .canvas-container {
+      background: #0f172a;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    }
+    .draggable-element {
+      border: 1px dashed transparent;
+      cursor: move;
+    }
+    .draggable-element:hover {
+      border-color: #6366f1;
+    }
+  </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden select-none">
+
+  <!-- Main Header: 4ステップに拡張 -->
+  <header class="h-11 bg-slate-950 border-b border-slate-800 flex items-center justify-between px-5 flex-shrink-0 z-30">
+    <div class="flex items-center gap-6">
+      <div class="flex items-center gap-2">
+        <div class="w-5 h-5 bg-indigo-600 rounded flex items-center justify-center text-white font-black text-[10px]">P</div>
+        <span class="text-xs font-black tracking-widest uppercase">Pipeline <span class="text-slate-500">v18.2</span> Builder</span>
+      </div>
+      <nav class="flex gap-1">
+        <button onclick="setGlobalStep(1)" id="global-nav-1" class="nav-btn px-3 py-1 font-bold rounded transition uppercase">1. Data</button>
+        <button onclick="setGlobalStep(2)" id="global-nav-2" class="nav-btn px-3 py-1 font-bold rounded transition uppercase">2. Logic</button>
+        <button onclick="setGlobalStep(3)" id="global-nav-3" class="nav-btn px-3 py-1 font-bold rounded transition uppercase">3. Layout</button>
+        <button onclick="setGlobalStep(4)" id="global-nav-4" class="nav-btn px-3 py-1 font-bold rounded transition uppercase">4. Preview</button>
+      </nav>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+        <button onclick="changeRow(-1)" class="text-slate-500 hover:text-white px-1 text-md">◀</button>
+        <span class="text-xs font-mono w-14 text-center text-slate-400 border-x border-slate-800 mx-1">
+          <span id="row-idx" class="text-indigo-400 font-bold">1</span> / <span id="total-rows">0</span>
+        </span>
+        <button onclick="changeRow(1)" class="text-slate-500 hover:text-white px-1 text-md">▶</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 flex overflow-hidden">
+    
+    <!-- View 1: Data Input -->
+    <div id="view-step-1" class="global-view hidden flex-1 p-6 bg-slate-950 overflow-y-auto">
+      <div class="max-w-4xl mx-auto h-full flex flex-col">
+        <div class="mb-2 flex justify-between items-center">
+          <span class="meta-label">CSV Source Data</span>
+        </div>
+        <textarea id="csv-input" oninput="parseCSV()" class="flex-1 p-5 font-mono-code bg-slate-900 border border-slate-800 rounded-lg outline-none text-slate-300 focus:border-indigo-500/50 transition-all shadow-inner leading-relaxed">氏名,住所,郵便番号
+山田 太郎,東京都渋谷区道玄坂1-2-3,150-0043
+佐藤 花子,大阪府大阪市北区梅田9-8-7,530-0001
+鈴木 一郎,愛知県名古屋市中区栄4-5-6,460-0008</textarea>
+      </div>
+    </div>
+
+    <!-- View 2: Logic Designer -->
+    <div id="view-step-2" class="global-view hidden flex-1 flex overflow-hidden">
+      <!-- Logic Designer Content (Same as before) -->
+      <aside class="w-52 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0">
+        <div class="p-3 border-b border-slate-800 bg-slate-900/30">
+          <span class="meta-label">Logic Modules</span>
+        </div>
+        <div class="flex-1 overflow-y-auto p-2 space-y-1.5">
+          <button onclick="addStep('split')" class="module-row w-full p-2.5 rounded-lg border border-slate-800 bg-slate-900/30 text-left flex items-center gap-2.5">
+            <span class="text-lg">✂️</span>
+            <span class="font-bold text-slate-300">Split String</span>
+          </button>
+          <button onclick="addStep('kanji')" class="module-row w-full p-2.5 rounded-lg border border-slate-800 bg-slate-900/30 text-left flex items-center gap-2.5">
+            <span class="text-lg">漢</span>
+            <span class="font-bold text-slate-300">Kanji Numerals</span>
+          </button>
+          <button onclick="addStep('replace')" class="module-row w-full p-2.5 rounded-lg border border-slate-800 bg-slate-900/30 text-left flex items-center gap-2.5">
+            <span class="text-lg">🔄</span>
+            <span class="font-bold text-slate-300">Text Replace</span>
+          </button>
+          <button onclick="addStep('prefix')" class="module-row w-full p-2.5 rounded-lg border border-slate-800 bg-slate-900/30 text-left flex items-center gap-2.5">
+            <span class="text-lg">➕</span>
+            <span class="font-bold text-slate-300">Add Prefix</span>
+          </button>
+        </div>
+      </aside>
+      <div class="flex-1 border-r border-slate-800 flex flex-col bg-slate-900/10 min-w-0">
+        <div class="p-3 border-b border-slate-800 bg-slate-900/30 flex justify-between items-center">
+          <span class="meta-label">Pipeline Logic</span>
+          <div class="flex bg-slate-950 rounded border border-slate-800 p-0.5">
+            <button id="toggle-visual" onclick="toggleLogicMode('visual')" class="mode-toggle px-2.5 py-0.5 rounded font-black uppercase active">Visual</button>
+            <button id="toggle-json" onclick="toggleLogicMode('json')" class="mode-toggle px-2.5 py-0.5 rounded font-black uppercase">JSON</button>
+          </div>
+        </div>
+        <div id="logic-visual-mode" class="flex-1 flex flex-col overflow-hidden">
+          <div class="flex-1 overflow-y-auto p-5 space-y-1.5">
+            <div id="pipeline-list" class="max-w-lg mx-auto space-y-1.5"></div>
+          </div>
+          <div class="h-60 border-t border-slate-800 bg-slate-950/80 p-5 pb-10 overflow-y-auto">
+            <div class="mb-3"><span class="meta-label">Step Arguments</span></div>
+            <div id="inspector-content" class="max-w-lg mx-auto"></div>
+          </div>
+        </div>
+        <div id="logic-json-mode" class="hidden flex-1 flex flex-col p-5 bg-slate-950">
+          <textarea id="json-editor" oninput="applyJsonUpdate()" class="flex-1 bg-slate-900 border border-slate-800 rounded-lg p-5 font-mono-code text-indigo-300 outline-none focus:border-indigo-500/50 resize-none leading-relaxed"></textarea>
+          <div id="json-error" class="mt-2 text-red-400 text-xs font-mono h-5"></div>
+        </div>
+      </div>
+      <aside class="w-64 bg-slate-950 flex flex-col flex-shrink-0">
+        <div class="p-3 border-b border-slate-800 bg-slate-900 flex justify-between items-center">
+          <span class="meta-label">Output Preview</span>
+        </div>
+        <div id="overall-data-list" class="flex-1 overflow-y-auto p-2 space-y-1.5 bg-slate-950"></div>
+      </aside>
+    </div>
+
+    <!-- View 3: Layout Designer -->
+    <div id="view-step-3" class="global-view hidden flex-1 flex overflow-hidden">
+      <aside class="w-64 bg-slate-950 border-r border-slate-800 flex flex-col flex-shrink-0">
+        <div class="p-3 border-b border-slate-800 bg-slate-900/30">
+          <span class="meta-label">Available Fields</span>
+        </div>
+        <div id="layout-fields-list" class="flex-1 overflow-y-auto p-3 space-y-2">
+          <!-- Field list to drag from -->
+        </div>
+      </aside>
+      <div class="flex-1 canvas-container flex items-center justify-center relative overflow-auto p-10">
+        <div class="bg-white w-[360px] h-[533px] shadow-2xl relative border flex-shrink-0" id="layout-canvas">
+          <!-- Drag/Drop fields go here -->
+          <div class="absolute inset-0 border border-red-100 pointer-events-none opacity-20" style="background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px;"></div>
+        </div>
+      </div>
+      <aside class="w-64 bg-slate-950 border-l border-slate-800 flex flex-col flex-shrink-0">
+        <div class="p-3 border-b border-slate-800 bg-slate-900/30">
+          <span class="meta-label">Properties</span>
+        </div>
+        <div id="field-properties" class="p-4 space-y-4">
+          <div class="text-xs text-slate-500 text-center py-10">Select an element on canvas</div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- View 4: Final Preview -->
+    <div id="view-step-4" class="global-view hidden flex-1 flex items-center justify-center bg-slate-900 overflow-auto">
+       <div class="bg-white w-[360px] h-[533px] shadow-2xl relative border flex-shrink-0 transition-all">
+          <div id="canvas-content" class="absolute inset-0 p-10 text-slate-900 overflow-hidden"></div>
+       </div>
+    </div>
+
+  </main>
+
+  <script>
+    let globalStep = 2;
+    let logicMode = 'visual';
+    let rawData = [];
+    let headers = [];
+    let activeRowIndex = 0;
+    let selectedStepId = null;
+    let lastData = {};
+    
+    let pipeline = [
+      { "id": "s1", "type": "split", "config": { "target": 0, "delimiter": " ", "names": "姓,名" } },
+      { "id": "s2", "type": "kanji", "config": { "target": 1 } }
+    ];
+
+    function setGlobalStep(s) {
+      globalStep = s;
+      document.querySelectorAll('.global-view').forEach((v, i) => v.classList.toggle('hidden', i+1 !== s));
+      document.querySelectorAll('.nav-btn').forEach((b, i) => b.classList.toggle('active', i+1 === s));
+      
+      runPipeline();
+      if (s === 2) syncJsonEditor();
+      if (s === 3) renderLayoutFields();
+      if (s === 4) renderFinalPreview();
+    }
+
+    function toggleLogicMode(mode) {
+      logicMode = mode;
+      document.getElementById('logic-visual-mode').classList.toggle('hidden', mode !== 'visual');
+      document.getElementById('logic-json-mode').classList.toggle('hidden', mode !== 'json');
+      document.getElementById('toggle-visual').classList.toggle('active', mode === 'visual');
+      document.getElementById('toggle-json').classList.toggle('active', mode === 'json');
+      if (mode === 'json') syncJsonEditor();
+      else { renderPipelineList(); renderInspector(); }
+    }
+
+    function syncJsonEditor() {
+      document.getElementById('json-editor').value = JSON.stringify(pipeline, null, 2);
+    }
+
+    function applyJsonUpdate() {
+      const editor = document.getElementById('json-editor');
+      const errorEl = document.getElementById('json-error');
+      try {
+        const newPipeline = JSON.parse(editor.value);
+        if (Array.isArray(newPipeline)) {
+          pipeline = newPipeline;
+          errorEl.innerText = "";
+          runPipeline();
+        }
+      } catch (e) { errorEl.innerText = "Invalid JSON structure"; }
+    }
+
+    function parseCSV() {
+      const text = document.getElementById('csv-input').value.trim();
+      if(!text) return;
+      const rows = text.split('\n').map(r => r.split(',').map(c => c.trim()));
+      headers = rows[0] || [];
+      rawData = rows.slice(1).filter(r => r[0]);
+      document.getElementById('total-rows').innerText = rawData.length;
+      runPipeline();
+    }
+
+    function addStep(type) {
+      const id = 's' + Math.random().toString(36).substr(2, 3);
+      let config = { target: 0 };
+      if (type === 'split') config = { ...config, delimiter: ' ', names: 'New1,New2' };
+      if (type === 'replace') config = { ...config, find: '', replace: '' };
+      if (type === 'prefix') config = { ...config, text: '' };
+      pipeline.push({ id, type, config });
+      selectedStepId = id;
+      renderPipelineList();
+      renderInspector();
+      runPipeline();
+    }
+
+    function selectStep(id) {
+      selectedStepId = id;
+      renderPipelineList();
+      renderInspector();
+      runPipeline();
+    }
+
+    function deleteStep(id) {
+      pipeline = pipeline.filter(s => s.id !== id);
+      if (selectedStepId === id) selectedStepId = null;
+      renderPipelineList();
+      renderInspector();
+      runPipeline();
+    }
+
+    function renderPipelineList() {
+      const list = document.getElementById('pipeline-list');
+      list.innerHTML = pipeline.map((s) => `
+        <div onclick="selectStep('${s.id}')" class="step-item w-full px-3.5 py-2.5 cursor-pointer rounded-lg transition-all flex items-center justify-between group ${selectedStepId === s.id ? 'active' : 'bg-slate-900/50 text-slate-400'}">
+          <div class="flex items-center gap-3">
+            <span class="text-md opacity-80">${s.type === 'split' ? '✂️' : s.type === 'kanji' ? '漢' : s.type === 'replace' ? '🔄' : '➕'}</span>
+            <span class="text-[9px] font-black uppercase tracking-widest opacity-50 w-14">${s.type}</span>
+            <span class="font-bold ${selectedStepId === s.id ? 'text-white' : 'text-slate-300'} truncate">${headers[s.config.target] || '---'}</span>
+          </div>
+          <button onclick="event.stopPropagation(); deleteStep('${s.id}')" class="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 text-md px-1.5">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function renderInspector() {
+      const container = document.getElementById('inspector-content');
+      const step = pipeline.find(s => s.id === selectedStepId);
+      if (!step) {
+        container.innerHTML = `<div class="py-10 flex items-center justify-center text-slate-700 text-[10px] font-black uppercase tracking-widest">Select a step above</div>`;
+        return;
+      }
+      const hOptions = headers.map((h, i) => `<option value="${i}" ${step.config.target == i ? 'selected' : ''}>${h}</option>`).join('');
+      let fields = `<div class="grid grid-cols-2 gap-x-5 gap-y-5 animate-in"><div class="flex flex-col gap-1.5"><label class="meta-label text-slate-500">Target Column</label><select onchange="updateStep('target', this.value)" class="bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-lg text-slate-200 outline-none appearance-none cursor-pointer">${hOptions}</select></div>`;
+      if (step.type === 'split') {
+        fields += `<div class="flex flex-col gap-1.5"><label class="meta-label text-slate-500">Delimiter</label><input type="text" oninput="updateStep('delimiter', this.value)" value="${step.config.delimiter}" class="bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-lg font-mono outline-none"></div><div class="flex flex-col gap-1.5 col-span-2"><label class="meta-label text-slate-500">New Column Names</label><input type="text" oninput="updateStep('names', this.value)" value="${step.config.names}" class="bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-lg font-mono outline-none"></div>`;
+      } else if (step.type === 'kanji') { /* no extra fields */ }
+      container.innerHTML = fields + `</div>`;
+    }
+
+    function updateStep(key, val) {
+      const step = pipeline.find(s => s.id === selectedStepId);
+      if (step) {
+        step.config[key] = isNaN(val) || val === "" ? val : parseInt(val);
+        runPipeline();
+        renderPipelineList();
+        syncJsonEditor();
+      }
+    }
+
+    function runPipeline() {
+      if (!rawData[activeRowIndex]) return;
+      let currentData = {};
+      headers.forEach((h, i) => currentData[h] = rawData[activeRowIndex][i]);
+      pipeline.forEach((step) => {
+        try {
+          const targetKey = headers[step.config.target];
+          if (!targetKey) return;
+          const sourceVal = currentData[targetKey] || "";
+          if (step.type === 'split') {
+            const parts = sourceVal.split(step.config.delimiter);
+            const names = step.config.names.split(',').map(n => n.trim());
+            names.forEach((name, i) => { if(name) currentData[name] = parts[i] || ""; });
+          } else if (step.type === 'kanji') {
+            const kanjiMap = ["〇", "一", "二", "三", "四", "五", "六", "七", "八", "九"];
+            currentData[targetKey + "_v"] = sourceVal.replace(/[0-9]/g, m => kanjiMap[parseInt(m)]).replace(/-/g, "ー");
+          } else if (step.type === 'replace') {
+            currentData[targetKey] = sourceVal.split(step.config.find).join(step.config.replace);
+          }
+        } catch(e) {}
+      });
+      lastData = currentData;
+      updateOutputVisualizer(currentData);
+    }
+
+    function updateOutputVisualizer(output) {
+      const container = document.getElementById('overall-data-list');
+      container.innerHTML = Object.entries(output).map(([k, v]) => `
+        <div class="px-2.5 py-1.5 rounded-lg bg-slate-900/50 border border-slate-800 flex flex-col">
+          <span class="meta-label text-slate-600 text-[9px]">${k}</span>
+          <div class="text-[12px] font-mono text-indigo-200 truncate">${v || ' '}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderLayoutFields() {
+      const container = document.getElementById('layout-fields-list');
+      container.innerHTML = Object.keys(lastData).map(k => `
+        <div class="p-2 bg-slate-900 border border-slate-800 rounded text-xs text-slate-300 cursor-grab hover:border-indigo-500 transition-colors">
+          ${k}
+        </div>
+      `).join('');
+    }
+
+    function renderFinalPreview() {
+      const canvas = document.getElementById('canvas-content');
+      const data = lastData;
+      if (!data) return;
+      const addrKey = headers.find(h => h.includes("住所"));
+      const addrVal = data[addrKey + "_v"] || data[addrKey] || "";
+      const zipKey = headers.find(h => h.includes("郵便"));
+      const zipVal = (data[zipKey] || "").replace(/[^0-9]/g, "");
+
+      canvas.innerHTML = `
+        <div class="absolute font-mono text-[20px] tracking-[0.8rem] text-red-600 font-bold top-[20px] left-[110px]">${zipVal}</div>
+        <div class="absolute vertical-text text-[16px] right-9 top-14 font-serif text-slate-800 h-[380px] leading-relaxed">${addrVal}</div>
+        <div class="absolute vertical-text text-3xl left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-serif font-bold text-center">
+          ${data['姓'] || ""} <span class="block h-7"></span> ${data['名'] || ""} 
+          <span class="text-md font-normal mt-10 inline-block">様</span>
+        </div>
+      `;
+    }
+
+    function changeRow(delta) {
+      activeRowIndex = Math.max(0, Math.min(rawData.length - 1, activeRowIndex + delta));
+      document.getElementById('row-idx').innerText = activeRowIndex + 1;
+      runPipeline();
+      if (globalStep === 3) renderLayoutFields();
+      if (globalStep === 4) renderFinalPreview();
+    }
+
+    window.onload = () => { parseCSV(); setGlobalStep(2); };
+  </script>
+</body>
+</html>

@@ -15,21 +15,29 @@
     "test:web:ui": "playwright test --ui"
   },
   "dependencies": {
+    "@pdfme/common": "^6.1.5",
+    "@pdfme/generator": "^6.1.5",
+    "@pdfme/ui": "^6.1.5",
     "i18next": "^26.0.8",
     "i18next-browser-languagedetector": "^8.2.1",
     "jotai": "^2.19.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-i18next": "^17.0.6"
+    "react-i18next": "^17.0.6",
+    "vike": "^0.4.259",
+    "vike-react": "^0.6.23"
   },
   "devDependencies": {
+    "@ameinhardt/unocss-preset-daisy": "github:nicky9door/unocss-preset-daisy#add-variant",
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@unocss/vite": "^66.5.10-beta.1",
+    "@unocss/vite": "^66.1.2",
+    "daisyui": "^5.5.19",
     "typescript": "^6.0.3",
-    "unocss": "^66.5.10-beta.1",
+    "unocss": "^66.1.2",
+    "unocss-preset-theme": "^0.14.1",
     "vite": "^7.2.6",
     "vite-tsconfig-paths": "^5.1.4"
   }
