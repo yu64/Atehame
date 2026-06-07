@@ -3,6 +3,7 @@ import { SelectCard } from '@src/components/SelectCard';
 import { isDarkAtom } from '@src/store/atom';
 import { useAtom } from 'jotai';
 import { useState, useEffect } from 'react';
+import { navigate } from 'vike/client/router';
 
 export function Page() {
 
@@ -44,6 +45,7 @@ export function Page() {
             title='レイアウトを作る'
             description='自分でレイアウトを作成します。'
             buttonText='始める'
+            onClick={() => navigate('/edit/layout')}
           />
           <SelectCard
             title='レイアウトを使う'
