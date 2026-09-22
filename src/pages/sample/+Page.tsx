@@ -1,6 +1,7 @@
 import Collapse from '@src/components/Collapse';
 import { Input } from '@src/components/Input';
 import PageFrame from '@src/components/PageFrame';
+import MainContent from '@src/components/MainContent';
 import { Select } from '@src/components/Select';
 import SelectCard from '@src/components/SelectCard';
 import { isDarkAtom } from '@src/store/atom';
@@ -21,7 +22,8 @@ export default function Page() {
       <header>
 
       </header>
-      <main className="flex flex-col gap-4 w-full">
+      <MainContent>
+      <div className="flex flex-col gap-4 w-full">
         <section className="border-b border-border-subtle pb-4">
           <button onClick={() => setDark(d => !d)} className="atehame-btn-primary">
             Toggle Dark Mode
@@ -61,7 +63,8 @@ export default function Page() {
             <option value="option3">Option 3</option>
           </Select>
         </section>
-      </main>
+      </div>
+      </MainContent>
       <footer>
 
       </footer>

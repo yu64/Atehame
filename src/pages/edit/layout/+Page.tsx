@@ -1,4 +1,5 @@
 import { Designer } from "@pdfme/ui";
+import MainContent from "@src/components/MainContent";
 import { useEffect, useRef } from "react";
 import { Template, BLANK_PDF, getDefaultFont } from '@pdfme/common';  
 
@@ -54,18 +55,18 @@ export default function Page() {
   }, []);  
   
   return (
-    <section className="w-full h-full">
+    <MainContent mode="canvas">
       <div 
         ref={containerRef} 
         style={{ 
           width: '100%', 
-          height: '100vh',
+          height: '100%',
           willChange: 'transform',
           transform: 'translate3d(0, 0, 0)',
           backfaceVisibility: 'hidden',
           perspective: 1000
         }} 
       />
-    </section>
+    </MainContent>
   );
 }

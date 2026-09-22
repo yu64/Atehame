@@ -12,8 +12,8 @@ export default function NormalHeader(props: Props) {
       flex flex-row
       text-primary
       border-b-2 border-primary
-      sticky top-0 z-50
-      h-16 w-full
+      z-50 shrink-0
+      h-16 w-full px-4 sm:px-6 lg:px-8
     `}>
       <div className="flex items-center space-x-3">
         <Logo/>
