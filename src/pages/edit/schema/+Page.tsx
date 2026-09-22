@@ -1,10 +1,25 @@
-import Collapse from "@src/components/Collapse";
 import EditableList from "@src/components/EditableList";
 import SchemaCard from "@src/components/SchemaCard";
+import { createSchemaField, type SchemaField } from "@src/models/DataSchema";
+import { schemaAtom } from "@src/store/schema";
+import { useAtom } from "jotai";
 import React from "react";
 
 
 export default function Page() {
+  const [schema, setSchema] = useAtom(schemaAtom);
+
+  function updateField(value: SchemaField) {
+    setSchema(current => ({
+      ...current,
+      fields: current.fields.map(field => field.id === value.id ? value : field),
+    }));
+  }
+
+  function addField() {
+    const field = createSchemaField();
+    setSchema(current => ({ ...current, fields: [...current.fields, field] }));
+  }
 
   return (
     <React.Fragment>
@@ -14,19 +29,20 @@ export default function Page() {
         </Collapse>
       </section> */}
       <section className="flex flex-row gap-4 mt-4">
-        <button className="atehame-btn-primary">スキーマを追加</button>
+        <button className="atehame-btn-primary" onClick={addField}>スキーマを追加</button>
         <button className="atehame-btn-secondary">インポート</button>
         <button className="atehame-btn-secondary">エクスポート</button>
       </section>
       <section>
         <EditableList
-          items={[1, 2, 3]}
-          factory={i => i + 1}
-          label={i => `${i}`}
-          onChange={(items) => console.log(items)}
+          items={schema.fields}
+          getKey={field => field.id}
+          dataFactory={createSchemaField}
+          label={(_, index) => `${index + 1}`}
+          onChange={fields => setSchema(current => ({ ...current, fields }))}
         >
-          {(i) => {
-            return <SchemaCard/>;
+          {(field) => {
+            return <SchemaCard value={field} onChange={updateField}/>;
           }}
         </EditableList>
       </section>
