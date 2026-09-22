@@ -1,8 +1,13 @@
+import Collapse from '@src/components/Collapse';
+import { Input } from '@src/components/Input';
+import PageFrame from '@src/components/PageFrame';
+import { Select } from '@src/components/Select';
+import SelectCard from '@src/components/SelectCard';
 import { isDarkAtom } from '@src/store/atom';
 import { useAtom } from 'jotai';
 import { useState, useEffect } from 'react';
 
-export function Page() {
+export default function Page() {
 
   const [dark, setDark] = useAtom(isDarkAtom);
 
@@ -12,65 +17,54 @@ export function Page() {
   }, [dark]);
 
   return (
-    <div className="atehame-panel atehame-lv1 min-h-screen p-8">
-      <div className="max-w-4xl mx-auto space-y-10">
-        
-        <header className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Atehame UI Verification</h1>
-          <button onClick={() => setDark(!dark)} className="btn btn-outline">
-            {dark ? 'Dark Mode' : 'Light Mode'}
+    <PageFrame>
+      <header>
+
+      </header>
+      <main className="flex flex-col gap-4 w-full">
+        <section className="border-b border-border-subtle pb-4">
+          <button onClick={() => setDark(d => !d)} className="atehame-btn-primary">
+            Toggle Dark Mode
           </button>
-        </header>
-
-        <section className='space-y-4'>
-          <div className='atehame-card atehame-lv1'>
-            カードLv1
-          </div>
-          <div className='atehame-card atehame-lv2'>
-            カードLv2
-          </div>
-          <div className='atehame-card atehame-lv3'>
-            カードLv3
-          </div>
+          <button onClick={() => setDark(d => !d)} className="atehame-btn-secondary">
+            Toggle Dark Mode
+          </button>
         </section>
-
-        <section className='space-y-4'>
-          <div className='atehame-card atehame-lv1'>
-            カード
-            <div className='atehame-card atehame-lv2'>
-              カード
-              <div className='atehame-card atehame-lv3'>
-                カード
-              </div>
-            </div>
-          </div>
+        <section className="border-b border-border-subtle pb-4">
+          <SelectCard
+            title="Select Card"
+            description="This is a select card component."
+            buttonText="Click Me"
+            onClick={() => alert('Card Clicked!')}
+          />
         </section>
-
-        <section className='space-y-4'>
-          <div className='atehame-card atehame-lv2 atehame-unused'>
-            未使用
-          </div>
-          <div className='atehame-card atehame-lv2 atehame-warn'>
-            警告
-          </div>
-          <div className='atehame-card atehame-lv2 atehame-error'>
-            エラー
-          </div>
+        <section className="border-b border-border-subtle pb-4">
+          <Collapse title="Collapsible Section">
+            <p>This is the content inside the collapsible section.</p>
+          </Collapse>
         </section>
-
-        <section className='space-y-4'>
-          <div className='atehame-card atehame-lv2'>
-            <span className='atehame-badge atehame-lv2 atehame-unused'>Unused</span>
-          </div>
-          <div className='atehame-card atehame-lv2'>
-            <span className='atehame-badge atehame-lv2 atehame-warn'>Warning</span>
-          </div>
-          <div className='atehame-card atehame-lv2'>
-            <span className='atehame-badge atehame-lv2 atehame-error'>Error</span>
-          </div>
+        <section className="border-b border-border-subtle pb-4">
+          <Input
+            type="text"
+            label="Input Label"
+            description="This is an input field."
+            placeholder="Enter text here"
+          />
         </section>
-        
-      </div>
-    </div>
+        <section className="border-b border-border-subtle pb-4">
+          <Select
+            value=""
+          >
+            <option value="" disabled>Select an option</option>
+            <option value="option1">Option 1</option>
+            <option value="option2">Option 2</option>
+            <option value="option3">Option 3</option>
+          </Select>
+        </section>
+      </main>
+      <footer>
+
+      </footer>
+    </PageFrame>
   );
 }

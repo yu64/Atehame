@@ -1,33 +1,20 @@
-import { PageFrame } from '@src/components/PageFrame';
-import { SelectCard } from '@src/components/SelectCard';
+import Logo from '@src/components/Logo';
+import MainContent from '@src/components/MainContent';
+import NormalHeader from '@src/components/NormalHeader';
+import PageFrame from '@src/components/PageFrame';
+import SelectCard from '@src/components/SelectCard';
 import { isDarkAtom } from '@src/store/atom';
 import { useAtom } from 'jotai';
 import { useState, useEffect } from 'react';
 import { navigate } from 'vike/client/router';
 
-export function Page() {
+export default function Page() {
 
   return (
     <PageFrame>
-      <header className={`
-        flex flex-row
-        text-text-accent
-        border-b-2 border-bg-accent
-        sticky top-0 z-50
-        h-16 w-full
-      `}>
-         <div className="flex items-center space-x-3">
-            <div className="w-6 h-6 bg-bg-accent flex items-center justify-center rotate-45">
-                <div className="w-3 h-3 border-2 border-white rotate-45"></div>
-            </div>
-            <span className="text-2xl font-black tracking-tighter text-bg-accent uppercase">Atehame</span>
-        </div>
-
-      </header>
+      <NormalHeader/>
       
-      <main className={`
-        grow
-      `}>
+      <MainContent>
         <section className={`
           grid grid-cols-1 md:grid-cols-2 gap-6
           py-8
@@ -45,7 +32,7 @@ export function Page() {
             title='レイアウトを作る'
             description='自分でレイアウトを作成します。'
             buttonText='始める'
-            onClick={() => navigate('/edit/layout')}
+            onClick={() => navigate('/edit/schema')}
           />
           <SelectCard
             title='レイアウトを使う'
@@ -54,10 +41,7 @@ export function Page() {
           />
         </section>
 
-      </main>
-
-      <footer className="none">
-      </footer>
+      </MainContent>
     </PageFrame>
   );
 }

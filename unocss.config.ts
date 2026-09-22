@@ -1,4 +1,4 @@
-import { defineConfig, presetIcons, presetWebFonts, presetWind4 } from 'unocss'
+import { defineConfig, presetIcons, presetWebFonts, presetWind4, symbols } from "unocss"
 import { presetTheme } from "unocss-preset-theme"
 import { presetDaisy } from "@ameinhardt/unocss-preset-daisy";
 
@@ -6,24 +6,34 @@ const themeConfig = {
   light: {
     colors: {
 
+      "primary": {
+        "DEFAULT": "#C0392B",
+        "hover": "#A93226"
+      },
+      "base": {
+        "DEFAULT": "#F5F5F5",
+        "hover": "#EAEAEA",
+        "border": "#E5E5E5"
+      },
+      "surface": {
+        "DEFAULT": "#FFFFFF",
+        "hover": "#FAFAFA",
+        "border": "#E5E5E5"
+      },
+      "subtle": {
+        "DEFAULT": "#FAFAFA",
+        "hover": "#F4F4F4",
+        "border": "#E5E5E5"
+      },
+
       "text": {
         "primary": "#1A1A1A",
         "secondary": "#1A1A1A99",
         "tertiary": "#1A1A1A59",
-        "accent": {
-          "DEFAULT": "#C0392B",
-          "inner": "#FFFFFF"
-        }
+        "inner": "#FFFFFF"
       },
-      "bg": {
-        "base": "#FAFAFA",
-        "surface": "#F5F0E8",
-        "subtle": "#EDE8DC",
-        "accent": {
-          "DEFAULT": "#C0392B",
-          "hover": "#A93226"
-        }
-      },
+
+
       "border": {
         "strong": "#C8C3B8",
         "DEFAULT": "#D8D3C8",
@@ -124,14 +134,14 @@ const themeConfig = {
 export default defineConfig({
   presets: [
     presetWind4({
-      // dark: 'media'
+      // dark: "media"
     }),
     presetIcons(),
     presetWebFonts({
-      provider: 'google',
+      provider: "google",
       fonts: {
-        sans: 'Noto Sans JP:400,700',
-        mono: 'Fira Code:400,500',
+        sans: "Noto Sans JP:400,700",
+        mono: "Fira Code:400,500",
       },
     }),
     presetDaisy(),
@@ -150,7 +160,41 @@ export default defineConfig({
     "default": 60,
   },
   theme: themeConfig.light,
+  variants: [
+    // has-focus-visible
+    (matcher) => {
+      const prefix = "has-focus-visible:";
+      if(!matcher.startsWith(prefix)) return matcher;
+      return {
+        matcher: matcher.slice(prefix.length),
+        selector: s => `${s}:has(:focus-visible)`,
+      }
+    },
+    // select:open
+    (matcher) => {
+      const prefix = "select-open:";
+      if(!matcher.startsWith(prefix)) return matcher;
+      return {
+        matcher: matcher.slice(prefix.length),
+        selector: s => `${s}:open`,
+      }
+    },
+  ],
   rules: [
+    // [
+    //   /^appearance-base-select$/,
+    //   (_) => ([
+    //     {
+    //       "appearance": "base-select" 
+    //     },
+    //     {
+    //       [symbols.selector]: (selector) => `${selector}::picker(select):hover`,
+    //       "appearance": "base-select" 
+    //     }
+    //   ]),
+    //   { autocomplete: "appearance-base-select" }
+    // ]
+
     // [/^atehame-(lv1|lv2|lv3)$/, ([, lv], { theme }) => {
 
     //   const bg = theme.colors.base[lv as keyof typeof theme.colors.base];
@@ -158,9 +202,9 @@ export default defineConfig({
     //   const text = theme.colors.main.lv1;
 
     //   return {
-    //     'background-color': bg,
-    //     'border-color': border,
-    //     'color': text
+    //     "background-color": bg,
+    //     "border-color": border,
+    //     "color": text
     //   };
     // }],
     // [/^atehame-(unused|warn|error)$/, ([, name], { theme }) => {
@@ -172,23 +216,45 @@ export default defineConfig({
 
     //   return {
     //     // 下層の背景色(background-color)を活かすため、gradientで膜を張る
-    //     'background-image': `linear-gradient(${alphaColor}, ${alphaColor})`,
-    //     'border-color': color,
-    //     'color': color
+    //     "background-image": `linear-gradient(${alphaColor}, ${alphaColor})`,
+    //     "border-color": color,
+    //     "color": color
     //   };
     // }],
   ],
   shortcuts: [
 
     [
-      "atehame-btn", 
+      "atehame-focus",
       `
-        btn bg-bg-accent text-text-accent-inner
-        hover:bg-bg-accent-hover
+        outline-solid
+        outline-2
+        -outline-offset-1
+        outline-primary
+      `
+    ],
+    [
+      "atehame-btn-primary", 
+      `
+        btn bg-primary text-text-inner
+        hover:bg-primary-hover
         transition-colors duration-300
+        focus-visible:outline-solid
+        focus-visible:outline-2
+        focus-visible:-outline-offset-4
+        focus-visible:outline-surface
       `
-    ]
-
+    ],
+    [
+      "atehame-btn-secondary", 
+      `
+        btn bg-surface text-text-primary
+        hover:bg-surface-hover
+        transition-colors duration-300
+        focus-visible:atehame-focus
+        
+      `
+    ],
     // --- UI構成部品 (Components) ---
 
     // // パネル: 
@@ -220,5 +286,5 @@ export default defineConfig({
     //   text-xs border
     //   transition-colors duration-300
     // `]
-  ]
+  ],
 })

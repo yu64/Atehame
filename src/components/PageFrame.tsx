@@ -4,7 +4,7 @@ export interface Props {
   children: React.ReactNode;
 }
 
-export function PageFrame(props: Props) {
+export default function PageFrame(props: Props) {
 
   return (
     <div className={`
@@ -12,7 +12,7 @@ export function PageFrame(props: Props) {
       min-h-screen h-screen
       w-full
       px-4 sm:px-6 lg:px-8
-      bg-bg-base
+      bg-base
       overflow-hidden
     `}>
       {props.children}

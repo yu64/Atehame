@@ -7,14 +7,15 @@ export interface Props {
   onClick?: () => void;
 }
 
-export function SelectCard(props: Props) {
+export default function SelectCard(props: Props) {
 
   return (
     <div 
       className={`
         card w-full
-        bg-light-100 hover:bg-light-400
-        border border-border-subtle rounded-lg
+        bg-surface hover:bg-surface-hover
+        border border-surface-border rounded-lg
+        group
       `}
       onClick={props.onClick}
     >
@@ -27,7 +28,9 @@ export function SelectCard(props: Props) {
         </If>
         <If value={props.buttonText}>
           <div className="card-actions justify-end">
-            <button className="atehame-btn" onClick={props.onClick}>{props.buttonText}</button>
+            <button className="atehame-btn-primary group-hover:bg-primary-hover">
+              {props.buttonText}
+            </button>
           </div>
         </If>
       </div>
