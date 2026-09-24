@@ -14,9 +14,9 @@ export const Input = forwardRef<HTMLInputElement, Props>(
     const id = props.id ?? useId();
 
     return (
-      <fieldset className="fieldset">
+      <fieldset className="fieldset m-0 p-0 gap-1">
         <If value={props.label}>
-          <legend className="fieldset-legend">
+          <legend className="fieldset-legend m-0 pt-0 pb-1">
             {props.label}
           </legend>
         </If>

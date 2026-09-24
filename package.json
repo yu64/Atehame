@@ -21,7 +21,7 @@
     "i18next": "^26.0.8",
     "i18next-browser-languagedetector": "^8.2.1",
     "jotai": "^2.19.1",
-    "react": "^18.2.0",  
+    "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^17.0.6",
     "vike": "^0.4.259",
@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@ameinhardt/unocss-preset-daisy": "github:nicky9door/unocss-preset-daisy#add-variant",
+    "@iconify-json/lucide": "^1.2.136",
     "@playwright/test": "^1.57.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.14",

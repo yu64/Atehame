@@ -9,23 +9,15 @@ export interface Props {
 }
 
 
-export default function SchemaCard(props: Props) {
+export default function SchemaFieldEditor(props: Props) {
 
   return (
-    <div 
-      className={`
-        card w-full
-        bg-surface
-        border border-surface-border rounded-lg
-        group
-      `}
-    >
       <div className={`
-        card-body grid
+        grid min-w-0
         grid-cols-1
         md:grid-cols-[1fr_auto]
         lg:grid-cols-[3fr_auto_7fr]
-        gap-y-0 gap-x-2 pt-4
+        gap-y-3 gap-x-2
       `}>
         <div className="">
           <Input
@@ -56,6 +48,5 @@ export default function SchemaCard(props: Props) {
           />
         </div>
       </div>
-    </div>
   )
 }

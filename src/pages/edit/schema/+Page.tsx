@@ -1,9 +1,10 @@
 import EditableList from "@src/components/EditableList";
 import MainContent from "@src/components/MainContent";
-import SchemaCard from "@src/components/SchemaCard";
+import SchemaFieldEditor from "@src/components/SchemaFieldEditor";
 import { createSchemaField, type SchemaField } from "@src/models/DataSchema";
 import { schemaAtom } from "@src/store/schema";
 import { useAtom } from "jotai";
+import { navigate } from "vike/client/router";
 
 
 export default function Page() {
@@ -29,11 +30,25 @@ export default function Page() {
         </Collapse>
       </section> */}
       <section className="flex flex-wrap gap-4 mt-4">
-        <button className="atehame-btn-primary" onClick={addField}>スキーマを追加</button>
-        <button className="atehame-btn-secondary">インポート</button>
-        <button className="atehame-btn-secondary">エクスポート</button>
+        <button
+          type="button"
+          className="atehame-btn-secondary pl-2 pr-4"
+          onClick={addField}
+        >
+          <span className="i-lucide-plus size-6 shrink-0" aria-hidden="true" />
+          項目を追加
+        </button>
+        {/* <button className="atehame-btn-secondary">インポート</button> */}
+        {/* <button className="atehame-btn-secondary">エクスポート</button> */}
+        <button
+          type="button"
+          className="atehame-btn-primary ml-auto"
+          onClick={() => navigate('/edit/layout')}
+        >
+          次へ
+        </button>
       </section>
-      <section>
+      <section className="mt-4">
         <EditableList
           items={schema.fields}
           getKey={field => field.id}
@@ -42,7 +57,7 @@ export default function Page() {
           onChange={fields => setSchema(current => ({ ...current, fields }))}
         >
           {(field) => {
-            return <SchemaCard value={field} onChange={updateField}/>;
+            return <SchemaFieldEditor value={field} onChange={updateField}/>;
           }}
         </EditableList>
       </section>

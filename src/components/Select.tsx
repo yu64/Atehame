@@ -22,9 +22,9 @@ export const Select = forwardRef<HTMLSelectElement, Props>(
     useImperativeHandle(ref, () => selectRef.current!, []);
 
     return (
-      <fieldset className="fieldset">
+      <fieldset className="fieldset m-0 p-0 gap-1">
         <If value={props.label}>
-          <legend className="fieldset-legend">
+          <legend className="fieldset-legend m-0 pt-0 pb-1">
             {props.label}
           </legend>
         </If>

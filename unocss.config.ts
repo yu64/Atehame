@@ -136,7 +136,11 @@ export default defineConfig({
     presetWind4({
       // dark: "media"
     }),
-    presetIcons(),
+    presetIcons({
+      collections: {
+        lucide: () => import("@iconify-json/lucide/icons.json").then(module => module.default),
+      },
+    }),
     presetWebFonts({
       provider: "google",
       fonts: {
@@ -252,7 +256,12 @@ export default defineConfig({
         hover:bg-surface-hover
         transition-colors duration-300
         focus-visible:atehame-focus
-        
+        disabled:opacity-40
+        disabled:bg-base
+        disabled:hover:bg-base
+        disabled:border-base-border
+        disabled:shadow-none
+        disabled:cursor-not-allowed
       `
     ],
     // --- UI構成部品 (Components) ---
