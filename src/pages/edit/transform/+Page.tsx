@@ -2,9 +2,10 @@ import CodeEditor, { type CodeEditorHandle, type EditorMarker } from "@src/compo
 import { Input } from "@src/components/Input";
 import MainContent from "@src/components/MainContent";
 import StepHeader from "@src/components/StepHeader";
-import useTransformPreview, { type TransformPreview } from "@src/hooks/useTransformPreview";
+import useSampleOutput from "@src/hooks/useSampleOutput";
+import type { TransformPreview } from "@src/hooks/useTransformPreview";
 import { fieldTypeLabels } from "@src/models/DataSchema";
-import { createInputDeclaration, createTransformInput } from "@src/models/TransformInput";
+import { createInputDeclaration } from "@src/models/TransformInput";
 import type { ExecutionErrorCode } from "@src/runtime/JsExecutionEngine";
 import { schemaAtom } from "@src/store/schema";
 import { sampleRowAtom, transformCodeAtom } from "@src/store/transform";
@@ -34,8 +35,7 @@ export default function Page() {
   const editorRef = useRef<CodeEditorHandle>(null);
 
   const declarations = useMemo(() => createInputDeclaration(schema), [schema]);
-  const conversion = useMemo(() => createTransformInput(schema, sampleRow), [schema, sampleRow]);
-  const preview = useTransformPreview(code, conversion.input);
+  const { conversion, preview } = useSampleOutput();
 
   const markers = useMemo<EditorMarker[]>(() => {
     if (preview.status !== "error" || !preview.location) return [];

@@ -97,8 +97,10 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
     return () => {
       disposed = true;
       editorRef.current = null;
-      editor?.getModel()?.dispose();
+      // エディターから外してからモデルを破棄する。逆順ではMonaco内部でエラーになる。
+      const model = editor?.getModel();
       editor?.dispose();
+      model?.dispose();
     };
     // 初期値と初期テーマは生成時だけ使い、以降の変更は個別のeffectで反映する。
   }, []);
