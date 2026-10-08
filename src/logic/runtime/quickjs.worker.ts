@@ -1,8 +1,8 @@
 import { expose } from "comlink";
 import variant from "@jitl/quickjs-singlefile-cjs-release-sync";
 import { newQuickJSWASMModuleFromVariant } from "quickjs-emscripten-core";
-import { executeInQuickJS } from "@src/runtime/executeInQuickJS";
-import type { WorkerApi } from "@src/runtime/protocol";
+import { executeInQuickJS } from "@src/logic/runtime/executeInQuickJS";
+import type { WorkerApi } from "@src/logic/runtime/protocol";
 
 // WASMは最初の要求で初期化し、Workerが生きている間は共有する。
 type ModulePromise = ReturnType<typeof newQuickJSWASMModuleFromVariant>;

@@ -1,11 +1,11 @@
 import type { QuickJSWASMModule, QuickJSHandle, QuickJSContext } from "quickjs-emscripten-core";
-import { limits } from "@src/runtime/protocol";
+import { limits } from "@src/logic/runtime/protocol";
 import type {
   ExecutionErrorCode,
   ExecutionRequest,
   ExecutionResult,
   SourceLocation,
-} from "@src/runtime/protocol";
+} from "@src/logic/runtime/protocol";
 
 // Function('input', body)はQuickJS内で次の形にコンパイルされ、bodyは4行目から始まる。
 // (function anonymous(input\n) {\n"use strict";\n<code>\n})

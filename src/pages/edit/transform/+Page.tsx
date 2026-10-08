@@ -6,7 +6,7 @@ import useSampleOutput from "@src/hooks/useSampleOutput";
 import type { TransformPreview } from "@src/hooks/useTransformPreview";
 import { fieldTypeLabels } from "@src/models/DataSchema";
 import { createInputDeclaration } from "@src/models/TransformInput";
-import type { ExecutionErrorCode } from "@src/runtime/JsExecutionEngine";
+import type { ExecutionErrorCode } from "@src/logic/runtime/JsExecutionEngine";
 import { schemaAtom } from "@src/store/schema";
 import { sampleRowAtom, transformCodeAtom } from "@src/store/transform";
 import { useAtom, useAtomValue } from "jotai";

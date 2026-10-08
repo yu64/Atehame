@@ -16,7 +16,7 @@ QuickJSはWASM同梱版を使用し、実行時にCDNや別のWASMファイル�
 `JsExecutionError` に変換する。隔離はQuickJS、通信はComlinkが担当する。
 
 ```ts
-import { JsExecutionEngine, JsExecutionError } from "@src/runtime/JsExecutionEngine";
+import { JsExecutionEngine, JsExecutionError } from "@src/logic/runtime/JsExecutionEngine";
 
 const engine = new JsExecutionEngine();
 try {

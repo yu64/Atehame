@@ -1,4 +1,4 @@
-﻿import { insertAt, moveAt, removeAt } from "@src/util/CollectionUtil";
+﻿import { insertAt, moveAt, removeAt } from "@src/logic/util/CollectionUtil";
 import type { ReactNode, Key } from "react";
 import DropdownMenu from "@src/components/DropdownMenu";
 

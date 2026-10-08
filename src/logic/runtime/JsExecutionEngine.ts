@@ -1,6 +1,6 @@
 import { wrap, releaseProxy } from "comlink";
 import type { Remote } from "comlink";
-import { limits } from "@src/runtime/protocol";
+import { limits } from "@src/logic/runtime/protocol";
 import type {
   ExecutionErrorCode,
   ExecutionOptions,
@@ -9,14 +9,14 @@ import type {
   JsonValue,
   SourceLocation,
   WorkerApi,
-} from "@src/runtime/protocol";
+} from "@src/logic/runtime/protocol";
 
 export type {
   ExecutionErrorCode,
   ExecutionOptions,
   JsonValue,
   SourceLocation,
-} from "@src/runtime/protocol";
+} from "@src/logic/runtime/protocol";
 
 export class JsExecutionError extends Error {
   constructor(

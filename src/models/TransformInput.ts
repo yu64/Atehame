@@ -1,5 +1,5 @@
 import type { DataSchema, FieldType } from "@src/models/DataSchema";
-import type { JsonValue } from "@src/runtime/protocol";
+import type { JsonValue } from "@src/logic/runtime/protocol";
 
 /** CSVの1行。フィールドIDからセルの文字列を引く。 */
 export type RowCells = Record<string, string>;

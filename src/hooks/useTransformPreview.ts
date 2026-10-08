@@ -1,5 +1,9 @@
-import { JsExecutionEngine, JsExecutionError } from "@src/runtime/JsExecutionEngine";
-import type { ExecutionErrorCode, JsonValue, SourceLocation } from "@src/runtime/JsExecutionEngine";
+import { JsExecutionEngine, JsExecutionError } from "@src/logic/runtime/JsExecutionEngine";
+import type {
+  ExecutionErrorCode,
+  JsonValue,
+  SourceLocation,
+} from "@src/logic/runtime/JsExecutionEngine";
 import { useEffect, useRef, useState } from "react";
 
 export type TransformPreview =
