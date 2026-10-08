@@ -6,14 +6,13 @@ import { schemaAtom } from "@src/store/schema";
 import { useAtom } from "jotai";
 import { navigate } from "vike/client/router";
 
-
 export default function Page() {
   const [schema, setSchema] = useAtom(schemaAtom);
 
   function updateField(value: SchemaField) {
     setSchema(current => ({
       ...current,
-      fields: current.fields.map(field => field.id === value.id ? value : field),
+      fields: current.fields.map(field => (field.id === value.id ? value : field)),
     }));
   }
 
@@ -30,11 +29,7 @@ export default function Page() {
         </Collapse>
       </section> */}
       <section className="flex flex-wrap gap-4 mt-4">
-        <button
-          type="button"
-          className="atehame-btn-secondary pl-2 pr-4"
-          onClick={addField}
-        >
+        <button type="button" className="atehame-btn-secondary pl-2 pr-4" onClick={addField}>
           <span className="i-lucide-plus size-6 shrink-0" aria-hidden="true" />
           項目を追加
         </button>
@@ -43,7 +38,7 @@ export default function Page() {
         <button
           type="button"
           className="atehame-btn-primary ml-auto"
-          onClick={() => navigate('/edit/layout')}
+          onClick={() => navigate("/edit/transform")}
         >
           次へ
         </button>
@@ -56,8 +51,8 @@ export default function Page() {
           label={(_, index) => `${index + 1}`}
           onChange={fields => setSchema(current => ({ ...current, fields }))}
         >
-          {(field) => {
-            return <SchemaFieldEditor value={field} onChange={updateField}/>;
+          {field => {
+            return <SchemaFieldEditor value={field} onChange={updateField} />;
           }}
         </EditableList>
       </section>
