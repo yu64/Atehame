@@ -19,9 +19,6 @@
   },
   "dependencies": {
     "@jitl/quickjs-singlefile-cjs-release-sync": "^0.32.0",
-    "@pdfme/common": "^6.1.5",
-    "@pdfme/generator": "^6.1.5",
-    "@pdfme/ui": "^6.1.5",
     "comlink": "^4.4.2",
     "i18next": "^26.0.8",
     "i18next-browser-languagedetector": "^8.2.1",

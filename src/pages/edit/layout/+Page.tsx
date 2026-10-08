@@ -1,72 +1,23 @@
-import { Designer } from "@pdfme/ui";
 import MainContent from "@src/components/MainContent";
-import { useEffect, useRef } from "react";
-import { Template, BLANK_PDF, getDefaultFont } from "@pdfme/common";
-
-const template: Template = {
-  basePdf: BLANK_PDF,
-  schemas: [
-    [
-      {
-        name: "a",
-        type: "text",
-        position: { x: 0, y: 0 },
-        width: 10,
-        height: 10,
-      },
-      {
-        name: "b",
-        type: "text",
-        position: { x: 10, y: 10 },
-        width: 10,
-        height: 10,
-      },
-      {
-        name: "c",
-        type: "text",
-        position: { x: 20, y: 20 },
-        width: 10,
-        height: 10,
-      },
-    ],
-  ],
-};
+import StepHeader from "@src/components/StepHeader";
+import { navigate } from "vike/client/router";
 
 export default function Page() {
-  const designerRef = useRef<Designer | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const designer = new Designer({
-      domContainer: containerRef.current,
-      template: template,
-      options: {
-        font: getDefaultFont(),
-      },
-    });
-
-    designerRef.current = designer;
-
-    return () => {
-      designer.destroy();
-    };
-  }, []);
-
   return (
-    <MainContent mode="canvas">
-      <div
-        ref={containerRef}
-        style={{
-          width: "100%",
-          height: "100%",
-          willChange: "transform",
-          transform: "translate3d(0, 0, 0)",
-          backfaceVisibility: "hidden",
-          perspective: 1000,
-        }}
+    <>
+      <StepHeader
+        title="レイアウト"
+        description={
+          <>
+            加工で <code className="font-mono">return</code>{" "}
+            した値を配置する、印刷用のレイアウトを作ります。
+          </>
+        }
+        onBack={() => navigate("/edit/transform")}
       />
-    </MainContent>
+      <MainContent>
+        <p className="pt-4 text-sm text-text-secondary">レイアウトの編集機能は準備中です。</p>
+      </MainContent>
+    </>
   );
 }
