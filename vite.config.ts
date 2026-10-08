@@ -1,20 +1,16 @@
-import { defineConfig } from 'vite'
-import UnoCSS from '@unocss/vite'
+import { defineConfig } from "vite";
+import UnoCSS from "@unocss/vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { fileURLToPath } from 'url'
-import path from 'path'
+import { fileURLToPath } from "url";
+import path from "path";
 import vike from "vike/plugin";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   root: path.resolve(__dirname, "src"),
-  base: (process.env.IC ? "/Atehame" : "/"),
-  plugins: [
-    UnoCSS(), 
-    tsconfigPaths(),
-    vike()
-  ],
+  base: process.env.IC ? "/Atehame" : "/",
+  plugins: [UnoCSS(), tsconfigPaths(), vike()],
   resolve: {
     alias: {
       "@src": path.resolve(__dirname, "src"),
@@ -23,5 +19,8 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist"),
     emptyOutDir: true,
+  },
+  worker: {
+    format: "es",
   },
 });
