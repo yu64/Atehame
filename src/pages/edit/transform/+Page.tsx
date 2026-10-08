@@ -1,6 +1,7 @@
 import CodeEditor, { type CodeEditorHandle, type EditorMarker } from "@src/components/CodeEditor";
 import { Input } from "@src/components/Input";
 import MainContent from "@src/components/MainContent";
+import StepHeader from "@src/components/StepHeader";
 import useTransformPreview, { type TransformPreview } from "@src/hooks/useTransformPreview";
 import { fieldTypeLabels } from "@src/models/DataSchema";
 import { createInputDeclaration, createTransformInput } from "@src/models/TransformInput";
@@ -42,44 +43,22 @@ export default function Page() {
   }, [preview]);
 
   return (
-    <MainContent mode="canvas">
-      <div className="flex flex-col h-full min-h-0">
-        <section
-          className={`
-          flex flex-wrap items-center gap-4
-          shrink-0 px-4 sm:px-6 lg:px-8 py-3
-          border-b border-surface-border
-        `}
-        >
-          <button
-            type="button"
-            className="atehame-btn-secondary pl-2 pr-4"
-            onClick={() => navigate("/edit/schema")}
-          >
-            <span className="i-lucide-chevron-left size-6 shrink-0" aria-hidden="true" />
-            戻る
-          </button>
-          {/* 狭い画面では説明を1段目、操作ボタンを2段目に置く。 */}
-          <div className="min-w-0 basis-full order-first sm:basis-auto sm:order-none sm:flex-1">
-            <h1 className="text-lg font-bold text-text-primary">加工</h1>
-            <p className="text-sm text-text-secondary">
-              CSVの1行を <code className="font-mono">input</code>{" "}
-              として受け取り、レイアウトに渡す値を <code className="font-mono">return</code>{" "}
-              します。
-            </p>
-          </div>
-          <button
-            type="button"
-            className="atehame-btn-primary ml-auto"
-            onClick={() => navigate("/edit/layout")}
-          >
-            次へ
-          </button>
-        </section>
-
+    <>
+      <StepHeader
+        title="加工"
+        description={
+          <>
+            CSVの1行を <code className="font-mono">input</code> として受け取り、レイアウトに渡す値を{" "}
+            <code className="font-mono">return</code> します。
+          </>
+        }
+        onBack={() => navigate("/edit/schema")}
+        onNext={() => navigate("/edit/layout")}
+      />
+      <MainContent mode="canvas">
         <div
           className={`
-          flex-1 min-h-0
+          h-full min-h-0
           grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(320px,420px)]
           overflow-auto lg:overflow-hidden
         `}
@@ -154,8 +133,8 @@ export default function Page() {
             </section>
           </aside>
         </div>
-      </div>
-    </MainContent>
+      </MainContent>
+    </>
   );
 }
 
