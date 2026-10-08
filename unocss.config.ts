@@ -1,58 +1,56 @@
-import { defineConfig, presetIcons, presetWebFonts, presetWind4, symbols } from "unocss"
-import { presetTheme } from "unocss-preset-theme"
+import { defineConfig, presetIcons, presetWebFonts, presetWind4, symbols } from "unocss";
+import { presetTheme } from "unocss-preset-theme";
 import { presetDaisy } from "@ameinhardt/unocss-preset-daisy";
 
 const themeConfig = {
   light: {
     colors: {
-
-      "primary": {
-        "DEFAULT": "#C0392B",
-        "hover": "#A93226"
+      primary: {
+        DEFAULT: "#C0392B",
+        hover: "#A93226",
       },
-      "base": {
-        "DEFAULT": "#F5F5F5",
-        "hover": "#EAEAEA",
-        "border": "#E5E5E5"
+      base: {
+        DEFAULT: "#F5F5F5",
+        hover: "#EAEAEA",
+        border: "#E5E5E5",
       },
-      "surface": {
-        "DEFAULT": "#FFFFFF",
-        "hover": "#FAFAFA",
-        "border": "#E5E5E5"
+      surface: {
+        DEFAULT: "#FFFFFF",
+        hover: "#FAFAFA",
+        border: "#E5E5E5",
       },
-      "subtle": {
-        "DEFAULT": "#FAFAFA",
-        "hover": "#F4F4F4",
-        "border": "#E5E5E5"
-      },
-
-      "text": {
-        "primary": "#1A1A1A",
-        "secondary": "#1A1A1A99",
-        "tertiary": "#1A1A1A59",
-        "inner": "#FFFFFF"
+      subtle: {
+        DEFAULT: "#FAFAFA",
+        hover: "#F4F4F4",
+        border: "#E5E5E5",
       },
 
-
-      "border": {
-        "strong": "#C8C3B8",
-        "DEFAULT": "#D8D3C8",
-        "subtle": "#E5E0D8"
+      text: {
+        primary: "#1A1A1A",
+        secondary: "#1A1A1A99",
+        tertiary: "#1A1A1A59",
+        inner: "#FFFFFF",
       },
-      "status": {
-        "error": {
-          "DEFAULT": "#C0510A",
-          "bg": "#FDF0E8"
+
+      border: {
+        strong: "#C8C3B8",
+        DEFAULT: "#D8D3C8",
+        subtle: "#E5E0D8",
+      },
+      status: {
+        error: {
+          DEFAULT: "#C0510A",
+          bg: "#FDF0E8",
         },
-        "warning": {
-          "DEFAULT": "#A07800",
-          "bg": "#FDF8E8"
+        warning: {
+          DEFAULT: "#A07800",
+          bg: "#FDF8E8",
         },
-        "success": {
-          "DEFAULT": "#2E7D32",
-          "bg": "#EDF7EE"
-        }
-      }
+        success: {
+          DEFAULT: "#2E7D32",
+          bg: "#EDF7EE",
+        },
+      },
 
       // base: {
       //   DEFAULT: "#FFFFFF",
@@ -76,7 +74,6 @@ const themeConfig = {
       //   reverse: "#FFFFFF",
       // }
 
-
       // base: {
       //   "lv1": "oklch(99% 0 0)",      // 純白
       //   "lv2": "oklch(97% 0.01 240)",  // 少し沈んだ背景
@@ -99,7 +96,7 @@ const themeConfig = {
       //   warn: "oklch(75% 0.18 70)",
       //   error: "oklch(65% 0.22 25)"
       // }
-    }
+    },
   },
   dark: {
     colors: {
@@ -125,11 +122,9 @@ const themeConfig = {
       //   warn:    "oklch(80% 0.15 70)",
       //   error:   "oklch(70% 0.18 25)"
       // }
-    }
+    },
   },
-} as const satisfies Record<string, object>
-
-
+} as const satisfies Record<string, object>;
 
 export default defineConfig({
   presets: [
@@ -151,37 +146,37 @@ export default defineConfig({
     presetDaisy(),
     presetTheme({
       theme: {
-        dark: themeConfig.dark
-      }
-    }) as any
+        dark: themeConfig.dark,
+      },
+    }) as any,
   ],
   layers: {
-    "properties": 10,
+    properties: 10,
     "daisyui.l1": 20,
     "daisyui.l1.l2": 30,
     "daisyui.l1.l2.l3": 40,
-    "shortcuts": 50,
-    "default": 60,
+    shortcuts: 50,
+    default: 60,
   },
   theme: themeConfig.light,
   variants: [
     // has-focus-visible
-    (matcher) => {
+    matcher => {
       const prefix = "has-focus-visible:";
-      if(!matcher.startsWith(prefix)) return matcher;
+      if (!matcher.startsWith(prefix)) return matcher;
       return {
         matcher: matcher.slice(prefix.length),
         selector: s => `${s}:has(:focus-visible)`,
-      }
+      };
     },
     // select:open
-    (matcher) => {
+    matcher => {
       const prefix = "select-open:";
-      if(!matcher.startsWith(prefix)) return matcher;
+      if (!matcher.startsWith(prefix)) return matcher;
       return {
         matcher: matcher.slice(prefix.length),
         selector: s => `${s}:open`,
-      }
+      };
     },
   ],
   rules: [
@@ -189,22 +184,19 @@ export default defineConfig({
     //   /^appearance-base-select$/,
     //   (_) => ([
     //     {
-    //       "appearance": "base-select" 
+    //       "appearance": "base-select"
     //     },
     //     {
     //       [symbols.selector]: (selector) => `${selector}::picker(select):hover`,
-    //       "appearance": "base-select" 
+    //       "appearance": "base-select"
     //     }
     //   ]),
     //   { autocomplete: "appearance-base-select" }
     // ]
-
     // [/^atehame-(lv1|lv2|lv3)$/, ([, lv], { theme }) => {
-
     //   const bg = theme.colors.base[lv as keyof typeof theme.colors.base];
     //   const border = theme.colors.stroke[lv as keyof typeof theme.colors.stroke];
     //   const text = theme.colors.main.lv1;
-
     //   return {
     //     "background-color": bg,
     //     "border-color": border,
@@ -212,12 +204,9 @@ export default defineConfig({
     //   };
     // }],
     // [/^atehame-(unused|warn|error)$/, ([, name], { theme }) => {
-
     //   const color = theme.colors.state[name as keyof typeof theme.colors.state];
     //   if (!color) throw new Error();
-
     //   const alphaColor = `color-mix(in srgb, ${color} 10%, transparent)`;
-
     //   return {
     //     // 下層の背景色(background-color)を活かすため、gradientで膜を張る
     //     "background-image": `linear-gradient(${alphaColor}, ${alphaColor})`,
@@ -227,7 +216,6 @@ export default defineConfig({
     // }],
   ],
   shortcuts: [
-
     [
       "atehame-focus",
       `
@@ -235,10 +223,10 @@ export default defineConfig({
         outline-2
         -outline-offset-1
         outline-primary
-      `
+      `,
     ],
     [
-      "atehame-btn-primary", 
+      "atehame-btn-primary",
       `
         btn bg-primary text-text-inner
         hover:bg-primary-hover
@@ -247,10 +235,10 @@ export default defineConfig({
         focus-visible:outline-2
         focus-visible:-outline-offset-4
         focus-visible:outline-surface
-      `
+      `,
     ],
     [
-      "atehame-btn-secondary", 
+      "atehame-btn-secondary",
       `
         btn bg-surface text-text-primary
         hover:bg-surface-hover
@@ -262,11 +250,11 @@ export default defineConfig({
         disabled:border-base-border
         disabled:shadow-none
         disabled:cursor-not-allowed
-      `
+      `,
     ],
     // --- UI構成部品 (Components) ---
 
-    // // パネル: 
+    // // パネル:
     // // min-h-screen を削除。
     // //「背景が塗られる器」としての性質（遷移アニメーション等）のみを保持。
     // ["atehame-panel", `
@@ -296,4 +284,4 @@ export default defineConfig({
     //   transition-colors duration-300
     // `]
   ],
-})
+});

@@ -1,73 +1,68 @@
-import Collapse from '@src/components/Collapse';
-import { Input } from '@src/components/Input';
-import PageFrame from '@src/components/PageFrame';
-import MainContent from '@src/components/MainContent';
-import { Select } from '@src/components/Select';
-import SelectCard from '@src/components/SelectCard';
-import { isDarkAtom } from '@src/store/atom';
-import { useAtom } from 'jotai';
-import { useState, useEffect } from 'react';
+import Collapse from "@src/components/Collapse";
+import { Input } from "@src/components/Input";
+import PageFrame from "@src/components/PageFrame";
+import MainContent from "@src/components/MainContent";
+import { Select } from "@src/components/Select";
+import SelectCard from "@src/components/SelectCard";
+import { isDarkAtom } from "@src/store/atom";
+import { useAtom } from "jotai";
+import { useState, useEffect } from "react";
 
 export default function Page() {
-
   const [dark, setDark] = useAtom(isDarkAtom);
 
   useEffect(() => {
     const root = window.document.documentElement;
-    dark ? root.classList.add('dark') : root.classList.remove('dark');
+    dark ? root.classList.add("dark") : root.classList.remove("dark");
   }, [dark]);
 
   return (
     <PageFrame>
-      <header>
-
-      </header>
+      <header></header>
       <MainContent>
-      <div className="flex flex-col gap-4 w-full">
-        <section className="border-b border-border-subtle pb-4">
-          <button onClick={() => setDark(d => !d)} className="atehame-btn-primary">
-            Toggle Dark Mode
-          </button>
-          <button onClick={() => setDark(d => !d)} className="atehame-btn-secondary">
-            Toggle Dark Mode
-          </button>
-        </section>
-        <section className="border-b border-border-subtle pb-4">
-          <SelectCard
-            title="Select Card"
-            description="This is a select card component."
-            buttonText="Click Me"
-            onClick={() => alert('Card Clicked!')}
-          />
-        </section>
-        <section className="border-b border-border-subtle pb-4">
-          <Collapse title="Collapsible Section">
-            <p>This is the content inside the collapsible section.</p>
-          </Collapse>
-        </section>
-        <section className="border-b border-border-subtle pb-4">
-          <Input
-            type="text"
-            label="Input Label"
-            description="This is an input field."
-            placeholder="Enter text here"
-          />
-        </section>
-        <section className="border-b border-border-subtle pb-4">
-          <Select
-            value=""
-          >
-            <option value="" disabled>Select an option</option>
-            <option value="option1">Option 1</option>
-            <option value="option2">Option 2</option>
-            <option value="option3">Option 3</option>
-          </Select>
-        </section>
-      </div>
+        <div className="flex flex-col gap-4 w-full">
+          <section className="border-b border-border-subtle pb-4">
+            <button onClick={() => setDark(d => !d)} className="atehame-btn-primary">
+              Toggle Dark Mode
+            </button>
+            <button onClick={() => setDark(d => !d)} className="atehame-btn-secondary">
+              Toggle Dark Mode
+            </button>
+          </section>
+          <section className="border-b border-border-subtle pb-4">
+            <SelectCard
+              title="Select Card"
+              description="This is a select card component."
+              buttonText="Click Me"
+              onClick={() => alert("Card Clicked!")}
+            />
+          </section>
+          <section className="border-b border-border-subtle pb-4">
+            <Collapse title="Collapsible Section">
+              <p>This is the content inside the collapsible section.</p>
+            </Collapse>
+          </section>
+          <section className="border-b border-border-subtle pb-4">
+            <Input
+              type="text"
+              label="Input Label"
+              description="This is an input field."
+              placeholder="Enter text here"
+            />
+          </section>
+          <section className="border-b border-border-subtle pb-4">
+            <Select value="">
+              <option value="" disabled>
+                Select an option
+              </option>
+              <option value="option1">Option 1</option>
+              <option value="option2">Option 2</option>
+              <option value="option3">Option 3</option>
+            </Select>
+          </section>
+        </div>
       </MainContent>
-      <footer>
-
-      </footer>
+      <footer></footer>
     </PageFrame>
   );
 }

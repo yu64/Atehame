@@ -1,46 +1,48 @@
-import Logo from '@src/components/Logo';
-import MainContent from '@src/components/MainContent';
-import NormalHeader from '@src/components/NormalHeader';
-import PageFrame from '@src/components/PageFrame';
-import SelectCard from '@src/components/SelectCard';
-import { isDarkAtom } from '@src/store/atom';
-import { useAtom } from 'jotai';
-import { useState, useEffect } from 'react';
-import { navigate } from 'vike/client/router';
+import Logo from "@src/components/Logo";
+import MainContent from "@src/components/MainContent";
+import NormalHeader from "@src/components/NormalHeader";
+import PageFrame from "@src/components/PageFrame";
+import SelectCard from "@src/components/SelectCard";
+import { isDarkAtom } from "@src/store/atom";
+import { useAtom } from "jotai";
+import { useState, useEffect } from "react";
+import { navigate } from "vike/client/router";
 
 export default function Page() {
-
   return (
     <PageFrame>
-      <NormalHeader/>
-      
+      <NormalHeader />
+
       <MainContent>
-        <section className={`
+        <section
+          className={`
           grid grid-cols-1 md:grid-cols-2 gap-6
           py-8
-        `}>
-          <div className={`
+        `}
+        >
+          <div
+            className={`
             md:col-span-2
-          `}>
+          `}
+          >
             <SelectCard
-              title='標準レイアウトを使う'
-              description='Atehameが提供するレイアウトを使用します。'
-              buttonText='始める'
+              title="標準レイアウトを使う"
+              description="Atehameが提供するレイアウトを使用します。"
+              buttonText="始める"
             />
           </div>
           <SelectCard
-            title='レイアウトを作る'
-            description='自分でレイアウトを作成します。'
-            buttonText='始める'
-            onClick={() => navigate('/edit/schema')}
+            title="レイアウトを作る"
+            description="自分でレイアウトを作成します。"
+            buttonText="始める"
+            onClick={() => navigate("/edit/schema")}
           />
           <SelectCard
-            title='レイアウトを使う'
-            description='自分または他の人が作成したレイアウトを使用します。'
-            buttonText='始める'
+            title="レイアウトを使う"
+            description="自分または他の人が作成したレイアウトを使用します。"
+            buttonText="始める"
           />
         </section>
-
       </MainContent>
     </PageFrame>
   );

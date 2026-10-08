@@ -1,5 +1,4 @@
 {
-  
   "files.exclude": {
     "**/.git": true,
     "**/.svn": true,
@@ -7,9 +6,11 @@
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
     "**/package-lock.json": true,
-    "**/node_modules": true,
+    "**/node_modules": true
   },
   "workbench.tree.indent": 16,
   "editor.tabSize": 2,
-  "js/ts.tsdk.path": "node_modules\\typescript\\lib"
+  "js/ts.tsdk.path": "node_modules\\typescript\\lib",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true
 }

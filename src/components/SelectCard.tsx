@@ -8,9 +8,8 @@ export interface Props {
 }
 
 export default function SelectCard(props: Props) {
-
   return (
-    <div 
+    <div
       className={`
         card w-full
         bg-surface hover:bg-surface-hover
@@ -35,5 +34,5 @@ export default function SelectCard(props: Props) {
         </If>
       </div>
     </div>
-  )
+  );
 }

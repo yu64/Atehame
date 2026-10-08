@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import "uno.css";
 import "@src/store/i18n.js";
 

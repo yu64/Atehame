@@ -1,5 +1,6 @@
 {
   "recommendations": [
-    "antfu.unocss" //66.4.2
+    "antfu.unocss", //66.4.2
+    "esbenp.prettier-vscode"
   ]
 }

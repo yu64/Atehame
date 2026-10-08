@@ -1,13 +1,9 @@
-
-
-
 export interface Props {
-  label?: string,
-  onClick?: () => void
+  label?: string;
+  onClick?: () => void;
 }
 
 export default function Divider(props: Props) {
-
   return (
     <div
       className={`
@@ -22,5 +18,5 @@ export default function Divider(props: Props) {
     >
       {props.label}
     </div>
-  )
+  );
 }

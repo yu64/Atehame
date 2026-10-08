@@ -1,0 +1,2 @@
+# Prettier の endOfLine: "lf" と合わせ、Windows でも作業ツリーを LF にする。
+* text=auto eol=lf

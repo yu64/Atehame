@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from "react";
 
 export interface DropdownMenuItem {
   id: string;
@@ -19,16 +19,16 @@ export default function DropdownMenu(props: Props) {
   useEffect(() => {
     function closeOutside(event: PointerEvent) {
       if (event.target instanceof Node && !menuRef.current?.contains(event.target)) {
-        menuRef.current?.removeAttribute('open');
+        menuRef.current?.removeAttribute("open");
       }
     }
-    document.addEventListener('pointerdown', closeOutside);
-    return () => document.removeEventListener('pointerdown', closeOutside);
+    document.addEventListener("pointerdown", closeOutside);
+    return () => document.removeEventListener("pointerdown", closeOutside);
   }, []);
 
   function closeAndFocusTrigger() {
-    menuRef.current?.removeAttribute('open');
-    menuRef.current?.querySelector('summary')?.focus();
+    menuRef.current?.removeAttribute("open");
+    menuRef.current?.querySelector("summary")?.focus();
   }
 
   return (
@@ -37,11 +37,11 @@ export default function DropdownMenu(props: Props) {
       className="relative"
       onBlur={event => {
         if (!event.currentTarget.contains(event.relatedTarget)) {
-          event.currentTarget.removeAttribute('open');
+          event.currentTarget.removeAttribute("open");
         }
       }}
       onKeyDown={event => {
-        if (event.key === 'Escape') {
+        if (event.key === "Escape") {
           event.preventDefault();
           event.stopPropagation();
           closeAndFocusTrigger();
@@ -56,17 +56,17 @@ export default function DropdownMenu(props: Props) {
         aria-label={props.label}
         title={props.label}
       >
-        {props.trigger ?? (
-          <span className="i-lucide-ellipsis size-6 shrink-0" aria-hidden="true" />
-        )}
+        {props.trigger ?? <span className="i-lucide-ellipsis size-6 shrink-0" aria-hidden="true" />}
       </summary>
-      <div className={`
+      <div
+        className={`
         absolute right-0 top-full z-20
         mt-1 w-44 p-1
         rounded-lg border border-surface-border
         bg-surface shadow-lg
         flex flex-col
-      `}>
+      `}
+      >
         {props.items.map(item => (
           <button
             key={item.id}

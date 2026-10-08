@@ -6,12 +6,9 @@ import { useEffect, useLayoutEffect, type RefObject } from "react";
  */
 export default function useFixedLongestSelect(
   selectRef: RefObject<HTMLSelectElement | null>,
-  enable: boolean = true
-)
-{
-  function resize(select: HTMLSelectElement)
-  {
-
+  enable: boolean = true,
+) {
+  function resize(select: HTMLSelectElement) {
     // 現在の選択状態と、width を退避
     const originalIndex = select.selectedIndex;
     const originalWidth = select.style.minWidth;
@@ -19,7 +16,7 @@ export default function useFixedLongestSelect(
     // 最も文字数が長い option を探す
     let maxLength = 0;
     let longestIndex = 0;
-    
+
     Array.from(select.options).forEach((opt, index) => {
       if (opt.text.length > maxLength) {
         maxLength = opt.text.length;
@@ -36,34 +33,28 @@ export default function useFixedLongestSelect(
 
     // 計測した最大幅をインラインスタイルの width として直接適用する
     // (もし計測値が0の場合は、非表示状態なので適用しない)
-    if(optimalWidth > 0) select.style.minWidth = `${optimalWidth}px`;
+    if (optimalWidth > 0) select.style.minWidth = `${optimalWidth}px`;
     else select.style.minWidth = originalWidth;
   }
 
   useLayoutEffect(() => {
-
     const select = selectRef.current;
-    if(!select) return;
-    if(!enable) return;
+    if (!select) return;
+    if (!enable) return;
 
     //マウント時
     resize(select);
 
-    const observer = new MutationObserver(
-      () => resize(select)
-    );
+    const observer = new MutationObserver(() => resize(select));
 
-    observer.observe(
-      select,
-      {
-        characterData: true,
-        childList: true,
-        subtree: true,
-      }
-    );
+    observer.observe(select, {
+      characterData: true,
+      childList: true,
+      subtree: true,
+    });
 
     return () => {
       observer.disconnect();
-    }
+    };
   }, [selectRef.current?.options.length]);
 }

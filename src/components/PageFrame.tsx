@@ -1,19 +1,18 @@
-
-
 export interface Props {
   children: React.ReactNode;
 }
 
 export default function PageFrame(props: Props) {
-
   return (
-    <div className={`
+    <div
+      className={`
       flex flex-col items-center
       h-dvh
       w-full
       bg-base
       overflow-hidden
-    `}>
+    `}
+    >
       {props.children}
     </div>
   );

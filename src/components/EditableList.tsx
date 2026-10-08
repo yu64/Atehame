@@ -1,6 +1,6 @@
-﻿import { insertAt, moveAt, removeAt } from '@src/util/CollectionUtil';
-import type { ReactNode, Key } from 'react';
-import DropdownMenu from '@src/components/DropdownMenu';
+﻿import { insertAt, moveAt, removeAt } from "@src/util/CollectionUtil";
+import type { ReactNode, Key } from "react";
+import DropdownMenu from "@src/components/DropdownMenu";
 
 export interface EditableListProps<T> {
   items: T[];
@@ -43,7 +43,7 @@ export default function EditableList<T>(props: EditableListProps<T>) {
         onClick={() => addAt(props.items.length)}
       >
         <span className="i-lucide-plus size-6 shrink-0" aria-hidden="true" />
-        {props.items.length === 0 ? '最初の項目を追加' : '項目を追加'}
+        {props.items.length === 0 ? "最初の項目を追加" : "項目を追加"}
       </button>
     </div>
   );
@@ -64,10 +64,12 @@ interface CardProps {
 /** リスト専用のカード。内容の種類や入力欄の配置には依存しない。 */
 function Card(props: CardProps) {
   return (
-    <div className={`
+    <div
+      className={`
       card w-full min-w-0
       bg-surface border border-surface-border rounded-lg
-    `}>
+    `}
+    >
       <div className="card-body min-w-0 gap-1 px-4 py-3">
         <div className="flex items-center justify-between gap-3">
           <span className="min-w-0 break-words text-text-secondary">{props.label}</span>
@@ -95,8 +97,8 @@ function Card(props: CardProps) {
             <DropdownMenu
               label="項目の操作"
               items={[
-                { id: 'add-before', label: 'この上に追加', onSelect: props.onAddBefore },
-                { id: 'add-after', label: 'この下に追加', onSelect: props.onAddAfter },
+                { id: "add-before", label: "この上に追加", onSelect: props.onAddBefore },
+                { id: "add-after", label: "この下に追加", onSelect: props.onAddAfter },
               ]}
             />
             <button
