@@ -12,7 +12,9 @@
     "build": "vite build",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "test:unit": "vitest run",
     "test:runtime": "node test/runtime/run.mjs",
+    "test:print": "node test/print/run.mjs",
     "test:setup": "npm install & npx playwright install --with-deps",
     "test:web": "playwright test",
     "test:web:ui": "playwright test --ui"
@@ -20,6 +22,7 @@
   "dependencies": {
     "@jitl/quickjs-singlefile-cjs-release-sync": "^0.32.0",
     "comlink": "^4.4.2",
+    "css-tree": "^3.2.1",
     "i18next": "^26.0.8",
     "i18next-browser-languagedetector": "^8.2.1",
     "jotai": "^2.19.1",
@@ -28,23 +31,28 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-i18next": "^17.0.6",
+    "react-moveable": "^0.56.0",
     "vike": "^0.4.259",
-    "vike-react": "^0.6.23"
+    "vike-react": "^0.6.23",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@ameinhardt/unocss-preset-daisy": "github:nicky9door/unocss-preset-daisy#add-variant",
     "@iconify-json/lucide": "^1.2.136",
     "@playwright/test": "^1.57.0",
+    "@types/css-tree": "^3.2.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@unocss/vite": "^66.1.2",
     "daisyui": "^5.5.19",
+    "happy-dom": "^20.14.5",
     "prettier": "^3.9.9",
     "typescript": "^6.0.3",
     "unocss": "^66.1.2",
     "unocss-preset-theme": "^0.14.1",
     "vite": "^7.2.6",
-    "vite-tsconfig-paths": "^5.1.4"
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^5.0.3"
   }
 }
