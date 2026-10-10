@@ -23,4 +23,9 @@ export default defineConfig({
   worker: {
     format: "es",
   },
+  optimizeDeps: {
+    // Worker の中だけで使う依存は起動時の調査で見つからず、初めて使ったときに
+    // 最適化がやり直されてページが再読み込みされるため、最初から含めておく。
+    include: ["comlink", "@jitl/quickjs-singlefile-cjs-release-sync", "quickjs-emscripten-core"],
+  },
 });
