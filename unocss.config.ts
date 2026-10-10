@@ -127,6 +127,12 @@ const themeConfig = {
 } as const satisfies Record<string, object>;
 
 export default defineConfig({
+  content: {
+    pipeline: {
+      // 既定では .ts を探さないため、部品の雛形（.ts）に書いたアイコンのクラスも対象にする。
+      include: [/\.([jt]sx?|mdx?|html)($|\?)/],
+    },
+  },
   presets: [
     presetWind4({
       // dark: "media"

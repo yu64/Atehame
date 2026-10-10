@@ -1,4 +1,5 @@
 import * as monaco from "monaco-editor";
+import CssWorker from "monaco-editor/language/css/css.worker?worker";
 import EditorWorker from "monaco-editor/editor/editor.worker?worker";
 import TypeScriptWorker from "monaco-editor/language/typescript/ts.worker?worker";
 
@@ -6,6 +7,7 @@ import TypeScriptWorker from "monaco-editor/language/typescript/ts.worker?worker
 self.MonacoEnvironment = {
   getWorker(_workerId, label) {
     if (label === "typescript" || label === "javascript") return new TypeScriptWorker();
+    if (label === "css") return new CssWorker();
     return new EditorWorker();
   },
 };

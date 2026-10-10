@@ -38,7 +38,9 @@ export const Input = forwardRef<HTMLInputElement, Props>(function Input(
         />
       </label>
       <If value={message}>
-        <span className={`label ${error ? "text-status-error" : ""}`}>{message}</span>
+        <span className={`label whitespace-normal ${error ? "text-status-error" : ""}`}>
+          {message}
+        </span>
       </If>
     </fieldset>
   );
