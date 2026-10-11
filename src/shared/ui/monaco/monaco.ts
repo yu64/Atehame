@@ -1,3 +1,4 @@
+import { editorThemes } from "@src/shared/ui/monaco/themes";
 import * as monaco from "monaco-editor";
 import EditorWorker from "monaco-editor/editor/editor.worker?worker";
 import CssWorker from "monaco-editor/language/css/css.worker?worker";
@@ -31,14 +32,14 @@ javascript.setDiagnosticsOptions({
 });
 
 // JavaScriptの色分けはASCII以外の識別子を不正なトークン（赤字）とする。
-// カラム名には日本語を使うため、通常の文字色で表示する。構文の誤りは診断の波線で示される。
-monaco.editor.defineTheme("atehame-light", {
+// 日本語の識別子も使えるよう、通常の文字色で表示する。構文の誤りは診断の波線で示される。
+monaco.editor.defineTheme(editorThemes.light, {
   base: "vs",
   inherit: true,
   rules: [{ token: "invalid", foreground: "000000" }],
   colors: {},
 });
-monaco.editor.defineTheme("atehame-dark", {
+monaco.editor.defineTheme(editorThemes.dark, {
   base: "vs-dark",
   inherit: true,
   rules: [{ token: "invalid", foreground: "D4D4D4" }],

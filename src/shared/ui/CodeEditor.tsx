@@ -1,4 +1,5 @@
 import { changedRange } from "@src/shared/lib/TextUtil";
+import { editorThemes } from "@src/shared/ui/monaco/themes";
 import type * as Monaco from "monaco-editor";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 
@@ -32,7 +33,8 @@ export interface Props {
 
 type MonacoModule = typeof Monaco;
 
-const markerOwner = "atehame";
+/** エディターの外で検出した問題（markers）の持ち主の名前。 */
+const markerOwner = "code-editor";
 
 /**
  * Monaco Editor を使ったコードエディター（JavaScript / CSS）。
@@ -80,7 +82,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
         editor = loaded.editor.create(containerRef.current, {
           value: props.value,
           language: props.language ?? "javascript",
-          theme: dark ? "atehame-dark" : "atehame-light",
+          theme: dark ? editorThemes.dark : editorThemes.light,
           automaticLayout: true,
           minimap: { enabled: false },
           fontFamily: "'Fira Code', monospace",
@@ -139,7 +141,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
   }, [monaco, props.reveal?.key]);
 
   useEffect(() => {
-    monaco?.editor.setTheme(dark ? "atehame-dark" : "atehame-light");
+    monaco?.editor.setTheme(dark ? editorThemes.dark : editorThemes.light);
   }, [monaco, dark]);
 
   // 型宣言を登録し、input の補完と型チェックに使う。
@@ -147,7 +149,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
     if (!monaco || props.declarations === undefined || props.language === "css") return;
     const lib = monaco.typescript.javascriptDefaults.addExtraLib(
       props.declarations,
-      "ts:atehame/input.d.ts",
+      "ts:code-editor/declarations.d.ts",
     );
     return () => lib.dispose();
   }, [monaco, props.declarations, props.language]);

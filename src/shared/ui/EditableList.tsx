@@ -1,6 +1,6 @@
-﻿import { insertAt, moveAt, removeAt } from "@src/shared/lib/CollectionUtil";
-import type { ReactNode, Key } from "react";
+import { insertAt, moveAt, removeAt } from "@src/shared/lib/CollectionUtil";
 import DropdownMenu from "@src/shared/ui/DropdownMenu";
+import type { ReactNode, Key } from "react";
 
 export interface EditableListProps<T> {
   items: T[];
