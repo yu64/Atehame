@@ -1,4 +1,5 @@
 import type { CssEditorComponent, RevealRequest } from "@src/features/designer/types";
+import Alert from "@src/shared/ui/Alert";
 
 export interface Props {
   css: string;
@@ -55,14 +56,7 @@ export default function CssPanel(props: Props) {
         )}
       </div>
       {props.warnings.length > 0 && (
-        <ul
-          role="status"
-          className="shrink-0 px-3 py-2 text-xs text-status-warning bg-status-warning-bg"
-        >
-          {props.warnings.map(warning => (
-            <li key={warning}>{warning}</li>
-          ))}
-        </ul>
+        <Alert kind="warning" bar messages={props.warnings} className="shrink-0" />
       )}
     </div>
   );

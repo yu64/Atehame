@@ -7,6 +7,8 @@ import useSampleOutput from "@src/features/transform/hooks/useSampleOutput";
 import type { TransformPreview } from "@src/features/transform/hooks/useTransformPreview";
 import { createInputDeclaration } from "@src/features/transform/model";
 import { sampleRowAtom } from "@src/features/transform/store";
+import Alert from "@src/shared/ui/Alert";
+import Button from "@src/shared/ui/Button";
 import type { CodeEditorHandle, EditorMarker } from "@src/shared/ui/CodeEditor";
 import { Input } from "@src/shared/ui/Input";
 import { useAtom, useAtomValue } from "jotai";
@@ -90,13 +92,7 @@ export default function Page() {
               {schema.fields.length === 0 ? (
                 <div className="flex flex-col items-start gap-2 text-sm text-text-secondary">
                   <p>カラムが定義されていません。先にスキーマでカラムを追加してください。</p>
-                  <button
-                    type="button"
-                    className="atehame-btn-secondary btn-sm"
-                    onClick={() => navigate("/edit/schema")}
-                  >
-                    スキーマへ
-                  </button>
+                  <Button label="スキーマへ" onClick={() => navigate("/edit/schema")} />
                 </div>
               ) : (
                 <div className="flex flex-col gap-3">
@@ -174,26 +170,15 @@ function PreviewBody(props: PreviewBodyProps) {
 
   if (preview.status === "error") {
     return (
-      <div
-        role="alert"
-        className={`
-          flex flex-col items-start gap-2
-          p-3 rounded-lg
-          bg-status-error-bg text-status-error
-          border border-status-error/30
-        `}
-      >
-        <p className="text-sm font-mono whitespace-pre-wrap break-all">{preview.message}</p>
+      <Alert kind="error">
+        <p className="font-mono whitespace-pre-wrap break-all">{preview.message}</p>
         {preview.location && (
-          <button
-            type="button"
-            className="atehame-btn-secondary btn-sm"
+          <Button
+            label={`${preview.location.line}行目 ${preview.location.column}列へ移動`}
             onClick={() => props.onReveal(preview.location!.line, preview.location!.column)}
-          >
-            {preview.location.line}行目 {preview.location.column}列へ移動
-          </button>
+          />
         )}
-      </div>
+      </Alert>
     );
   }
 

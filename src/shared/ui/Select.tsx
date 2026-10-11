@@ -1,5 +1,5 @@
 import useFixedLongestSelect from "@src/shared/hooks/useFixedLongestSelect";
-import { If } from "@src/shared/ui/If";
+import Field from "@src/shared/ui/Field";
 import {
   Children,
   forwardRef,
@@ -20,7 +20,9 @@ export const Select = forwardRef<HTMLSelectElement, Props>(function Select(
   props: Props,
   ref: React.ForwardedRef<HTMLSelectElement>,
 ) {
-  const id = props.id ?? useId();
+  const { label, description, children, ...selectProps } = props;
+  const generatedId = useId();
+  const id = props.id ?? generatedId;
   const selectRef = useRef<HTMLSelectElement>(null);
   useFixedLongestSelect(selectRef);
 
@@ -28,10 +30,7 @@ export const Select = forwardRef<HTMLSelectElement, Props>(function Select(
   useImperativeHandle(ref, () => selectRef.current!, []);
 
   return (
-    <fieldset className="fieldset m-0 p-0 gap-1">
-      <If value={props.label}>
-        <legend className="fieldset-legend m-0 pt-0 pb-1">{props.label}</legend>
-      </If>
+    <Field label={label} description={description}>
       <select
         id={id}
         className={`
@@ -41,14 +40,11 @@ export const Select = forwardRef<HTMLSelectElement, Props>(function Select(
             select-open:atehame-focus
           `}
         ref={selectRef}
-        {...props}
+        {...selectProps}
       >
-        {props.children}
+        {children}
       </select>
-      <If value={props.description}>
-        <span className="label">{props.description}</span>
-      </If>
-    </fieldset>
+    </Field>
   );
 });
 

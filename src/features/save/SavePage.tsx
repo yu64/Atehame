@@ -9,7 +9,10 @@ import {
   toTemplateFile,
 } from "@src/features/template";
 import { formatBytes } from "@src/shared/lib/units";
+import Alert from "@src/shared/ui/Alert";
+import Button from "@src/shared/ui/Button";
 import { Input } from "@src/shared/ui/Input";
+import RadioCardGroup from "@src/shared/ui/RadioCardGroup";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
 import { navigate } from "vike/client/router";
@@ -65,35 +68,18 @@ export default function Page() {
             onChange={event => setName(event.currentTarget.value)}
           />
 
-          <fieldset className="fieldset m-0 p-0 gap-2">
-            <legend className="fieldset-legend m-0 pt-0 pb-1">保存の方法</legend>
-            {available.map(({ strategy, available }) => (
-              <label
-                key={strategy.id}
-                className={`
-                  flex items-start gap-3 p-3 rounded-lg border bg-surface
-                  ${strategyId === strategy.id ? "border-primary" : "border-surface-border"}
-                  ${available ? "cursor-pointer" : "opacity-50 cursor-not-allowed"}
-                `}
-              >
-                <input
-                  type="radio"
-                  name="strategy"
-                  className="radio radio-sm mt-0.5"
-                  value={strategy.id}
-                  checked={strategyId === strategy.id}
-                  disabled={!available}
-                  onChange={() => setStrategyId(strategy.id)}
-                />
-                <span className="flex flex-col">
-                  <span className="font-bold text-text-primary">{strategy.label}</span>
-                  <span className="text-sm text-text-secondary">
-                    {available ? strategy.description : "このブラウザでは使えません。"}
-                  </span>
-                </span>
-              </label>
-            ))}
-          </fieldset>
+          <RadioCardGroup
+            name="strategy"
+            legend="保存の方法"
+            options={available.map(({ strategy, available }) => ({
+              value: strategy.id,
+              label: strategy.label,
+              description: available ? strategy.description : "このブラウザでは使えません。",
+              disabled: !available,
+            }))}
+            value={strategyId}
+            onChange={setStrategyId}
+          />
 
           <section className="flex flex-col gap-1 text-sm text-text-secondary">
             <h2 className="font-bold text-text-primary">保存する内容</h2>
@@ -112,26 +98,21 @@ export default function Page() {
           </section>
 
           <div className="flex items-center gap-4">
-            <button
-              type="button"
-              className="atehame-btn-primary"
+            <Button
+              icon="i-lucide-download"
+              label="保存"
+              variant="primary"
+              size="md"
               disabled={status.type === "saving"}
               onClick={save}
-            >
-              <span className="i-lucide-download size-5" aria-hidden="true" />
-              保存
-            </button>
-            {status.type === "saved" && (
-              <p role="status" className="text-sm text-status-success">
-                保存しました（{status.label}）。
-              </p>
-            )}
-            {status.type === "error" && (
-              <p role="alert" className="text-sm text-status-error">
-                保存できませんでした: {status.message}
-              </p>
-            )}
+            />
           </div>
+          {status.type === "saved" && (
+            <Alert kind="success" messages={[`保存しました（${status.label}）。`]} />
+          )}
+          {status.type === "error" && (
+            <Alert kind="error" messages={[`保存できませんでした: ${status.message}`]} />
+          )}
         </div>
       </MainContent>
     </>

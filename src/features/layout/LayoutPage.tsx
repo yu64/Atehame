@@ -4,6 +4,7 @@ import CodeEditor from "@src/app/ThemedCodeEditor";
 import { Designer, type Values } from "@src/features/designer";
 import { layoutAtom } from "@src/features/template";
 import { useSampleOutput } from "@src/features/transform";
+import Alert from "@src/shared/ui/Alert";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { navigate } from "vike/client/router";
@@ -37,12 +38,14 @@ export default function Page() {
         onNext={() => navigate("/edit/save")}
       />
       {preview.status === "error" && (
-        <p
-          role="status"
-          className="shrink-0 w-full px-4 sm:px-6 lg:px-8 py-2 text-sm bg-status-warning-bg text-status-warning"
-        >
-          加工でエラーが発生しているため、出力の項目を表示できません。加工画面で確認してください。
-        </p>
+        <Alert
+          kind="warning"
+          bar
+          className="shrink-0 w-full px-4 sm:px-6 lg:px-8"
+          messages={[
+            "加工でエラーが発生しているため、出力の項目を表示できません。加工画面で確認してください。",
+          ]}
+        />
       )}
       <MainContent mode="canvas">
         <Designer

@@ -1,4 +1,3 @@
-import DesignerButton from "@src/features/designer/DesignerButton";
 import {
   decodeCssString,
   encodeCssString,
@@ -16,6 +15,8 @@ import {
   fontVariables,
   type FontKey,
 } from "@src/features/designer/render";
+import Button from "@src/shared/ui/Button";
+import Checkbox from "@src/shared/ui/Checkbox";
 
 export interface Props {
   rule: ElementRule;
@@ -58,19 +59,19 @@ export default function ElementProperties(props: Props) {
           aria-label={`${rule.name} の操作`}
           className="flex flex-wrap items-center gap-1"
         >
-          <DesignerButton icon="i-lucide-braces" label="CSS で編集" onClick={props.onShowCss} />
-          <DesignerButton icon="i-lucide-copy" label="複製" onClick={props.onDuplicate} />
-          <DesignerButton
+          <Button icon="i-lucide-braces" label="CSS で編集" onClick={props.onShowCss} />
+          <Button icon="i-lucide-copy" label="複製" onClick={props.onDuplicate} />
+          <Button
             icon="i-lucide-bring-to-front"
             label="最前面へ"
             onClick={() => props.onReorder("front")}
           />
-          <DesignerButton
+          <Button
             icon="i-lucide-send-to-back"
             label="最背面へ"
             onClick={() => props.onReorder("back")}
           />
-          <DesignerButton icon="i-lucide-trash-2" label="削除" danger onClick={props.onRemove} />
+          <Button icon="i-lucide-trash-2" label="削除" danger onClick={props.onRemove} />
         </div>
       </div>
 
@@ -240,17 +241,11 @@ function TextFields(props: {
         />
       </div>
 
-      <label className="flex items-center gap-2 text-sm cursor-pointer">
-        <input
-          type="checkbox"
-          className="checkbox checkbox-sm"
-          checked={value(splitProperty) === "char"}
-          onChange={event =>
-            props.onDeclaration(splitProperty, event.currentTarget.checked ? "char" : undefined)
-          }
-        />
-        1文字ずつ分ける（[data-part="char"] で1文字ずつ指定できます）
-      </label>
+      <Checkbox
+        label='1文字ずつ分ける（[data-part="char"] で1文字ずつ指定できます）'
+        checked={value(splitProperty) === "char"}
+        onChange={checked => props.onDeclaration(splitProperty, checked ? "char" : undefined)}
+      />
     </>
   );
 }

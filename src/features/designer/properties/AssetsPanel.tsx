@@ -1,6 +1,7 @@
-import DesignerButton from "@src/features/designer/DesignerButton";
 import useSyncedText from "@src/shared/hooks/useSyncedText";
 import { formatBytes } from "@src/shared/lib/units";
+import Alert from "@src/shared/ui/Alert";
+import Button from "@src/shared/ui/Button";
 import FileDropZone from "@src/shared/ui/FileDropZone";
 import { Input } from "@src/shared/ui/Input";
 import { useRef, useState } from "react";
@@ -52,13 +53,7 @@ export default function AssetsPanel(props: Props) {
         使用量: {formatBytes(props.totalBytes)} / {formatBytes(props.limits.totalBytes)}
       </p>
 
-      {errors.length > 0 && (
-        <ul role="alert" className="flex flex-col gap-1 text-xs text-status-error">
-          {errors.map(error => (
-            <li key={error}>{error}</li>
-          ))}
-        </ul>
-      )}
+      {errors.length > 0 && <Alert kind="error" messages={errors} />}
 
       {props.items.length === 0 ? (
         <p className="text-sm text-text-secondary">画像がありません。</p>
@@ -142,12 +137,12 @@ function AssetRow(props: {
           {item.usage.length > 0 ? `${item.usage.length} 個の部品で使用` : "未使用"}
         </span>
         <div className="flex gap-1">
-          <DesignerButton
+          <Button
             icon="i-lucide-replace"
             label="差し替え"
             onClick={() => replaceRef.current?.click()}
           />
-          <DesignerButton
+          <Button
             icon="i-lucide-trash-2"
             label={`${item.name} を削除`}
             iconOnly

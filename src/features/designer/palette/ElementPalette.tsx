@@ -1,5 +1,6 @@
 import { useAddElement } from "@src/features/designer/hooks/useAddElement";
 import { useDesignerConfig } from "@src/features/designer/state/DesignerContext";
+import Button from "@src/shared/ui/Button";
 
 /** パレットの幅（px）。 */
 export const paletteWidth = 192;
@@ -55,14 +56,12 @@ export default function ElementPalette() {
 
 function PaletteButton(props: { icon: string; label: string; onClick: () => void }) {
   return (
-    <button
-      type="button"
-      className="atehame-btn-secondary btn-sm justify-start w-full font-normal"
+    <Button
+      icon={props.icon}
+      label={<span className="truncate">{props.label}</span>}
       title={`${props.label} を追加`}
+      className="justify-start w-full"
       onClick={props.onClick}
-    >
-      <span className={`${props.icon} size-4 shrink-0`} aria-hidden="true" />
-      <span className="truncate">{props.label}</span>
-    </button>
+    />
   );
 }

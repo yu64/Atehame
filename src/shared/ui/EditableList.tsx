@@ -1,4 +1,5 @@
 import { insertAt, moveAt, removeAt } from "@src/shared/lib/CollectionUtil";
+import Button from "@src/shared/ui/Button";
 import DropdownMenu from "@src/shared/ui/DropdownMenu";
 import type { ReactNode, Key } from "react";
 
@@ -37,14 +38,13 @@ export default function EditableList<T>(props: EditableListProps<T>) {
           </li>
         ))}
       </ul>
-      <button
-        type="button"
-        className="atehame-btn-secondary w-full"
+      <Button
+        icon="i-lucide-plus"
+        label={props.items.length === 0 ? "最初の項目を追加" : "項目を追加"}
+        size="md"
+        className="w-full"
         onClick={() => addAt(props.items.length)}
-      >
-        <span className="i-lucide-plus size-6 shrink-0" aria-hidden="true" />
-        {props.items.length === 0 ? "最初の項目を追加" : "項目を追加"}
-      </button>
+      />
     </div>
   );
 }
@@ -74,26 +74,22 @@ function Card(props: CardProps) {
         <div className="flex items-center justify-between gap-3">
           <span className="min-w-0 break-words text-text-secondary">{props.label}</span>
           <div className="flex items-center gap-1 shrink-0">
-            <button
-              type="button"
-              className="atehame-btn-secondary btn-square p-0"
-              aria-label="上へ移動"
-              title="上へ移動"
+            <Button
+              icon="i-lucide-arrow-up"
+              label="上へ移動"
+              iconOnly
+              size="md"
               disabled={props.first}
               onClick={props.onPrev}
-            >
-              <span className="i-lucide-arrow-up size-6 shrink-0" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              className="atehame-btn-secondary btn-square p-0"
-              aria-label="下へ移動"
-              title="下へ移動"
+            />
+            <Button
+              icon="i-lucide-arrow-down"
+              label="下へ移動"
+              iconOnly
+              size="md"
               disabled={props.last}
               onClick={props.onNext}
-            >
-              <span className="i-lucide-arrow-down size-6 shrink-0" aria-hidden="true" />
-            </button>
+            />
             <DropdownMenu
               label="項目の操作"
               items={[
@@ -101,15 +97,13 @@ function Card(props: CardProps) {
                 { id: "add-after", label: "この下に追加", onSelect: props.onAddAfter },
               ]}
             />
-            <button
-              type="button"
-              className="atehame-btn-secondary btn-square p-0"
-              aria-label="削除"
-              title="削除"
+            <Button
+              icon="i-lucide-trash-2"
+              label="削除"
+              iconOnly
+              size="md"
               onClick={props.onRemove}
-            >
-              <span className="i-lucide-trash-2 size-6 shrink-0" aria-hidden="true" />
-            </button>
+            />
           </div>
         </div>
         <div className="min-w-0">{props.children}</div>

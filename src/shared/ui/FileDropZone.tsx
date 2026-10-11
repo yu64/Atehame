@@ -1,3 +1,4 @@
+import Button from "@src/shared/ui/Button";
 import { useRef, useState, type ReactNode } from "react";
 
 export interface Props {
@@ -42,14 +43,11 @@ export default function FileDropZone(props: Props) {
       }}
     >
       <span className="i-lucide-upload size-6 text-text-secondary" aria-hidden="true" />
-      <button
-        type="button"
-        className="atehame-btn-secondary btn-sm"
+      <Button
+        label={props.label ?? "ファイルを選ぶ"}
         disabled={props.disabled}
         onClick={() => inputRef.current?.click()}
-      >
-        {props.label ?? "ファイルを選ぶ"}
-      </button>
+      />
       <span className="text-xs text-text-secondary">またはここにドロップ</span>
       {props.hint && <span className="text-xs text-text-tertiary">{props.hint}</span>}
       <input

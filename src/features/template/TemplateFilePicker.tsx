@@ -1,6 +1,7 @@
 import { layoutSummary } from "@src/features/designer";
 import { fromTemplateFile, parseTemplateFile, type Template } from "@src/features/template/model";
 import { formatBytes } from "@src/shared/lib/units";
+import Alert from "@src/shared/ui/Alert";
 import FileDropZone from "@src/shared/ui/FileDropZone";
 import { useState } from "react";
 
@@ -43,9 +44,7 @@ export default function TemplateFilePicker(props: Props) {
         onFiles={([file]) => void read(file)}
       />
       {error && (
-        <p role="alert" className="text-sm text-status-error">
-          「{fileName}」を読み込めませんでした: {error}
-        </p>
+        <Alert kind="error" messages={[`「${fileName}」を読み込めませんでした: ${error}`]} />
       )}
       {props.value && <TemplateSummary template={props.value} />}
     </div>

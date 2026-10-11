@@ -2,6 +2,7 @@ import MainContent from "@src/app/MainContent";
 import StepHeader from "@src/app/StepHeader";
 import SchemaFieldEditor from "@src/features/schema/SchemaFieldEditor";
 import { createSchemaField, schemaAtom, type SchemaField } from "@src/features/template";
+import Button from "@src/shared/ui/Button";
 import EditableList from "@src/shared/ui/EditableList";
 import { useAtom } from "jotai";
 import { navigate } from "vike/client/router";
@@ -35,10 +36,13 @@ export default function Page() {
       />
       <MainContent>
         <section className="flex flex-wrap gap-4 pt-4">
-          <button type="button" className="atehame-btn-secondary pl-2 pr-4" onClick={addField}>
-            <span className="i-lucide-plus size-6 shrink-0" aria-hidden="true" />
-            項目を追加
-          </button>
+          <Button
+            icon="i-lucide-plus"
+            label="項目を追加"
+            size="md"
+            className="pl-2 pr-4"
+            onClick={addField}
+          />
           {/* <button className="atehame-btn-secondary">インポート</button> */}
           {/* <button className="atehame-btn-secondary">エクスポート</button> */}
         </section>

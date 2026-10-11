@@ -1,4 +1,4 @@
-import { If } from "@src/shared/ui/If";
+import Field from "@src/shared/ui/Field";
 import { ComponentPropsWithoutRef, forwardRef, useId } from "react";
 
 export interface Props extends ComponentPropsWithoutRef<"input"> {
@@ -13,14 +13,11 @@ export const Input = forwardRef<HTMLInputElement, Props>(function Input(
   ref: React.ForwardedRef<HTMLInputElement>,
 ) {
   const { label, description, error, ...inputProps } = props;
-  const id = props.id ?? useId();
-  const message = error ?? description;
+  const generatedId = useId();
+  const id = props.id ?? generatedId;
 
   return (
-    <fieldset className="fieldset m-0 p-0 gap-1">
-      <If value={label}>
-        <legend className="fieldset-legend m-0 pt-0 pb-1">{label}</legend>
-      </If>
+    <Field label={label} description={description} error={error}>
       <label
         className={`
           input
@@ -37,12 +34,7 @@ export const Input = forwardRef<HTMLInputElement, Props>(function Input(
           {...inputProps}
         />
       </label>
-      <If value={message}>
-        <span className={`label whitespace-normal ${error ? "text-status-error" : ""}`}>
-          {message}
-        </span>
-      </If>
-    </fieldset>
+    </Field>
   );
 });
 

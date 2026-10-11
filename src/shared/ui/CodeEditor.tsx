@@ -1,4 +1,5 @@
 import { changedRange } from "@src/shared/lib/TextUtil";
+import Button from "@src/shared/ui/Button";
 import { editorThemes } from "@src/shared/ui/monaco/themes";
 import type * as Monaco from "monaco-editor";
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
@@ -183,16 +184,13 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
           {failed ? (
             <span className="flex flex-col items-center gap-2">
               エディターを読み込めませんでした。
-              <button
-                type="button"
-                className="atehame-btn-secondary btn-sm"
+              <Button
+                label="再読み込み"
                 onClick={() => {
                   setFailed(false);
                   setAttempt(value => value + 1);
                 }}
-              >
-                再読み込み
-              </button>
+              />
             </span>
           ) : (
             "エディターを読み込み中…"

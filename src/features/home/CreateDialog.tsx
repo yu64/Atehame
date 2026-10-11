@@ -5,6 +5,7 @@ import {
   TemplateFilePicker,
   type Template,
 } from "@src/features/template";
+import Button from "@src/shared/ui/Button";
 import Dialog from "@src/shared/ui/Dialog";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
@@ -60,14 +61,12 @@ export default function CreateDialog(props: Props) {
         <h3 className="font-bold">テンプレートを読み込んで編集</h3>
         <TemplateFilePicker value={loaded} onChange={setLoaded} />
         <div className="flex justify-end">
-          <button
-            type="button"
-            className="atehame-btn-primary btn-sm"
+          <Button
+            label="読み込んで編集"
+            variant="primary"
             disabled={!loaded}
             onClick={() => loaded && begin(() => startTemplate(loaded))}
-          >
-            読み込んで編集
-          </button>
+          />
         </div>
       </section>
     </Dialog>
@@ -86,9 +85,7 @@ function Choice(props: {
         <h3 className="font-bold">{props.title}</h3>
         <p className="text-sm text-text-secondary">{props.description}</p>
       </div>
-      <button type="button" className="atehame-btn-primary btn-sm" onClick={props.onClick}>
-        {props.action}
-      </button>
+      <Button label={props.action} variant="primary" onClick={props.onClick} />
     </section>
   );
 }

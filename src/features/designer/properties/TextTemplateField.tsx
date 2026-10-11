@@ -1,5 +1,7 @@
 import { fieldPlaceholder } from "@src/features/designer/layoutCss";
 import useSyncedText from "@src/shared/hooks/useSyncedText";
+import Button from "@src/shared/ui/Button";
+import Textarea from "@src/shared/ui/Textarea";
 
 export interface Props {
   value: string;
@@ -18,32 +20,26 @@ export default function TextTemplateField(props: Props) {
   };
 
   return (
-    <fieldset className="fieldset m-0 p-0 gap-1">
-      <legend className="fieldset-legend m-0 pt-0 pb-1">表示する文字</legend>
-      <textarea
-        className="textarea w-full focus-within:atehame-focus"
+    <div className="flex flex-col gap-1">
+      <Textarea
+        label="表示する文字"
+        description={<>{"{カラム名}"} の部分に加工の出力の値が入ります。</>}
         rows={3}
         value={text}
         onChange={event => update(event.currentTarget.value)}
       />
-      <span className="label whitespace-normal">
-        {"{カラム名}"} の部分に加工の出力の値が入ります。
-      </span>
       {props.fields.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {props.fields.map(key => (
-            <button
+            <Button
               key={key}
-              type="button"
-              className="atehame-btn-secondary btn-xs font-normal"
+              label={`+ ${key}`}
               title={`${fieldPlaceholder(key)} を末尾に追加`}
               onClick={() => update(text + fieldPlaceholder(key))}
-            >
-              + {key}
-            </button>
+            />
           ))}
         </div>
       )}
-    </fieldset>
+    </div>
   );
 }

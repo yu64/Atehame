@@ -1,6 +1,8 @@
 import { standardTemplates } from "@src/features/standard";
 import { usingTemplateAtom } from "@src/features/use";
+import Button from "@src/shared/ui/Button";
 import Dialog from "@src/shared/ui/Dialog";
+import RadioCardGroup from "@src/shared/ui/RadioCardGroup";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
@@ -23,9 +25,10 @@ export default function StandardDialog(props: Props) {
       title="標準レイアウトを使う"
       description="Atehame が用意したテンプレートから選びます。"
       actions={
-        <button
-          type="button"
-          className="atehame-btn-primary"
+        <Button
+          label="このテンプレートを使う"
+          variant="primary"
+          size="md"
           disabled={!selected}
           onClick={() => {
             if (!selected) return;
@@ -33,35 +36,21 @@ export default function StandardDialog(props: Props) {
             props.onClose();
             void navigate("/use");
           }}
-        >
-          このテンプレートを使う
-        </button>
+        />
       }
     >
-      <fieldset className="flex flex-col gap-2">
-        <legend className="sr-only">テンプレート</legend>
-        {standardTemplates.map(standard => (
-          <label
-            key={standard.id}
-            className={`
-              flex items-start gap-3 p-3 rounded-lg border cursor-pointer
-              ${selectedId === standard.id ? "border-primary" : "border-surface-border"}
-            `}
-          >
-            <input
-              type="radio"
-              name="standard-template"
-              className="radio radio-sm mt-0.5"
-              checked={selectedId === standard.id}
-              onChange={() => setSelectedId(standard.id)}
-            />
-            <span className="flex flex-col">
-              <span className="font-bold">{standard.title}</span>
-              <span className="text-sm text-text-secondary">{standard.description}</span>
-            </span>
-          </label>
-        ))}
-      </fieldset>
+      <RadioCardGroup
+        name="standard-template"
+        legend="テンプレート"
+        hideLegend
+        options={standardTemplates.map(standard => ({
+          value: standard.id,
+          label: standard.title,
+          description: standard.description,
+        }))}
+        value={selectedId}
+        onChange={setSelectedId}
+      />
     </Dialog>
   );
 }

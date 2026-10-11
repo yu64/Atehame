@@ -1,3 +1,4 @@
+import Button from "@src/shared/ui/Button";
 import { useEffect, useId, useRef, type ReactNode } from "react";
 
 export interface Props {
@@ -49,15 +50,7 @@ export default function Dialog(props: Props) {
               <div className="text-sm text-text-secondary">{props.description}</div>
             )}
           </div>
-          <button
-            type="button"
-            className="atehame-btn-secondary btn-sm btn-square p-0"
-            aria-label="閉じる"
-            title="閉じる"
-            onClick={() => props.onClose()}
-          >
-            <span className="i-lucide-x size-4" aria-hidden="true" />
-          </button>
+          <Button icon="i-lucide-x" label="閉じる" iconOnly onClick={() => props.onClose()} />
         </div>
         {props.children}
         {props.actions && <div className="flex flex-wrap justify-end gap-2">{props.actions}</div>}
