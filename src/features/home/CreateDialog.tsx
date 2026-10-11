@@ -6,6 +6,7 @@ import {
   type Template,
 } from "@src/features/template";
 import Button from "@src/shared/ui/Button";
+import ConfirmDialog from "@src/shared/ui/ConfirmDialog";
 import Dialog from "@src/shared/ui/Dialog";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
@@ -22,11 +23,23 @@ export default function CreateDialog(props: Props) {
   const startNew = useSetAtom(startNewTemplateAtom);
   const startTemplate = useSetAtom(startTemplateAtom);
   const [loaded, setLoaded] = useState<Template>();
+  /** 確かめている操作。作業中の内容があるときに、破棄してよいか確かめる。 */
+  const [pending, setPending] = useState<"new" | "load">();
 
   const begin = (start: () => void) => {
     start();
+    setPending(undefined);
     props.onClose();
     void navigate("/edit/schema");
+  };
+
+  const startNewTemplate = () => begin(startNew);
+  const startLoadedTemplate = () => loaded && begin(() => startTemplate(loaded));
+
+  /** 作業中の内容があれば、破棄してよいか確かめてから始める。 */
+  const confirmThen = (kind: "new" | "load", start: () => void) => {
+    if (hasDraft) setPending(kind);
+    else start();
   };
 
   return (
@@ -37,11 +50,6 @@ export default function CreateDialog(props: Props) {
         props.onClose();
       }}
       title="レイアウトを作る"
-      description={
-        hasDraft
-          ? "新しく作る・読み込むと、作業中の内容は破棄されます（保存していなければ戻せません）。"
-          : undefined
-      }
     >
       {hasDraft && (
         <Choice
@@ -55,7 +63,7 @@ export default function CreateDialog(props: Props) {
         title="新しく作る"
         description="空のテンプレートから作ります。"
         action="新しく作る"
-        onClick={() => begin(startNew)}
+        onClick={() => confirmThen("new", startNewTemplate)}
       />
       <section className="flex flex-col gap-2 rounded-lg border border-surface-border p-3">
         <h3 className="font-bold">テンプレートを読み込んで編集</h3>
@@ -65,10 +73,21 @@ export default function CreateDialog(props: Props) {
             label="読み込んで編集"
             variant="primary"
             disabled={!loaded}
-            onClick={() => loaded && begin(() => startTemplate(loaded))}
+            onClick={() => confirmThen("load", startLoadedTemplate)}
           />
         </div>
       </section>
+
+      {/* 作成ダイアログの上に重ねて開く。 */}
+      <ConfirmDialog
+        open={pending !== undefined}
+        title={pending === "load" ? "テンプレートを読み込みますか？" : "新しく作りますか？"}
+        message="作業中の内容は破棄されます。保存していなければ、元に戻せません。"
+        confirmLabel={pending === "load" ? "破棄して読み込む" : "破棄して新しく作る"}
+        danger
+        onConfirm={() => (pending === "load" ? startLoadedTemplate() : startNewTemplate())}
+        onCancel={() => setPending(undefined)}
+      />
     </Dialog>
   );
 }

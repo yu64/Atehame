@@ -41,7 +41,8 @@ export default function useDesignerKeyboard(store: DesignerStore) {
 
 function isEditable(target: EventTarget): boolean {
   if (!(target instanceof HTMLElement)) return false;
-  if (target.closest(".monaco-editor")) return true;
+  // CSS エディターの中と、ダイアログ（削除の確認など）の中では、それぞれの操作を優先する。
+  if (target.closest(".monaco-editor, dialog")) return true;
   const tag = target.tagName;
   return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
 }

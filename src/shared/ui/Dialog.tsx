@@ -15,6 +15,11 @@ export interface Props {
 /**
  * モーダルのダイアログ。HTML 標準の dialog（showModal）を使うため、
  * 開いている間はダイアログの外を操作できず、フォーカスもダイアログの中に留まる。
+ * ほかのダイアログの上にも重ねて開ける。
+ *
+ * 開いているかどうかは open（呼び出し側の状態）だけが決める。Esc キーや背景のクリックでは、
+ * ブラウザに閉じさせずに onClose を呼び、呼び出し側が open を変えたときに閉じる。
+ * close イベントだけに頼ると、届かない・遅れる環境で状態とずれるため。
  */
 export default function Dialog(props: Props) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -32,10 +37,21 @@ export default function Dialog(props: Props) {
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
-    // Esc キーなど、ブラウザが閉じた場合も知らせる。
-    const onClose = () => onCloseRef.current();
+    // Esc キー。ブラウザに閉じさせず、呼び出し側に閉じてもらう。
+    const onCancel = (event: Event) => {
+      event.preventDefault();
+      onCloseRef.current();
+    };
+    // ほかの理由でブラウザが閉じた場合も知らせる（閉じたままのときだけ。遅れて届くことがある）。
+    const onClose = () => {
+      if (!dialog.open) onCloseRef.current();
+    };
+    dialog.addEventListener("cancel", onCancel);
     dialog.addEventListener("close", onClose);
-    return () => dialog.removeEventListener("close", onClose);
+    return () => {
+      dialog.removeEventListener("cancel", onCancel);
+      dialog.removeEventListener("close", onClose);
+    };
   }, []);
 
   return (
@@ -56,11 +72,7 @@ export default function Dialog(props: Props) {
         {props.actions && <div className="flex flex-wrap justify-end gap-2">{props.actions}</div>}
       </div>
       {/* 背景をクリックしたら閉じる。 */}
-      <form method="dialog" className="modal-backdrop">
-        <button type="submit" tabIndex={-1} aria-hidden="true">
-          閉じる
-        </button>
-      </form>
+      <div className="modal-backdrop" aria-hidden="true" onClick={() => props.onClose()} />
     </dialog>
   );
 }

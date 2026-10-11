@@ -2,6 +2,7 @@ import useSyncedText from "@src/shared/hooks/useSyncedText";
 import { formatBytes } from "@src/shared/lib/units";
 import Alert from "@src/shared/ui/Alert";
 import Button from "@src/shared/ui/Button";
+import ConfirmDialog from "@src/shared/ui/ConfirmDialog";
 import FileDropZone from "@src/shared/ui/FileDropZone";
 import { Input } from "@src/shared/ui/Input";
 import { useRef, useState } from "react";
@@ -99,12 +100,12 @@ function AssetRow(props: {
         ? "同じ名前の画像があります。"
         : undefined;
 
+  const [confirming, setConfirming] = useState(false);
+
+  /** 使っている部品があれば、削除してよいか確かめる。削除は元に戻すで戻せる。 */
   const remove = () => {
-    const used = item.usage.length;
-    if (used > 0 && !confirm(`「${item.name}」は ${used} 個の部品で使っています。削除しますか？`)) {
-      return;
-    }
-    props.onRemove();
+    if (item.usage.length > 0) setConfirming(true);
+    else props.onRemove();
   };
 
   return (
@@ -148,6 +149,18 @@ function AssetRow(props: {
             iconOnly
             danger
             onClick={remove}
+          />
+          <ConfirmDialog
+            open={confirming}
+            title={`「${item.name}」を削除しますか？`}
+            message={`${item.usage.length} 個の部品（${item.usage.join("、")}）で使っています。削除すると、これらの部品は「画像がありません」になります（元に戻すで戻せます）。`}
+            confirmLabel="削除する"
+            danger
+            onConfirm={() => {
+              setConfirming(false);
+              props.onRemove();
+            }}
+            onCancel={() => setConfirming(false)}
           />
           <input
             ref={replaceRef}

@@ -106,6 +106,13 @@ export default function Page() {
               disabled={status.type === "saving"}
               onClick={save}
             />
+            {/* 作業中の内容は残るので、トップの「続きから編集」で戻れる。 */}
+            <Button
+              icon="i-lucide-house"
+              label="トップへ戻る"
+              size="md"
+              onClick={() => navigate("/")}
+            />
           </div>
           {status.type === "saved" && (
             <Alert kind="success" messages={[`保存しました（${status.label}）。`]} />
