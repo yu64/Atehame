@@ -1,3 +1,4 @@
+import type { LayoutAsset } from "@src/features/designer/assets/assets";
 import type { LayoutDocument, PageSize } from "@src/features/designer/layoutCss";
 import { paperSizeOf } from "@src/features/designer/model";
 import { ElementIds } from "@src/features/designer/state/elementIds";
@@ -9,7 +10,6 @@ import {
   setPaperSize,
   type ElementRect,
 } from "@src/features/designer/state/operations";
-import type { LayoutAsset } from "@src/features/designer/assets/assets";
 import type { ElementPreset, RevealRequest } from "@src/features/designer/types";
 import {
   canRedo,

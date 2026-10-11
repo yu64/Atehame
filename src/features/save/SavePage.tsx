@@ -1,12 +1,13 @@
 import MainContent from "@src/app/MainContent";
 import StepHeader from "@src/app/StepHeader";
 import { layoutSummary } from "@src/features/designer";
-import { layoutAtom } from "@src/features/layout";
 import { exportStrategies } from "@src/features/save/export/strategies";
-import { createTemplateFile, toFileName } from "@src/features/save/model";
-import { templateNameAtom } from "@src/features/save/store";
-import { schemaAtom } from "@src/features/schema";
-import { transformCodeAtom } from "@src/features/transform";
+import {
+  currentTemplateAtom,
+  templateNameAtom,
+  toFileName,
+  toTemplateFile,
+} from "@src/features/template";
 import { formatBytes } from "@src/shared/lib/units";
 import { Input } from "@src/shared/ui/Input";
 import { useAtom, useAtomValue } from "jotai";
@@ -20,9 +21,9 @@ type SaveStatus =
   | { type: "error"; message: string };
 
 export default function Page() {
-  const schema = useAtomValue(schemaAtom);
-  const code = useAtomValue(transformCodeAtom);
-  const layout = useAtomValue(layoutAtom);
+  const template = useAtomValue(currentTemplateAtom);
+  const { schema, layout } = template;
+  const code = template.transform.code;
   const [name, setName] = useAtom(templateNameAtom);
   const [strategyId, setStrategyId] = useState(exportStrategies[0].id);
   const [status, setStatus] = useState<SaveStatus>({ type: "idle" });
@@ -38,7 +39,7 @@ export default function Page() {
   async function save() {
     setStatus({ type: "saving" });
     try {
-      const file = createTemplateFile(name.trim(), schema, code, layout);
+      const file = toTemplateFile({ ...template, name: name.trim() });
       const done = await selected.export(file);
       setStatus(done ? { type: "saved", label: selected.label } : { type: "idle" });
     } catch (error) {

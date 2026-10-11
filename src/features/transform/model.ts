@@ -1,4 +1,4 @@
-import type { DataSchema, FieldType } from "@src/features/schema";
+import type { DataSchema, FieldType } from "@src/features/template";
 import type { JsonValue } from "@src/shared/lib/json";
 
 /** CSVの1行。フィールドIDからセルの文字列を引く。 */

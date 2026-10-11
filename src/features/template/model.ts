@@ -1,17 +1,41 @@
-import { layoutSchema, type Layout } from "@src/features/designer";
-import type { DataSchema } from "@src/features/schema";
+import { createLayout, layoutSchema, type Layout } from "@src/features/designer";
+import type { DataSchema } from "@src/features/template/schema";
 import { z } from "zod";
 
-export const templateFileFormat = "atehame-template";
-
-/** テンプレートとして書き出すファイルの内容。スキーマ・加工・レイアウトをまとめて持つ。 */
-export interface TemplateFile {
-  format: typeof templateFileFormat;
-  version: 1;
+/**
+ * テンプレート。CSV で受け取るカラム（スキーマ）・加工のコード・レイアウトをまとめて持つ。
+ * 編集中はアプリでこれを1つの状態として持ち、保存するとそのままファイルになる。
+ */
+export interface Template {
   name: string;
   schema: DataSchema;
   transform: { code: string };
   layout: Layout;
+}
+
+export const defaultTransformCode = `// input: CSVの1行（カラム名 → 値）
+// return: レイアウトに渡す値（JSONデータ）
+return {
+  ...input,
+};
+`;
+
+/** 空のテンプレート。 */
+export function createTemplate(): Template {
+  return {
+    name: "",
+    schema: { version: 1, fields: [] },
+    transform: { code: defaultTransformCode },
+    layout: createLayout("hagaki"),
+  };
+}
+
+export const templateFileFormat = "atehame-template";
+
+/** テンプレートとして書き出すファイルの内容。 */
+export interface TemplateFile extends Template {
+  format: typeof templateFileFormat;
+  version: 1;
 }
 
 const templateFileSchema = z.object({
@@ -35,13 +59,14 @@ const templateFileSchema = z.object({
   layout: layoutSchema,
 });
 
-export function createTemplateFile(
-  name: string,
-  schema: DataSchema,
-  code: string,
-  layout: Layout,
-): TemplateFile {
-  return { format: templateFileFormat, version: 1, name, schema, transform: { code }, layout };
+export function toTemplateFile(template: Template): TemplateFile {
+  const { name, schema, transform, layout } = template;
+  return { format: templateFileFormat, version: 1, name, schema, transform, layout };
+}
+
+export function fromTemplateFile(file: TemplateFile): Template {
+  const { name, schema, transform, layout } = file;
+  return { name, schema, transform, layout };
 }
 
 export function serializeTemplateFile(file: TemplateFile): string {

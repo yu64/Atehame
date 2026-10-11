@@ -1,9 +1,11 @@
 import {
-  createTemplateFile,
+  createTemplate,
+  fromTemplateFile,
   parseTemplateFile,
   serializeTemplateFile,
   toFileName,
-} from "@src/features/save/model";
+  toTemplateFile,
+} from "@src/features/template/model";
 import { describe, expect, test } from "vitest";
 
 describe("テンプレートファイル", () => {
@@ -17,8 +19,17 @@ describe("テンプレートファイル", () => {
       version: 1 as const,
       css: '[data-name="氏名"] { --atehame-text: "{氏名} 様"; }',
     };
-    const file = createTemplateFile("年賀状", schema, "return input;", layout);
+    const template = { name: "年賀状", schema, transform: { code: "return input;" }, layout };
+    const file = toTemplateFile(template);
     expect(parseTemplateFile(serializeTemplateFile(file))).toEqual({ ok: true, file });
+    expect(fromTemplateFile(file)).toEqual(template);
+  });
+
+  test("空のテンプレートは、カラムなし・既定の加工・はがきの用紙で始まる", () => {
+    const template = createTemplate();
+    expect(template.schema.fields).toEqual([]);
+    expect(template.transform.code).toContain("return");
+    expect(template.layout.css).toContain("100mm 148mm");
   });
 
   test.each([

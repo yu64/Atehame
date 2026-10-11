@@ -2,7 +2,7 @@ import MainContent from "@src/app/MainContent";
 import StepHeader from "@src/app/StepHeader";
 import CodeEditor from "@src/app/ThemedCodeEditor";
 import { Designer, type Values } from "@src/features/designer";
-import { layoutAtom } from "@src/features/layout/store";
+import { layoutAtom } from "@src/features/template";
 import { useSampleOutput } from "@src/features/transform";
 import { useAtom } from "jotai";
 import { useMemo } from "react";

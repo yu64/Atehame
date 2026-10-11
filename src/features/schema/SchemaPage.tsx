@@ -1,8 +1,7 @@
 import MainContent from "@src/app/MainContent";
 import StepHeader from "@src/app/StepHeader";
 import SchemaFieldEditor from "@src/features/schema/SchemaFieldEditor";
-import { createSchemaField, type SchemaField } from "@src/features/schema/model";
-import { schemaAtom } from "@src/features/schema/store";
+import { createSchemaField, schemaAtom, type SchemaField } from "@src/features/template";
 import EditableList from "@src/shared/ui/EditableList";
 import { useAtom } from "jotai";
 import { navigate } from "vike/client/router";

@@ -1,7 +1,7 @@
-import { schemaAtom } from "@src/features/schema";
+import { schemaAtom, transformCodeAtom } from "@src/features/template";
 import useTransformPreview from "@src/features/transform/hooks/useTransformPreview";
 import { createTransformInput } from "@src/features/transform/model";
-import { sampleRowAtom, transformCodeAtom } from "@src/features/transform/store";
+import { sampleRowAtom } from "@src/features/transform/store";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 
