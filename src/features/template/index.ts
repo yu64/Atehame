@@ -27,3 +27,7 @@ export {
   templateNameAtom,
   transformCodeAtom,
 } from "@src/features/template/store";
+export {
+  default as TemplateFilePicker,
+  TemplateSummary,
+} from "@src/features/template/TemplateFilePicker";
