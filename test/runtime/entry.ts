@@ -1,3 +1,3 @@
-import { JsExecutionEngine } from "@src/logic/runtime/JsExecutionEngine";
+import { JsExecutionEngine } from "@src/features/runtime/JsExecutionEngine";
 
 Object.assign(window, { JsExecutionEngine });

@@ -1,9 +1,9 @@
-import Logo from "@src/components/Logo";
-import MainContent from "@src/components/MainContent";
-import NormalHeader from "@src/components/NormalHeader";
-import PageFrame from "@src/components/PageFrame";
-import SelectCard from "@src/components/SelectCard";
-import { isDarkAtom } from "@src/store/atom";
+import Logo from "@src/app/Logo";
+import MainContent from "@src/app/MainContent";
+import NormalHeader from "@src/app/NormalHeader";
+import PageFrame from "@src/app/PageFrame";
+import { isDarkAtom } from "@src/app/store";
+import SelectCard from "@src/shared/ui/SelectCard";
 import { useAtom } from "jotai";
 import { useState, useEffect } from "react";
 import { navigate } from "vike/client/router";

@@ -10,7 +10,7 @@ export default defineConfig({
     alias: { "@src": path.resolve(__dirname, "src") },
   },
   test: {
-    include: ["test/unit/**/*.test.ts"],
+    include: ["src/**/*.test.ts"],
     environment: "node",
   },
 });

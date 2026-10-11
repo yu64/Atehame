@@ -1,14 +1,19 @@
-import { addFromPreset } from "@src/components/designer/state/operations";
-import { postalCodePreset } from "@src/components/designer/presets";
-import { LayoutDocument } from "@src/logic/layoutCss";
+import { LayoutDocument } from "@src/features/designer/layoutCss";
+import {
+  createLayout,
+  paperPresets,
+  type Layout,
+  type PaperPreset,
+} from "@src/features/designer/model";
+import { postalCodePreset } from "@src/features/designer/presets";
 import {
   applyLayoutStyles,
   createDocumentHtml,
   renderFrameSandbox,
   renderPages,
   type Values,
-} from "@src/logic/render";
-import { createLayout, paperPresets, type Layout, type PaperPreset } from "@src/models/Layout";
+} from "@src/features/designer/render";
+import { addFromPreset } from "@src/features/designer/state/operations";
 
 /** はがき・封筒の宛名面のサンプル。部品はすべて CSS で書く。 */
 function addressLayout(preset: PaperPreset): Layout {

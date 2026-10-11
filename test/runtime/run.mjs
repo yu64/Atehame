@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { fileURLToPath } from "node:url";
-import { build, createServer, preview } from "vite";
 import { chromium } from "playwright";
+import { build, createServer, preview } from "vite";
 
 // アプリ画面と独立した入口で、本番バンドルにWorker/WASMが含まれることも検証する。
 const root = fileURLToPath(new URL("./", import.meta.url));

@@ -1,10 +1,10 @@
-import Collapse from "@src/components/Collapse";
-import { Input } from "@src/components/Input";
-import PageFrame from "@src/components/PageFrame";
-import MainContent from "@src/components/MainContent";
-import { Select } from "@src/components/Select";
-import SelectCard from "@src/components/SelectCard";
-import { isDarkAtom } from "@src/store/atom";
+import MainContent from "@src/app/MainContent";
+import PageFrame from "@src/app/PageFrame";
+import { isDarkAtom } from "@src/app/store";
+import Collapse from "@src/shared/ui/Collapse";
+import { Input } from "@src/shared/ui/Input";
+import { Select } from "@src/shared/ui/Select";
+import SelectCard from "@src/shared/ui/SelectCard";
 import { useAtom } from "jotai";
 import { useState, useEffect } from "react";
 
