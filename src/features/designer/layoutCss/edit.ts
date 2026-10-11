@@ -13,6 +13,7 @@ import {
   replaceRange,
   replaceRanges,
 } from "@src/features/designer/layoutCss/ranges";
+import { formatMm } from "@src/shared/lib/units";
 import { walk } from "css-tree";
 
 /**
@@ -197,9 +198,4 @@ export function moveElementRule(
   return to === "front"
     ? `${removed.slice(0, anchorRule.range.end)}\n\n${text}${removed.slice(anchorRule.range.end)}`
     : `${removed.slice(0, anchorRule.range.start)}${text}\n\n${removed.slice(anchorRule.range.start)}`;
-}
-
-/** mm の数値を CSS の長さにする（0.01mm 単位）。 */
-export function formatMm(value: number): string {
-  return `${Math.round(value * 100) / 100}mm`;
 }

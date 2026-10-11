@@ -1,6 +1,3 @@
-/** CSS の 1mm に相当する px（96dpi）。 */
-export const pxPerMm = 96 / 25.4;
-
 /** 用紙の周りの余白（px）。 */
 export const canvasPadding = 24;
 

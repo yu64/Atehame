@@ -2,7 +2,6 @@ export { decodeCssString, encodeCssString } from "@src/features/designer/layoutC
 export {
   addElementRule,
   duplicateElementRule,
-  formatMm,
   moveElementRule,
   renameElement,
   selectorFor,
@@ -13,7 +12,6 @@ export {
 export { LayoutDocument } from "@src/features/designer/layoutCss/LayoutDocument";
 export { removeElementRule } from "@src/features/designer/layoutCss/remove";
 export {
-  lengthToMm,
   parseLayoutCss,
   readPageSize,
   splitProperty,

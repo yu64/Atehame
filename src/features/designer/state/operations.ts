@@ -1,11 +1,10 @@
 import {
-  formatMm,
-  lengthToMm,
   type ElementRule,
   type LayoutDocument,
   type PageSize,
 } from "@src/features/designer/layoutCss";
 import type { ElementPreset, PresetContext } from "@src/features/designer/types";
+import { formatMm, lengthToMm } from "@src/shared/lib/units";
 
 /** 部品の表示上の位置と大きさ（mm）。プレビューから測った値。 */
 export interface ElementRect {

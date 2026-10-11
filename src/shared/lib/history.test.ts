@@ -7,7 +7,7 @@ import {
   mergeWindowMs,
   type History,
   type HistoryAction,
-} from "@src/features/designer/state/history";
+} from "@src/shared/lib/history";
 import { describe, expect, test } from "vitest";
 
 function apply<T>(history: History<T>, ...actions: HistoryAction<T>[]): History<T> {

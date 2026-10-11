@@ -3,7 +3,6 @@ import {
   decodeCssString,
   duplicateElementRule,
   encodeCssString,
-  lengthToMm,
   moveElementRule,
   parseLayoutCss,
   parseTextTemplate,
@@ -99,16 +98,6 @@ describe("解析", () => {
   test("用紙サイズがなければ undefined", () => {
     expect(readPageSize(parseLayoutCss("@page { margin: 0 }"))).toBeUndefined();
     expect(readPageSize(parseLayoutCss(""))).toBeUndefined();
-  });
-
-  test.each([
-    ["10mm", 10],
-    ["1cm", 10],
-    ["1in", 25.4],
-    ["0", 0],
-    ["auto", undefined],
-  ])("長さ %s → %s mm", (value, expected) => {
-    expect(lengthToMm(value)).toBe(expected);
   });
 });
 describe("書き換え", () => {

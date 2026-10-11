@@ -1,3 +1,4 @@
+import { lengthToMm } from "@src/shared/lib/units";
 import { parse, type AttributeSelector, type CssNode, type Declaration, type Rule } from "css-tree";
 
 /**
@@ -165,23 +166,6 @@ function readDeclaration(css: string, node: Declaration): DeclarationInfo | unde
     range: { start: node.loc.start.offset, end: node.loc.end.offset },
     valueRange,
   };
-}
-
-/** 長さを mm にする。読めない場合は undefined。 */
-export function lengthToMm(value: string): number | undefined {
-  const match = value.trim().match(/^(-?\d*\.?\d+)(mm|cm|in|pt|pc|px|q)$/i);
-  if (!match) return value.trim() === "0" ? 0 : undefined;
-  const number = Number(match[1]);
-  const perUnit: Record<string, number> = {
-    mm: 1,
-    cm: 10,
-    in: 25.4,
-    pt: 25.4 / 72,
-    pc: 25.4 / 6,
-    px: 25.4 / 96,
-    q: 0.25,
-  };
-  return number * perUnit[match[2].toLowerCase()];
 }
 
 const namedPageSizes: Record<string, [number, number]> = {

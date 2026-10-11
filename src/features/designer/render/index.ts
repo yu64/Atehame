@@ -1,8 +1,6 @@
 export {
   applyLayoutStyles,
   createDocumentHtml,
-  renderFrameCsp,
-  renderFrameSandbox,
   renderPage,
   renderPages,
 } from "@src/features/designer/render/document";

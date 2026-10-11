@@ -1,12 +1,12 @@
 import {
   encodeCssString,
   fieldPlaceholder,
-  formatMm,
   splitProperty,
   textProperty,
 } from "@src/features/designer/layoutCss";
 import { defaultFont, fontFamilyValue } from "@src/features/designer/render";
 import type { ElementPreset } from "@src/features/designer/types";
+import { formatMm } from "@src/shared/lib/units";
 
 /** 文字を表示する部品。縦長の用紙では縦書きにする。 */
 export const textPreset: ElementPreset = {

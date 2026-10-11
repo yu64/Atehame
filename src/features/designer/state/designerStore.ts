@@ -1,14 +1,6 @@
 import type { LayoutDocument, PageSize } from "@src/features/designer/layoutCss";
 import { paperSizeOf } from "@src/features/designer/model";
 import {
-  canRedo,
-  canUndo,
-  createHistory,
-  historyReducer,
-  type History,
-  type HistoryAction,
-} from "@src/features/designer/state/history";
-import {
   addFromPreset,
   duplicateElement,
   moveElementBy,
@@ -17,6 +9,15 @@ import {
   type ElementRect,
 } from "@src/features/designer/state/operations";
 import type { ElementPreset, RevealRequest } from "@src/features/designer/types";
+import {
+  canRedo,
+  canUndo,
+  createHistory,
+  historyReducer,
+  type History,
+  type HistoryAction,
+} from "@src/shared/lib/history";
+import { Store } from "@src/shared/lib/store";
 
 export type SidePanelTab = "properties" | "list" | "css";
 
@@ -44,18 +45,16 @@ export interface DesignerState {
 }
 
 /**
- * デザイナーの状態と操作。React に依存せず、useSyncExternalStore で購読する。
+ * デザイナーの状態と操作。React に依存せず、useStoreSelector で購読する。
  * 確定した変更（ドラッグ中の途中経過を除く）だけを onCommit で外へ知らせる。
  */
-export class DesignerStore {
-  #state: DesignerState;
-  #listeners = new Set<() => void>();
+export class DesignerStore extends Store<DesignerState> {
   /** 外へ知らせた文書。これと異なる文書が外から来たら差し替えとみなす。 */
   #committed: LayoutDocument;
   onCommit: (layout: LayoutDocument) => void;
 
   constructor(initial: LayoutDocument, onCommit: (layout: LayoutDocument) => void) {
-    this.#state = {
+    super({
       history: createHistory(initial),
       selected: null,
       selectionKey: 0,
@@ -65,20 +64,13 @@ export class DesignerStore {
       gridSnap: false,
       rects: new Map(),
       cssWarnings: [],
-    };
+    });
     this.#committed = initial;
     this.onCommit = onCommit;
   }
 
-  getState = (): DesignerState => this.#state;
-
-  subscribe = (listener: () => void): (() => void) => {
-    this.#listeners.add(listener);
-    return () => this.#listeners.delete(listener);
-  };
-
   #set(update: (state: DesignerState) => DesignerState) {
-    const previous = this.#state;
+    const previous = this.getState();
     let next = update(previous);
     if (next === previous) return;
 
@@ -87,8 +79,7 @@ export class DesignerStore {
     if (next.selected !== null && !layout.element(next.selected))
       next = { ...next, selected: null };
 
-    this.#state = next;
-    this.#listeners.forEach(listener => listener());
+    this.replaceState(next);
 
     if (next.history.previewBase === undefined && layout !== this.#committed) {
       this.#committed = layout;
@@ -115,7 +106,7 @@ export class DesignerStore {
   }
 
   get layout(): LayoutDocument {
-    return this.#state.history.present;
+    return this.getState().history.present;
   }
 
   /** 外から渡された文書を受け取る。知らせた文書と同じ CSS なら何もしない。 */
@@ -127,8 +118,8 @@ export class DesignerStore {
 
   // 履歴
 
-  canUndo = () => canUndo(this.#state.history);
-  canRedo = () => canRedo(this.#state.history);
+  canUndo = () => canUndo(this.getState().history);
+  canRedo = () => canRedo(this.getState().history);
   undo = () => this.#history({ type: "undo" });
   redo = () => this.#history({ type: "redo" });
 
@@ -148,7 +139,7 @@ export class DesignerStore {
 
   /** 選択を変えるときの状態。 */
   #selection(name: string | null): Pick<DesignerState, "selected" | "selectionKey"> {
-    return { selected: name, selectionKey: this.#state.selectionKey + 1 };
+    return { selected: name, selectionKey: this.getState().selectionKey + 1 };
   }
 
   /** 雛形から部品を追加して選択し、設定タブを開く。 */
@@ -177,11 +168,11 @@ export class DesignerStore {
       layout => layout.renameElement(from, to),
       // 名前は1文字打つたびに変わるため、名前ではなく「名前の変更」でまとめる。
       "rename",
-      this.#state.selected === from ? { selected: to } : undefined,
+      this.getState().selected === from ? { selected: to } : undefined,
     );
 
   duplicate = (name: string) => {
-    const result = duplicateElement(this.layout, name, this.#state.rects.get(name));
+    const result = duplicateElement(this.layout, name, this.getState().rects.get(name));
     if (!result.name) return;
     this.#edit(() => result.layout, undefined, this.#selection(result.name));
   };
@@ -192,7 +183,7 @@ export class DesignerStore {
   /** 位置をずらす（mm）。キーの連打で続く変更も取りこぼさないよう、直前の文書から作る。 */
   nudge = (name: string, dx: number, dy: number) =>
     this.#edit(
-      layout => moveElementBy(layout, name, dx, dy, this.#state.rects.get(name)),
+      layout => moveElementBy(layout, name, dx, dy, this.getState().rects.get(name)),
       `nudge:${name}`,
     );
 

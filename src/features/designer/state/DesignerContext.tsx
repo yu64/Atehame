@@ -1,7 +1,8 @@
 import type { Values } from "@src/features/designer/render";
 import type { DesignerState, DesignerStore } from "@src/features/designer/state/designerStore";
 import type { CssEditorComponent, ElementPreset } from "@src/features/designer/types";
-import { createContext, useContext, useSyncExternalStore } from "react";
+import useStoreSelector from "@src/shared/hooks/useStoreSelector";
+import { createContext, useContext } from "react";
 
 /** Designer に渡された設定（props）。部品の雛形やプレビューの値など。 */
 export interface DesignerConfig {
@@ -26,8 +27,7 @@ export function useDesignerStore(): DesignerStore {
 
 /** 状態の一部を購読する。選んだ値が変わったときだけ再描画する。 */
 export function useDesignerSelector<T>(select: (state: DesignerState) => T): T {
-  const store = useDesignerStore();
-  return useSyncExternalStore(store.subscribe, () => select(store.getState()));
+  return useStoreSelector(useDesignerStore(), select);
 }
 
 export function useDesignerConfig(): DesignerConfig {

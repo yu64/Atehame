@@ -7,16 +7,7 @@ import {
 } from "@src/features/designer/render/elements";
 import { defaultFont, fontVariables } from "@src/features/designer/render/fonts";
 import { sanitizeCss } from "@src/features/designer/render/sanitizeCss";
-
-/**
- * 描画用の iframe に設定する属性。スクリプトは実行させず、
- * 親から内容を組み立てられるよう同一オリジンとし、印刷のためにダイアログを許可する。
- */
-export const renderFrameSandbox = "allow-same-origin allow-modals";
-
-/** 描画用の文書の CSP。外部への通信を一切許可しない。 */
-export const renderFrameCsp =
-  "default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:";
+import { createIsolatedFrameHtml, setStyleText } from "@src/shared/lib/frame/isolatedFrame";
 
 const fontCss = Object.values(fontVariables)
   .map(font => `${font.variable}: ${font.family};`)
@@ -46,24 +37,25 @@ html, body { margin: 0; padding: 0; background: #fff; color: #000; }
 }
 `;
 
-/** 描画用の iframe の srcdoc。中身は親が DOM で組み立てる。 */
+/**
+ * 描画用の iframe の srcdoc。外部への通信を禁止した文書に、基本の CSS と、
+ * 用紙・作成者の CSS を後から入れる場所を用意する。中身は親が DOM で組み立てる。
+ */
 export function createDocumentHtml(): string {
-  return [
-    "<!doctype html>",
-    '<html lang="ja"><head><meta charset="utf-8">',
-    `<meta http-equiv="Content-Security-Policy" content="${renderFrameCsp}">`,
-    `<style id="atehame-base">${baseCss}</style>`,
-    '<style id="atehame-paper"></style>',
-    '<style id="atehame-author"></style>',
-    "</head><body></body></html>",
-  ].join("");
+  return createIsolatedFrameHtml({
+    styles: [
+      { id: "atehame-base", css: baseCss },
+      { id: "atehame-paper" },
+      { id: "atehame-author" },
+    ],
+  });
 }
 
 /** 用紙の大きさと、作成者の CSS（安全化済み）を文書に設定する。取り除いた記述の警告を返す。 */
 export function applyLayoutStyles(doc: Document, layout: LayoutDocument): string[] {
   const { width, height } = paperSizeOf(layout);
   // 作成者が @page で余白を指定しなければ 0 にする。作成者の CSS が後に来るため上書きできる。
-  setStyle(
+  setStyleText(
     doc,
     "atehame-paper",
     `@page { size: ${width}mm ${height}mm; margin: 0; }\n` +
@@ -71,19 +63,8 @@ export function applyLayoutStyles(doc: Document, layout: LayoutDocument): string
   );
 
   const sanitized = sanitizeCss(layout.css);
-  setStyle(doc, "atehame-author", sanitized.css);
+  setStyleText(doc, "atehame-author", sanitized.css);
   return sanitized.warnings;
-}
-
-function setStyle(doc: Document, id: string, css: string) {
-  let style = doc.getElementById(id);
-  if (!style) {
-    style = doc.createElement("style");
-    style.id = id;
-    doc.head.append(style);
-  }
-  // CSS は文字列として設定し、HTML としては解釈させない。
-  if (style.textContent !== css) style.textContent = css;
 }
 
 /** 1ページ分の要素を組み立てる。部品は CSS の記述順に並べる。 */

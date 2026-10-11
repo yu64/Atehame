@@ -1,5 +1,5 @@
-import { pxPerMm } from "@src/features/designer/canvas/units";
 import type { DesignerStore } from "@src/features/designer/state/designerStore";
+import { pxPerMm } from "@src/shared/lib/units";
 import { useCallback, type KeyboardEvent } from "react";
 
 /** 矢印キーで 1px、Shift と矢印キーで 1mm 動かす。 */

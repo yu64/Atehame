@@ -2,12 +2,14 @@ import type { LayoutDocument, PageSize } from "@src/features/designer/layoutCss"
 import {
   applyLayoutStyles,
   createDocumentHtml,
-  renderFrameSandbox,
   renderPages,
   type Values,
 } from "@src/features/designer/render";
 import type { ElementRect } from "@src/features/designer/state/operations";
-import { useEffect, useMemo, useRef, useState } from "react";
+import useFrameDocument from "@src/shared/hooks/useFrameDocument";
+import { scriptlessFrameSandbox } from "@src/shared/lib/frame/isolatedFrame";
+import { measureRelative } from "@src/shared/lib/frame/measure";
+import { useEffect, useMemo, useRef } from "react";
 
 export interface Props {
   layout: LayoutDocument;
@@ -22,20 +24,19 @@ export interface Props {
 }
 
 /**
- * 用紙を印刷と同じ仕組み（sandbox 付きの iframe）で描画する。操作は受け付けない。
+ * 用紙を印刷と同じ仕組み（外部と切り離した iframe）で描画する。操作は受け付けない。
  * 中身は親が DOM で組み立て、値は textContent でのみ入れる。
  * 部品の位置は CSS で決まるため、描画した結果を測って操作レイヤーに渡す。
  */
 export default function PaperFrame(props: Props) {
-  const frameRef = useRef<HTMLIFrameElement>(null);
-  const [ready, setReady] = useState(false);
+  const frame = useFrameDocument();
   const srcDoc = useMemo(() => createDocumentHtml(), []);
   const callbacks = useRef(props);
   callbacks.current = props;
+  const doc = frame.document;
 
   useEffect(() => {
-    const doc = frameRef.current?.contentDocument;
-    if (!ready || !doc) return;
+    if (!doc) return;
 
     callbacks.current.onCssWarnings(applyLayoutStyles(doc, props.layout));
     renderPages(doc, props.layout, [props.sample], { placeholder: true });
@@ -48,7 +49,7 @@ export default function PaperFrame(props: Props) {
     return () => {
       cancelled = true;
     };
-  }, [ready, props.layout, props.sample, props.pxPerMm]);
+  }, [doc, props.layout, props.sample, props.pxPerMm]);
 
   const width = props.paper.width * props.pxPerMm;
   const height = props.paper.height * props.pxPerMm;
@@ -59,11 +60,11 @@ export default function PaperFrame(props: Props) {
       style={{ width: width * props.scale, height: height * props.scale }}
     >
       <iframe
-        ref={frameRef}
+        ref={frame.ref}
         title="用紙のプレビュー"
-        sandbox={renderFrameSandbox}
+        sandbox={scriptlessFrameSandbox}
         srcDoc={srcDoc}
-        onLoad={() => setReady(true)}
+        onLoad={frame.onLoad}
         tabIndex={-1}
         className="block border-0 bg-white pointer-events-none origin-top-left"
         style={{ width, height, transform: `scale(${props.scale})` }}
@@ -72,21 +73,21 @@ export default function PaperFrame(props: Props) {
   );
 }
 
+/** 用紙の中の部品を、用紙の左上からの位置（mm）で測る。同じ名前の部品は最初のものだけ。 */
 function measureElements(doc: Document, pxPerMm: number): Map<string, ElementRect> {
   const rects = new Map<string, ElementRect>();
   const page = doc.querySelector<HTMLElement>(".atehame-page");
   if (!page) return rects;
 
-  const origin = page.getBoundingClientRect();
   for (const element of page.querySelectorAll<HTMLElement>(":scope > .atehame-element")) {
     const name = element.dataset.name;
     if (name === undefined || rects.has(name)) continue;
-    const rect = element.getBoundingClientRect();
+    const box = measureRelative(page, element);
     rects.set(name, {
-      left: (rect.left - origin.left) / pxPerMm,
-      top: (rect.top - origin.top) / pxPerMm,
-      width: rect.width / pxPerMm,
-      height: rect.height / pxPerMm,
+      left: box.left / pxPerMm,
+      top: box.top / pxPerMm,
+      width: box.width / pxPerMm,
+      height: box.height / pxPerMm,
     });
   }
   return rects;

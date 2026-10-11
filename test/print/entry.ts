@@ -9,11 +9,11 @@ import { postalCodePreset } from "@src/features/designer/presets";
 import {
   applyLayoutStyles,
   createDocumentHtml,
-  renderFrameSandbox,
   renderPages,
   type Values,
 } from "@src/features/designer/render";
 import { addFromPreset } from "@src/features/designer/state/operations";
+import { scriptlessFrameSandbox } from "@src/shared/lib/frame/isolatedFrame";
 
 /** はがき・封筒の宛名面のサンプル。部品はすべて CSS で書く。 */
 function addressLayout(preset: PaperPreset): Layout {
@@ -69,7 +69,7 @@ const rows: Values[] = [
  */
 async function buildPrintHtml(preset: PaperPreset, extraCss = ""): Promise<string> {
   const frame = document.createElement("iframe");
-  frame.setAttribute("sandbox", renderFrameSandbox);
+  frame.setAttribute("sandbox", scriptlessFrameSandbox);
   const loaded = new Promise(resolve => frame.addEventListener("load", resolve, { once: true }));
   frame.srcdoc = createDocumentHtml();
   document.body.append(frame);

@@ -2,7 +2,6 @@ import { minCanvasWidth } from "@src/features/designer/canvas/units";
 import CssPanel from "@src/features/designer/properties/CssPanel";
 import ElementList from "@src/features/designer/properties/ElementList";
 import ElementProperties from "@src/features/designer/properties/ElementProperties";
-import PaneResizer from "@src/features/designer/properties/PaneResizer";
 import PaperProperties from "@src/features/designer/properties/PaperProperties";
 import { useDesignerConfig } from "@src/features/designer/state/DesignerContext";
 import type { SidePanelTab } from "@src/features/designer/state/designerStore";
@@ -13,6 +12,7 @@ import {
   useDesignerTab,
   useSelectedElement,
 } from "@src/features/designer/state/hooks";
+import PaneResizer from "@src/shared/ui/PaneResizer";
 import { useRef, useState } from "react";
 
 const tabs: Array<{ id: SidePanelTab; label: string }> = [

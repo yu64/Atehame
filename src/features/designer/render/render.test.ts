@@ -3,10 +3,10 @@ import { LayoutDocument } from "@src/features/designer/layoutCss";
 import {
   applyLayoutStyles,
   createDocumentHtml,
-  renderFrameCsp,
   renderPage,
   renderPages,
 } from "@src/features/designer/render";
+import { isolatedFrameCsp } from "@src/shared/lib/frame/isolatedFrame";
 import { beforeEach, describe, expect, test } from "vitest";
 
 let doc: Document;
@@ -20,8 +20,8 @@ const layout = (css: string) => LayoutDocument.from(css);
 describe("描画用の文書", () => {
   test("外部への通信を禁止する CSP を持つ", () => {
     const html = createDocumentHtml();
-    expect(html).toContain(`content="${renderFrameCsp}"`);
-    expect(renderFrameCsp).toContain("default-src 'none'");
+    expect(html).toContain(`content="${isolatedFrameCsp}"`);
+    expect(isolatedFrameCsp).toContain("default-src 'none'");
     expect(html).not.toContain("<script");
   });
 
