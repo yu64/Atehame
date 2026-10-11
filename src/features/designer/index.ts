@@ -29,6 +29,7 @@ export {
   layoutSummary,
   paperPresets,
   type Layout,
+  type LayoutSummary,
   type PaperPreset,
 } from "@src/features/designer/model";
 export { printLayout, type Values } from "@src/features/designer/render";

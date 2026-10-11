@@ -3,6 +3,7 @@ import {
   createLayout,
   fromLayoutDocument,
   layoutSchema,
+  layoutSummary,
   paperPresetOf,
   paperSizeOf,
   toLayoutDocument,
@@ -30,6 +31,20 @@ describe("レイアウト", () => {
 
 describe("レイアウトの画像", () => {
   const png = { type: "image/png", data: "iVBORw0KGgo=" } as const;
+
+  test("概要には部品の数・用紙・画像の数と合計の大きさを出す", () => {
+    const summary = layoutSummary({
+      version: 1,
+      css: '@page { size: 120mm 235mm; } [data-name="a"] {}',
+      assets: { logo: png, mark: png },
+    });
+    expect(summary).toEqual({
+      paper: { width: 120, height: 235 },
+      elementCount: 1,
+      imageCount: 2,
+      imageBytes: 16,
+    });
+  });
 
   test("画像は保存する。なければ項目ごと省く", () => {
     const layout = { version: 1, css: "", assets: { logo: png } } as const;

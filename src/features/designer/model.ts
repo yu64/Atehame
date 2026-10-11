@@ -55,10 +55,23 @@ export function fromLayoutDocument(layoutDocument: LayoutDocument): Layout {
   return Object.keys(assets).length === 0 ? { version: 1, css } : { version: 1, css, assets };
 }
 
+export interface LayoutSummary {
+  paper: PageSize;
+  elementCount: number;
+  imageCount: number;
+  /** 画像の合計の大きさ（バイト）。 */
+  imageBytes: number;
+}
+
 /** レイアウトの概要。CSS の中身を知らない側（保存画面など）に見せる。 */
-export function layoutSummary(layout: Layout): { paper: PageSize; elementCount: number } {
+export function layoutSummary(layout: Layout): LayoutSummary {
   const layoutDocument = toLayoutDocument(layout);
-  return { paper: paperSizeOf(layoutDocument), elementCount: layoutDocument.elements.length };
+  return {
+    paper: paperSizeOf(layoutDocument),
+    elementCount: layoutDocument.elements.length,
+    imageCount: Object.keys(layoutDocument.assets).length,
+    imageBytes: totalAssetBytes(layoutDocument.assets),
+  };
 }
 
 /** 用紙の大きさに一致する種類。なければ undefined（任意のサイズ）。 */

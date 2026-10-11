@@ -7,6 +7,7 @@ import { createTemplateFile, toFileName } from "@src/features/save/model";
 import { templateNameAtom } from "@src/features/save/store";
 import { schemaAtom } from "@src/features/schema";
 import { transformCodeAtom } from "@src/features/transform";
+import { formatBytes } from "@src/shared/lib/units";
 import { Input } from "@src/shared/ui/Input";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
@@ -25,7 +26,7 @@ export default function Page() {
   const [name, setName] = useAtom(templateNameAtom);
   const [strategyId, setStrategyId] = useState(exportStrategies[0].id);
   const [status, setStatus] = useState<SaveStatus>({ type: "idle" });
-  const { paper, elementCount } = useMemo(() => layoutSummary(layout), [layout]);
+  const summary = useMemo(() => layoutSummary(layout), [layout]);
 
   const available = useMemo(
     () => exportStrategies.map(strategy => ({ strategy, available: strategy.isAvailable() })),
@@ -98,7 +99,14 @@ export default function Page() {
             <p>スキーマ: {schema.fields.length} カラム</p>
             <p>加工: {code.split("\n").length} 行</p>
             <p>
-              レイアウト: {elementCount} 部品（{paper.width}×{paper.height}mm）
+              レイアウト: {summary.elementCount} 部品（{summary.paper.width}×{summary.paper.height}
+              mm）
+            </p>
+            <p>
+              画像:{" "}
+              {summary.imageCount === 0
+                ? "なし"
+                : `${summary.imageCount} 枚（${formatBytes(summary.imageBytes)}）`}
             </p>
           </section>
 
