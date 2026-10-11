@@ -1,8 +1,9 @@
 import DesignerCanvas from "@src/features/designer/canvas/DesignerCanvas";
+import { minCanvasWidth } from "@src/features/designer/canvas/units";
 import useDesignerKeyboard from "@src/features/designer/hooks/useDesignerKeyboard";
 import type { LayoutDocument } from "@src/features/designer/layoutCss";
 import { fromLayoutDocument, toLayoutDocument, type Layout } from "@src/features/designer/model";
-import ElementPalette from "@src/features/designer/palette/ElementPalette";
+import ElementPalette, { paletteWidth } from "@src/features/designer/palette/ElementPalette";
 import { defaultPresets } from "@src/features/designer/presets";
 import SidePanel from "@src/features/designer/properties/SidePanel";
 import type { Values } from "@src/features/designer/render";
@@ -81,7 +82,8 @@ function DefaultLayout() {
       <DesignerBody>
         <ElementPalette />
         <DesignerCanvas />
-        <SidePanel />
+        {/* 右の欄を広げても、パレットの幅とキャンバスの最小の幅は残す。 */}
+        <SidePanel reservedWidth={paletteWidth + minCanvasWidth} />
       </DesignerBody>
     </>
   );

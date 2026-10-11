@@ -1,6 +1,9 @@
 import { useAddElement } from "@src/features/designer/hooks/useAddElement";
 import { useDesignerConfig } from "@src/features/designer/state/DesignerContext";
 
+/** パレットの幅（px）。 */
+export const paletteWidth = 192;
+
 /**
  * 部品を追加するパレット（左の欄）。クリックで用紙に追加する。
  * 出力の項目からは、先頭の雛形でその値を埋め込んだ部品を追加する。
@@ -13,7 +16,8 @@ export default function ElementPalette() {
   return (
     <aside
       aria-label="パレット"
-      className="w-48 shrink-0 min-h-0 overflow-auto border-r border-surface-border bg-surface"
+      className="shrink-0 min-h-0 overflow-auto border-r border-surface-border bg-surface"
+      style={{ width: paletteWidth }}
     >
       <div className="flex flex-col gap-4 p-3">
         <section className="flex flex-col gap-1">

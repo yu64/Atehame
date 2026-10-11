@@ -1,4 +1,3 @@
-import { minCanvasWidth } from "@src/features/designer/canvas/units";
 import { useDesignerCss } from "@src/features/designer/hooks/useDesignerCss";
 import { useDesignerElements } from "@src/features/designer/hooks/useDesignerElements";
 import { useDesignerPaper } from "@src/features/designer/hooks/useDesignerPaper";
@@ -19,24 +18,27 @@ const tabs: Array<{ id: SidePanelTab; label: string }> = [
   { id: "css", label: "CSS" },
 ];
 
-/** 欄の幅（px）。 */
-const panelWidth = { default: 320, min: 256 };
+/** 欄の幅（px）。reserved は、指定がない場合にほかの領域へ残す幅。 */
+const panelWidth = { default: 320, min: 256, reserved: 240 };
+
+export interface Props {
+  /**
+   * 欄を広げても、同じ行のほかの領域（パレットやキャンバス）に残す幅（px）。
+   * 欄の最大幅は、行の幅からこの幅を引いたものになる。
+   */
+  reservedWidth?: number;
+}
 
 /** デザイナーの右の欄。タブで中身を切り替え、左端のドラッグで幅を変える。 */
-export default function SidePanel() {
+export default function SidePanel(props: Props) {
   const { tab, setTab, cssWarning } = useDesignerTab();
   const [width, setWidth] = useState(panelWidth.default);
   const asideRef = useRef<HTMLElement>(null);
 
-  // キャンバスに最小の幅を残す範囲まで広げられる。キャンバス以外の隣の欄（パレットなど）の幅は除く。
   const maxWidth = () => {
-    const aside = asideRef.current;
-    const parent = aside?.parentElement;
-    if (!aside || !parent) return panelWidth.default;
-    const others = [...parent.children]
-      .filter(child => child !== aside && !child.hasAttribute("data-designer-canvas"))
-      .reduce((sum, child) => sum + child.getBoundingClientRect().width, 0);
-    return parent.clientWidth - others - minCanvasWidth;
+    const parent = asideRef.current?.parentElement;
+    if (!parent) return panelWidth.default;
+    return parent.clientWidth - (props.reservedWidth ?? panelWidth.reserved);
   };
 
   return (

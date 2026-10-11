@@ -1,6 +1,5 @@
 import useFixedLongestSelect from "@src/shared/hooks/useFixedLongestSelect";
 import { If } from "@src/shared/ui/If";
-import { log } from "console";
 import {
   Children,
   forwardRef,

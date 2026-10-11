@@ -31,7 +31,6 @@ export default function DesignerCanvas() {
   return (
     <div
       ref={areaRef}
-      data-designer-canvas=""
       // キー操作を受けられるよう、押したらフォーカスを移す（デザイナーの根で受ける）。
       tabIndex={-1}
       className="flex-1 min-h-0 min-w-0 overflow-auto bg-base-hover outline-none"
