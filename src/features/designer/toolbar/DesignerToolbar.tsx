@@ -69,14 +69,17 @@ export default function DesignerToolbar() {
           onClick={view.requestFit}
         />
         <span className="mx-2 h-5 border-l border-surface-border" aria-hidden="true" />
-        <label className="flex items-center gap-1 text-sm cursor-pointer">
+        <label
+          className="flex items-center gap-1 text-sm cursor-pointer"
+          title="ドラッグで動かすときや大きさを変えるときに、位置と大きさを 1mm 刻みにそろえます。用紙の端・中央やほかの部品の端への吸着は、この設定に関係なく働きます。"
+        >
           <input
             type="checkbox"
             className="checkbox checkbox-sm"
             checked={view.gridSnap}
             onChange={event => view.setGridSnap(event.currentTarget.checked)}
           />
-          1mm に吸着
+          1mm 刻みで動かす
         </label>
         <DesignerButton
           icon="i-lucide-printer"
