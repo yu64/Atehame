@@ -241,6 +241,9 @@ export default defineConfig({
         focus-visible:outline-2
         focus-visible:-outline-offset-4
         focus-visible:outline-surface
+        disabled:opacity-40
+        disabled:hover:bg-primary
+        disabled:cursor-not-allowed
       `,
     ],
     [

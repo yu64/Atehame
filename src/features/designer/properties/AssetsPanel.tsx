@@ -1,8 +1,9 @@
 import DesignerButton from "@src/features/designer/DesignerButton";
 import useSyncedText from "@src/shared/hooks/useSyncedText";
 import { formatBytes } from "@src/shared/lib/units";
+import FileDropZone from "@src/shared/ui/FileDropZone";
 import { Input } from "@src/shared/ui/Input";
-import { useRef, useState, type DragEvent } from "react";
+import { useRef, useState } from "react";
 
 export interface AssetItem {
   name: string;
@@ -31,55 +32,22 @@ const accept = "image/png,image/jpeg,image/webp,image/svg+xml,.svg";
 /** 画像（アセット）の一覧。登録した画像は、画像の部品から名前で選ぶ。 */
 export default function AssetsPanel(props: Props) {
   const [errors, setErrors] = useState<string[]>([]);
-  const [dragging, setDragging] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   async function add(files: File[]) {
-    if (files.length === 0) return;
     setErrors(await props.onAdd(files));
   }
 
-  const onDrop = (event: DragEvent) => {
-    event.preventDefault();
-    setDragging(false);
-    void add([...event.dataTransfer.files]);
-  };
-
   return (
-    <div
-      className={`flex flex-col gap-3 p-3 min-h-full ${dragging ? "bg-surface-hover" : ""}`}
-      onDragOver={event => {
-        event.preventDefault();
-        setDragging(true);
-      }}
-      onDragLeave={() => setDragging(false)}
-      onDrop={onDrop}
-    >
-      <div className="flex items-center gap-2">
-        <h2 className="font-bold text-text-primary">画像</h2>
-        <DesignerButton
-          icon="i-lucide-image-plus"
-          label="画像を追加"
-          className="ml-auto"
-          onClick={() => inputRef.current?.click()}
-        />
-        <input
-          ref={inputRef}
-          type="file"
-          accept={accept}
-          multiple
-          hidden
-          onChange={event => {
-            void add([...(event.currentTarget.files ?? [])]);
-            event.currentTarget.value = "";
-          }}
-        />
-      </div>
-      <p className="text-xs text-text-secondary">
-        PNG・JPEG・WebP・SVG を登録できます（ここへのドロップも可）。1枚{" "}
-        {formatBytes(props.limits.bytes)}
-        、合計 {formatBytes(props.limits.totalBytes)} まで。画像の部品から名前で選びます。
-      </p>
+    <div className="flex flex-col gap-3 p-3">
+      <h2 className="font-bold text-text-primary">画像</h2>
+      <FileDropZone
+        accept={accept}
+        multiple
+        label="画像を追加"
+        hint={`PNG・JPEG・WebP・SVG。1枚 ${formatBytes(props.limits.bytes)}、合計 ${formatBytes(props.limits.totalBytes)} まで`}
+        onFiles={files => void add(files)}
+      />
+      <p className="text-xs text-text-secondary">画像の部品から、ここで付けた名前で選びます。</p>
       <p className="text-xs text-text-secondary">
         使用量: {formatBytes(props.totalBytes)} / {formatBytes(props.limits.totalBytes)}
       </p>
