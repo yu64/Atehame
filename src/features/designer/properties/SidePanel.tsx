@@ -91,7 +91,8 @@ function PropertiesTab() {
 
   return (
     <ElementProperties
-      key={element.selectionKey}
+      // 名前ではなく ID で作り直す（名前で作り直すと、名前を1文字打つたびにフォーカスが外れる）。
+      key={element.id}
       rule={element.rule}
       otherNames={element.otherNames}
       fields={fields}

@@ -8,8 +8,8 @@ import { useMemo } from "react";
 
 export interface SelectedElement {
   rule: ElementRule;
-  /** 選択し直すたびに変わる番号（名前を変えても変わらない）。 */
-  selectionKey: number;
+  /** 部品の固有の ID。名前を変えても変わらない（設定欄の作り直しの目印に使う）。 */
+  id: string;
   /** ほかの部品の名前（重複の確認用）。 */
   otherNames: string[];
   setDeclaration: (property: string, value: string | undefined) => void;
@@ -25,15 +25,15 @@ export function useSelectedElement(): SelectedElement | undefined {
   const store = useDesignerStore();
   const elements = useDesignerSelector(state => selectLayout(state).elements);
   const selected = useDesignerSelector(state => state.selected);
-  const selectionKey = useDesignerSelector(state => state.selectionKey);
+  const id = useDesignerSelector(state => state.selectedId);
 
   return useMemo(() => {
     const rule = elements.find(element => element.name === selected);
-    if (!rule) return undefined;
+    if (!rule || id === null) return undefined;
     const name = rule.name;
     return {
       rule,
-      selectionKey,
+      id,
       otherNames: elements.filter(element => element !== rule).map(element => element.name),
       setDeclaration: (property, value) => store.setDeclaration(name, property, value),
       rename: to => store.rename(name, to),
@@ -42,7 +42,7 @@ export function useSelectedElement(): SelectedElement | undefined {
       reorder: to => store.reorder(name, to),
       showCss: () => store.showCss(name),
     };
-  }, [store, elements, selected, selectionKey]);
+  }, [store, elements, selected, id]);
 }
 
 export default useSelectedElement;

@@ -1,5 +1,6 @@
 import type { LayoutDocument, PageSize } from "@src/features/designer/layoutCss";
 import { paperSizeOf } from "@src/features/designer/model";
+import { ElementIds } from "@src/features/designer/state/elementIds";
 import {
   addFromPreset,
   duplicateElement,
@@ -23,13 +24,13 @@ export type SidePanelTab = "properties" | "list" | "css";
 
 export interface DesignerState {
   history: History<LayoutDocument>;
-  /** 選択中の部品の名前。null なら用紙を選択している。 */
-  selected: string | null;
   /**
-   * 選択し直すたびに変わる番号。名前を変えても変わらないため、設定欄の作り直しの目印に使う
-   * （名前で作り直すと、名前を1文字打つたびに入力欄のフォーカスが外れる）。
+   * 選択中の部品の ID。null なら用紙を選択している。
+   * 名前を変えても、元に戻しても同じ部品を指す（state/elementIds.ts）。
    */
-  selectionKey: number;
+  selectedId: string | null;
+  /** 選択中の部品の今の名前。selectedId から引いたもの。 */
+  selected: string | null;
   /** 右の欄で開いているタブ。部品の追加や「CSS で編集」からも切り替える。 */
   tab: SidePanelTab;
   /** CSS タブで表示する行。 */
@@ -54,13 +55,16 @@ export const selectLayout = (state: DesignerState): LayoutDocument => state.hist
 export class DesignerStore extends Store<DesignerState> {
   /** 外へ知らせた文書。これと異なる文書が外から来たら差し替えとみなす。 */
   #committed: LayoutDocument;
+  #ids = new ElementIds();
+  /** 実行中の名前の変更。新しい版の ID の対応表を作るときに使う。 */
+  #renaming: { from: string; to: string } | undefined;
   onCommit: (layout: LayoutDocument) => void;
 
   constructor(initial: LayoutDocument, onCommit: (layout: LayoutDocument) => void) {
     super({
       history: createHistory(initial),
+      selectedId: null,
       selected: null,
-      selectionKey: 0,
       tab: "properties",
       zoom: 1,
       fitRequest: 0,
@@ -70,6 +74,7 @@ export class DesignerStore extends Store<DesignerState> {
     });
     this.#committed = initial;
     this.onCommit = onCommit;
+    this.#ids.register(initial);
   }
 
   #set(update: (state: DesignerState) => DesignerState) {
@@ -77,10 +82,14 @@ export class DesignerStore extends Store<DesignerState> {
     let next = update(previous);
     if (next === previous) return;
 
+    // 新しい版なら ID の対応表を前の版から作り、選択している ID を今の名前に引き直す。
     // 元に戻すや CSS の編集で選択中の部品がなくなったら、選択を外す。
     const layout = next.history.present;
-    if (next.selected !== null && !layout.element(next.selected))
-      next = { ...next, selected: null };
+    this.#ids.register(layout, previous.history.present, this.#renaming);
+    const selected =
+      next.selectedId === null ? null : (this.#ids.nameOf(layout, next.selectedId) ?? null);
+    if (selected === null && next.selectedId !== null) next = { ...next, selectedId: null };
+    if (selected !== next.selected) next = { ...next, selected };
 
     this.replaceState(next);
 
@@ -137,13 +146,10 @@ export class DesignerStore extends Store<DesignerState> {
 
   // 部品
 
-  select = (name: string | null) =>
-    this.#set(state => (state.selected === name ? state : { ...state, ...this.#selection(name) }));
-
-  /** 選択を変えるときの状態。 */
-  #selection(name: string | null): Pick<DesignerState, "selected" | "selectionKey"> {
-    return { selected: name, selectionKey: this.getState().selectionKey + 1 };
-  }
+  select = (name: string | null) => {
+    const id = name === null ? null : (this.#ids.idOf(this.layout, name) ?? null);
+    this.#set(state => (state.selectedId === id ? state : { ...state, selectedId: id }));
+  };
 
   /** 雛形から部品を追加して選択し、設定タブを開く。 */
   add = (preset: ElementPreset, fields: string[], key?: string) => {
@@ -152,10 +158,8 @@ export class DesignerStore extends Store<DesignerState> {
       fields,
       paper: this.paperSize(),
     });
-    this.#edit(() => result.layout, undefined, {
-      ...this.#selection(result.name),
-      tab: "properties",
-    });
+    this.#edit(() => result.layout, undefined, { tab: "properties" });
+    this.select(result.name);
   };
 
   remove = (name: string) => this.#edit(layout => layout.removeElement(name));
@@ -166,18 +170,22 @@ export class DesignerStore extends Store<DesignerState> {
       `${name}:${property}`,
     );
 
-  rename = (from: string, to: string) =>
-    this.#edit(
-      layout => layout.renameElement(from, to),
+  /** 名前を変える。ID は引き継ぐので、選択はそのまま保たれる。 */
+  rename = (from: string, to: string) => {
+    this.#renaming = { from, to };
+    try {
       // 名前は1文字打つたびに変わるため、名前ではなく「名前の変更」でまとめる。
-      "rename",
-      this.getState().selected === from ? { selected: to } : undefined,
-    );
+      this.#edit(layout => layout.renameElement(from, to), "rename");
+    } finally {
+      this.#renaming = undefined;
+    }
+  };
 
   duplicate = (name: string) => {
     const result = duplicateElement(this.layout, name, this.getState().rects.get(name));
     if (!result.name) return;
-    this.#edit(() => result.layout, undefined, this.#selection(result.name));
+    this.#edit(() => result.layout);
+    this.select(result.name);
   };
 
   reorder = (name: string, to: "front" | "back") =>

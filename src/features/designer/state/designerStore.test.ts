@@ -59,17 +59,29 @@ describe("デザイナーの状態", () => {
     expect(store.layout.element("b")).toBeDefined();
   });
 
-  test("名前を変えても選択の番号は変わらず、選択し直すと変わる。続けて変えた名前は1回で戻せる", () => {
+  test("名前を変えて元に戻しても、同じ部品を選んだまま。続けて変えた名前は1回で戻せる", () => {
     const { store } = createStore();
     store.select("a");
-    const key = store.getState().selectionKey;
+    const id = store.getState().selectedId;
     store.rename("a", "ab");
     store.rename("ab", "abc");
-    expect(store.getState().selectionKey).toBe(key);
+    expect(store.getState()).toMatchObject({ selectedId: id, selected: "abc" });
+
     store.undo();
-    expect(store.layout.element("a")).toBeDefined();
+    expect(store.getState()).toMatchObject({ selectedId: id, selected: "a" });
+    store.redo();
+    expect(store.getState()).toMatchObject({ selectedId: id, selected: "abc" });
+  });
+
+  test("部品を消したら選択を外し、元に戻しても選び直さない", () => {
+    const { store } = createStore();
     store.select("a");
-    expect(store.getState().selectionKey).not.toBe(key);
+    store.remove("a");
+    expect(store.getState()).toMatchObject({ selectedId: null, selected: null });
+    store.undo();
+    expect(store.getState().selected).toBeNull();
+    store.select("a");
+    expect(store.getState().selected).toBe("a");
   });
 
   test("CSS タブで部品の規則の行を表示する", () => {
