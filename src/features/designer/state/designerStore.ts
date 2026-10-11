@@ -44,6 +44,9 @@ export interface DesignerState {
   cssWarnings: string[];
 }
 
+/** 状態から、今の文書を選ぶ。 */
+export const selectLayout = (state: DesignerState): LayoutDocument => state.history.present;
+
 /**
  * デザイナーの状態と操作。React に依存せず、useStoreSelector で購読する。
  * 確定した変更（ドラッグ中の途中経過を除く）だけを onCommit で外へ知らせる。

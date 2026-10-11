@@ -1,4 +1,5 @@
 import type { LayoutDocument } from "@src/features/designer/layoutCss";
+import { toLayoutDocument, type Layout } from "@src/features/designer/model";
 import {
   applyLayoutStyles,
   createDocumentHtml,
@@ -8,7 +9,7 @@ import type { Values } from "@src/features/designer/render/elements";
 import { scriptlessFrameSandbox } from "@src/shared/lib/frame/isolatedFrame";
 import { printInHiddenFrame } from "@src/shared/lib/frame/printFrame";
 
-/** 行ごとに1ページずつ組み立てて印刷する。 */
+/** 行ごとに1ページずつ組み立てて印刷する（デザイナーの内部用。外には printLayout を公開する）。 */
 export function printPages(layout: LayoutDocument, rows: Values[]): Promise<void> {
   return printInHiddenFrame({
     html: createDocumentHtml(),
@@ -18,4 +19,9 @@ export function printPages(layout: LayoutDocument, rows: Values[]): Promise<void
       renderPages(doc, layout, rows);
     },
   });
+}
+
+/** レイアウトを使い、行ごとに1ページずつ組み立てて印刷する。 */
+export function printLayout(layout: Layout, rows: Values[]): Promise<void> {
+  return printPages(toLayoutDocument(layout), rows);
 }

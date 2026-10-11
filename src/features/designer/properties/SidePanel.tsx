@@ -1,17 +1,15 @@
 import { minCanvasWidth } from "@src/features/designer/canvas/units";
+import { useDesignerCss } from "@src/features/designer/hooks/useDesignerCss";
+import { useDesignerElements } from "@src/features/designer/hooks/useDesignerElements";
+import { useDesignerPaper } from "@src/features/designer/hooks/useDesignerPaper";
+import { useDesignerTab } from "@src/features/designer/hooks/useDesignerTab";
+import { useSelectedElement } from "@src/features/designer/hooks/useSelectedElement";
 import CssPanel from "@src/features/designer/properties/CssPanel";
 import ElementList from "@src/features/designer/properties/ElementList";
 import ElementProperties from "@src/features/designer/properties/ElementProperties";
 import PaperProperties from "@src/features/designer/properties/PaperProperties";
 import { useDesignerConfig } from "@src/features/designer/state/DesignerContext";
 import type { SidePanelTab } from "@src/features/designer/state/designerStore";
-import {
-  useDesignerCss,
-  useDesignerElements,
-  useDesignerPaper,
-  useDesignerTab,
-  useSelectedElement,
-} from "@src/features/designer/state/hooks";
 import PaneResizer from "@src/shared/ui/PaneResizer";
 import { useRef, useState } from "react";
 

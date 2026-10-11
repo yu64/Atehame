@@ -15,7 +15,7 @@ export {
   fontVariables,
   type FontKey,
 } from "@src/features/designer/render/fonts";
-export { printPages } from "@src/features/designer/render/print";
+export { printLayout, printPages } from "@src/features/designer/render/print";
 export { sanitizeCss, type SanitizedCss } from "@src/features/designer/render/sanitizeCss";
 export {
   formatValue,

@@ -1,7 +1,8 @@
 import PaperFrame from "@src/features/designer/canvas/PaperFrame";
 import SelectionLayer from "@src/features/designer/canvas/SelectionLayer";
 import { canvasPadding } from "@src/features/designer/canvas/units";
-import { useDesignerCanvas, useDesignerView } from "@src/features/designer/state/hooks";
+import { useDesignerCanvas } from "@src/features/designer/hooks/useDesignerCanvas";
+import { useDesignerView } from "@src/features/designer/hooks/useDesignerView";
 import { pxPerMm } from "@src/shared/lib/units";
 import { useEffect, useRef } from "react";
 

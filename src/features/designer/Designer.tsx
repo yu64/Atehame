@@ -1,4 +1,5 @@
 import DesignerCanvas from "@src/features/designer/canvas/DesignerCanvas";
+import useDesignerKeyboard from "@src/features/designer/hooks/useDesignerKeyboard";
 import type { LayoutDocument } from "@src/features/designer/layoutCss";
 import { fromLayoutDocument, toLayoutDocument, type Layout } from "@src/features/designer/model";
 import ElementPalette from "@src/features/designer/palette/ElementPalette";
@@ -13,7 +14,6 @@ import {
 import { DesignerStore } from "@src/features/designer/state/designerStore";
 import DesignerToolbar from "@src/features/designer/toolbar/DesignerToolbar";
 import type { CssEditorComponent, ElementPreset } from "@src/features/designer/types";
-import useDesignerKeyboard from "@src/features/designer/useDesignerKeyboard";
 import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
 
 export interface DesignerProps {

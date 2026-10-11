@@ -1,5 +1,5 @@
+import DesignerButton from "@src/features/designer/DesignerButton";
 import { decodeCssString, textProperty, type ElementRule } from "@src/features/designer/layoutCss";
-import { RemoveButton } from "@src/features/designer/properties/RemoveButton";
 
 export interface Props {
   elements: ElementRule[];
@@ -44,7 +44,14 @@ export default function ElementList(props: Props) {
               <span className="truncate text-sm text-text-primary">{element.name}</span>
               <span className="truncate text-xs text-text-tertiary">{text || "（文字なし）"}</span>
             </button>
-            <RemoveButton name={element.name} onClick={() => props.onRemove(element.name)} />
+            <DesignerButton
+              icon="i-lucide-trash-2"
+              label={`${element.name} を削除`}
+              iconOnly
+              danger
+              className="shrink-0"
+              onClick={() => props.onRemove(element.name)}
+            />
           </li>
         );
       })}

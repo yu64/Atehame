@@ -1,3 +1,4 @@
+import DesignerButton from "@src/features/designer/DesignerButton";
 import {
   decodeCssString,
   encodeCssString,
@@ -53,19 +54,19 @@ export default function ElementProperties(props: Props) {
           aria-label={`${rule.name} の操作`}
           className="flex flex-wrap items-center gap-1"
         >
-          <ActionButton icon="i-lucide-braces" label="CSS で編集" onClick={props.onShowCss} />
-          <ActionButton icon="i-lucide-copy" label="複製" onClick={props.onDuplicate} />
-          <ActionButton
+          <DesignerButton icon="i-lucide-braces" label="CSS で編集" onClick={props.onShowCss} />
+          <DesignerButton icon="i-lucide-copy" label="複製" onClick={props.onDuplicate} />
+          <DesignerButton
             icon="i-lucide-bring-to-front"
             label="最前面へ"
             onClick={() => props.onReorder("front")}
           />
-          <ActionButton
+          <DesignerButton
             icon="i-lucide-send-to-back"
             label="最背面へ"
             onClick={() => props.onReorder("back")}
           />
-          <ActionButton icon="i-lucide-trash-2" label="削除" danger onClick={props.onRemove} />
+          <DesignerButton icon="i-lucide-trash-2" label="削除" danger onClick={props.onRemove} />
         </div>
       </div>
 
@@ -182,24 +183,5 @@ export default function ElementProperties(props: Props) {
         1文字ずつ分ける（[data-part="char"] で1文字ずつ指定できます）
       </label>
     </div>
-  );
-}
-
-/** 操作のボタン。danger は削除など、注意が必要な操作に使う。 */
-function ActionButton(props: {
-  icon: string;
-  label: string;
-  danger?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      className={`atehame-btn-secondary btn-sm px-2 font-normal ${props.danger ? "text-status-error" : ""}`}
-      onClick={props.onClick}
-    >
-      <span className={`${props.icon} size-4`} aria-hidden="true" />
-      {props.label}
-    </button>
   );
 }

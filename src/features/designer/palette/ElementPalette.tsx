@@ -1,5 +1,5 @@
+import { useAddElement } from "@src/features/designer/hooks/useAddElement";
 import { useDesignerConfig } from "@src/features/designer/state/DesignerContext";
-import { useAddElement } from "@src/features/designer/state/hooks";
 
 /**
  * 部品を追加するパレット（左の欄）。クリックで用紙に追加する。

@@ -16,7 +16,7 @@ export const DesignerStoreContext = createContext<DesignerStore | null>(null);
 export const DesignerConfigContext = createContext<DesignerConfig | null>(null);
 
 /**
- * デザイナーの状態。外には公開せず、用途ごとのフック（state/hooks.ts）からだけ使う。
+ * デザイナーの状態。外には公開せず、用途ごとのフック（hooks/）からだけ使う。
  * Designer の外で使った場合は例外にする。
  */
 export function useDesignerStore(): DesignerStore {
