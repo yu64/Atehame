@@ -1,5 +1,5 @@
+import useSyncedText from "@src/shared/hooks/useSyncedText";
 import { Input } from "@src/shared/ui/Input";
-import { useEffect, useState } from "react";
 
 export interface Props {
   name: string;
@@ -11,8 +11,8 @@ export interface Props {
 
 /** 名前の欄。空や重複する名前は確定せず、理由を表示する。 */
 export default function NameField(props: Props) {
-  const [text, setText] = useState(props.name);
-  useEffect(() => setText(props.name), [props.name]);
+  // 名前は前後の空白を除いて確定するため、空白を除いて同じなら打ちかけの空白を保つ。
+  const [text, setText] = useSyncedText(props.name, text => text.trim() === props.name);
 
   const trimmed = text.trim();
   const error =

@@ -1,17 +1,6 @@
+import useSyncedText from "@src/shared/hooks/useSyncedText";
 import { Input } from "@src/shared/ui/Input";
 import { Select } from "@src/shared/ui/Select";
-import { useEffect, useState } from "react";
-
-/**
- * 外部から値が変わった場合（ドラッグや元に戻すなど）だけ表示を合わせ、入力途中の文字は保つ。
- */
-function useSyncedText(value: string, equals: (text: string) => boolean = text => text === value) {
-  const [text, setText] = useState(value);
-  useEffect(() => {
-    if (!equals(text)) setText(value);
-  }, [value]);
-  return [text, setText] as const;
-}
 
 export interface NumberFieldProps {
   label: string;
@@ -54,7 +43,9 @@ export interface CssValueFieldProps {
 
 /** CSS の値をそのまま入力する欄（例: 14pt、1.5、40mm）。 */
 export function CssValueField(props: CssValueFieldProps) {
-  const [text, setText] = useSyncedText(props.value ?? "");
+  // 値は前後の空白を除いて書くため、空白を除いて同じなら打ちかけの空白を保つ。
+  const value = props.value ?? "";
+  const [text, setText] = useSyncedText(value, text => text.trim() === value);
 
   return (
     <Input

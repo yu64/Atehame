@@ -1,5 +1,5 @@
 import { fieldPlaceholder } from "@src/features/designer/layoutCss";
-import { useEffect, useState } from "react";
+import useSyncedText from "@src/shared/hooks/useSyncedText";
 
 export interface Props {
   value: string;
@@ -10,10 +10,7 @@ export interface Props {
 
 /** 表示する文字の欄。{名前} で値を埋め込む。 */
 export default function TextTemplateField(props: Props) {
-  const [text, setText] = useState(props.value);
-  useEffect(() => {
-    if (text !== props.value) setText(props.value);
-  }, [props.value]);
+  const [text, setText] = useSyncedText(props.value);
 
   const update = (next: string) => {
     setText(next);
