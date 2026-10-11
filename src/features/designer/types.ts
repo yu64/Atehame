@@ -8,6 +8,8 @@ export interface PresetContext {
   key?: string;
   /** 値の名前の一覧（加工の出力のキー）。 */
   fields: string[];
+  /** 登録済みの画像の名前。 */
+  assets: string[];
   /** 用紙の大きさ（mm）。 */
   paper: PageSize;
   /** すでにある部品の数。追加位置をずらすのに使う。 */
@@ -32,6 +34,8 @@ export interface ElementPreset {
   icon: string;
   /** 値の名前を指定しない場合の部品の名前。 */
   defaultName: string;
+  /** 画像が登録されていないと追加できない雛形か。 */
+  requiresAsset?: boolean;
   create(context: PresetContext): PresetResult;
 }
 

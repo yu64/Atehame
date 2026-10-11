@@ -23,6 +23,7 @@ describe("デザイナーの操作", () => {
     const { layout, name } = addFromPreset(base, textPreset, {
       key: "氏名",
       fields: ["氏名"],
+      assets: [],
       paper,
     });
     const rule = layout.elements[0];
@@ -32,14 +33,20 @@ describe("デザイナーの操作", () => {
   });
 
   test("同じ値をもう一度追加すると名前に番号を付ける", () => {
-    const first = addFromPreset(base, textPreset, { key: "氏名", fields: [], paper });
-    const second = addFromPreset(first.layout, textPreset, { key: "氏名", fields: [], paper });
+    const first = addFromPreset(base, textPreset, { key: "氏名", fields: [], assets: [], paper });
+    const second = addFromPreset(first.layout, textPreset, {
+      key: "氏名",
+      fields: [],
+      assets: [],
+      paper,
+    });
     expect(second.name).toBe("氏名 2");
   });
 
   test("郵便番号枠は1文字ずつ分け、郵便番号らしい値を埋め込む", () => {
     const { layout } = addFromPreset(base, postalCodePreset, {
       fields: ["氏名", "郵便番号"],
+      assets: [],
       paper,
     });
     const rule = layout.elements[0];
@@ -52,7 +59,7 @@ describe("デザイナーの操作", () => {
   });
 
   test("位置を設定し、ずらす", () => {
-    let { layout } = addFromPreset(base, textPreset, { key: "a", fields: [], paper });
+    let { layout } = addFromPreset(base, textPreset, { key: "a", fields: [], assets: [], paper });
     layout = placeElement(layout, "a", { left: 10, top: 20 });
     layout = moveElementBy(layout, "a", 0.5, -1, undefined);
     const rule = layout.elements[0];

@@ -1,6 +1,7 @@
 import {
   encodeCssString,
   fieldPlaceholder,
+  imageProperty,
   splitProperty,
   textProperty,
 } from "@src/features/designer/layoutCss";
@@ -82,4 +83,27 @@ export const postalCodePreset: ElementPreset = {
   },
 };
 
-export const defaultPresets: ElementPreset[] = [textPreset, postalCodePreset];
+/** 画像を表示する部品。登録済みの先頭の画像を、枠の中に全体が収まるように表示する。 */
+export const imagePreset: ElementPreset = {
+  id: "image",
+  label: "画像",
+  icon: "i-lucide-image",
+  defaultName: "画像",
+  requiresAsset: true,
+  create({ assets, paper, count }) {
+    const size = Math.min(30, paper.width / 2, paper.height / 2);
+    const offset = (count % 5) * 5;
+    return {
+      declarations: [
+        [imageProperty, encodeCssString(assets[0] ?? "")],
+        ["left", formatMm((paper.width - size) / 2 + offset)],
+        ["top", formatMm((paper.height - size) / 2 + offset)],
+        ["width", formatMm(size)],
+        ["height", formatMm(size)],
+        ["object-fit", "contain"],
+      ],
+    };
+  },
+};
+
+export const defaultPresets: ElementPreset[] = [textPreset, postalCodePreset, imagePreset];

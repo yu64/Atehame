@@ -2,6 +2,7 @@ import DesignerButton from "@src/features/designer/DesignerButton";
 import {
   decodeCssString,
   encodeCssString,
+  imageProperty,
   splitProperty,
   textProperty,
   type ElementRule,
@@ -21,6 +22,8 @@ export interface Props {
   /** ほかの部品の名前（重複の確認用）。 */
   otherNames: string[];
   fields: string[];
+  /** 登録済みの画像の名前（画像の部品で選ぶ）。 */
+  assetNames: string[];
   /** 宣言を設定する。value が undefined なら取り除く。 */
   onDeclaration: (property: string, value: string | undefined) => void;
   onRename: (name: string) => void;
@@ -44,6 +47,7 @@ export default function ElementProperties(props: Props) {
   const value = (property: string) => rule.declarations.get(property)?.value;
   const set = (property: string) => (next: string | undefined) =>
     props.onDeclaration(property, next);
+  const isImage = value(imageProperty) !== undefined;
 
   return (
     <div className="flex flex-col gap-4 p-3">
@@ -72,11 +76,13 @@ export default function ElementProperties(props: Props) {
 
       <NameField name={rule.name} otherNames={props.otherNames} onRename={props.onRename} />
 
-      <TextTemplateField
-        value={decodeCssString(value(textProperty) ?? "") ?? ""}
-        fields={props.fields}
-        onChange={text => props.onDeclaration(textProperty, encodeCssString(text))}
-      />
+      {!isImage && (
+        <TextTemplateField
+          value={decodeCssString(value(textProperty) ?? "") ?? ""}
+          fields={props.fields}
+          onChange={text => props.onDeclaration(textProperty, encodeCssString(text))}
+        />
+      )}
 
       <div className="grid grid-cols-2 gap-x-2 gap-y-3">
         <CssValueField
@@ -103,6 +109,69 @@ export default function ElementProperties(props: Props) {
           placeholder="100mm"
           onChange={set("height")}
         />
+      </div>
+
+      {isImage ? (
+        <ImageFields value={value} set={set} assetNames={props.assetNames} />
+      ) : (
+        <TextFields value={value} set={set} onDeclaration={props.onDeclaration} />
+      )}
+    </div>
+  );
+}
+
+type ValueOf = (property: string) => string | undefined;
+type SetterOf = (property: string) => (next: string | undefined) => void;
+
+/** 画像の部品の設定。合わせ方と位置は、中の画像が部品の規則から受け継ぐ。 */
+function ImageFields(props: { value: ValueOf; set: SetterOf; assetNames: string[] }) {
+  const { value, set } = props;
+  return (
+    <div className="grid grid-cols-2 gap-x-2 gap-y-3">
+      <div className="col-span-2">
+        <CssChoiceField
+          label="画像"
+          value={value(imageProperty)}
+          options={props.assetNames.map(name => ({ value: encodeCssString(name), label: name }))}
+          onChange={next => next !== undefined && set(imageProperty)(next)}
+        />
+      </div>
+      <CssChoiceField
+        label="合わせ方"
+        value={value("object-fit")}
+        options={[
+          { value: "contain", label: "全体を収める" },
+          { value: "cover", label: "枠を埋める" },
+          { value: "", label: "引き伸ばす" },
+        ]}
+        onChange={set("object-fit")}
+      />
+      <CssChoiceField
+        label="位置"
+        value={value("object-position")}
+        options={[
+          { value: "", label: "中央" },
+          { value: "top", label: "上" },
+          { value: "bottom", label: "下" },
+          { value: "left", label: "左" },
+          { value: "right", label: "右" },
+        ]}
+        onChange={set("object-position")}
+      />
+    </div>
+  );
+}
+
+/** 文字の部品の設定。 */
+function TextFields(props: {
+  value: ValueOf;
+  set: SetterOf;
+  onDeclaration: Props["onDeclaration"];
+}) {
+  const { value, set } = props;
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-x-2 gap-y-3">
         <CssChoiceField
           label="向き"
           value={value("writing-mode")}
@@ -182,6 +251,6 @@ export default function ElementProperties(props: Props) {
         />
         1文字ずつ分ける（[data-part="char"] で1文字ずつ指定できます）
       </label>
-    </div>
+    </>
   );
 }

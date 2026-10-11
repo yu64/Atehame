@@ -26,3 +26,37 @@ describe("LayoutDocument", () => {
     expect(layout.pageSize).toEqual({ width: 100, height: 148 });
   });
 });
+
+describe("LayoutDocument の画像", () => {
+  const png = { type: "image/png", data: "iVBORw0KGgo=" } as const;
+  const css = `[data-name="ロゴ"] {
+  --atehame-image: "logo";
+}
+@media print {
+  [data-name="ロゴ"] { --atehame-image: "logo"; }
+}
+`;
+
+  test("CSS を書き換えても画像は引き継ぐ。画像を変えても解析結果は引き継ぐ", () => {
+    const layout = LayoutDocument.from(css).setAsset("logo", png);
+    const parsed = layout.parsed;
+    expect(layout.setDeclaration({ element: "ロゴ" }, "left", "1mm").assets).toBe(layout.assets);
+    expect(layout.setAsset("other", png).parsed).toBe(parsed);
+  });
+
+  test("画像の名前を変えると、参照している宣言も書き換える", () => {
+    const layout = LayoutDocument.from(css).setAsset("logo", png).renameAsset("logo", "印影");
+    expect(Object.keys(layout.assets)).toEqual(["印影"]);
+    expect(layout.css).not.toContain('"logo"');
+    expect(layout.css.match(/"印影"/g)).toHaveLength(2);
+    expect(layout.assetUsage("印影")).toEqual(["ロゴ"]);
+  });
+
+  test("同じ名前の画像があれば名前を変えない。取り除いても部品は残る", () => {
+    const layout = LayoutDocument.from(css).setAsset("logo", png).setAsset("b", png);
+    expect(layout.renameAsset("logo", "b")).toBe(layout);
+    const removed = layout.removeAsset("logo");
+    expect(Object.keys(removed.assets)).toEqual(["b"]);
+    expect(removed.element("ロゴ")).toBeDefined();
+  });
+});

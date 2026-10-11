@@ -1,6 +1,12 @@
 export { default as Designer, type DesignerProps } from "@src/features/designer/Designer";
-export { defaultPresets, postalCodePreset, textPreset } from "@src/features/designer/presets";
+export {
+  defaultPresets,
+  imagePreset,
+  postalCodePreset,
+  textPreset,
+} from "@src/features/designer/presets";
 export { useAddElement } from "@src/features/designer/hooks/useAddElement";
+export { useDesignerAssets } from "@src/features/designer/hooks/useDesignerAssets";
 export { useDesignerCss } from "@src/features/designer/hooks/useDesignerCss";
 export { useDesignerElements } from "@src/features/designer/hooks/useDesignerElements";
 export { useDesignerHistory } from "@src/features/designer/hooks/useDesignerHistory";

@@ -1,0 +1,204 @@
+import DesignerButton from "@src/features/designer/DesignerButton";
+import useSyncedText from "@src/shared/hooks/useSyncedText";
+import { formatBytes } from "@src/shared/lib/units";
+import { Input } from "@src/shared/ui/Input";
+import { useRef, useState, type DragEvent } from "react";
+
+export interface AssetItem {
+  name: string;
+  /** 表示に使う data: URL。読めない画像なら undefined。 */
+  url?: string;
+  type: string;
+  bytes: number;
+  /** この画像を使っている部品の名前。 */
+  usage: string[];
+}
+
+export interface Props {
+  items: AssetItem[];
+  totalBytes: number;
+  limits: { bytes: number; totalBytes: number };
+  /** 登録できなかったファイルの理由を返す。 */
+  onAdd: (files: File[]) => Promise<string[]>;
+  /** 差し替えられなかった理由を返す。 */
+  onReplace: (name: string, file: File) => Promise<string | undefined>;
+  onRename: (from: string, to: string) => void;
+  onRemove: (name: string) => void;
+}
+
+const accept = "image/png,image/jpeg,image/webp,image/svg+xml,.svg";
+
+/** 画像（アセット）の一覧。登録した画像は、画像の部品から名前で選ぶ。 */
+export default function AssetsPanel(props: Props) {
+  const [errors, setErrors] = useState<string[]>([]);
+  const [dragging, setDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function add(files: File[]) {
+    if (files.length === 0) return;
+    setErrors(await props.onAdd(files));
+  }
+
+  const onDrop = (event: DragEvent) => {
+    event.preventDefault();
+    setDragging(false);
+    void add([...event.dataTransfer.files]);
+  };
+
+  return (
+    <div
+      className={`flex flex-col gap-3 p-3 min-h-full ${dragging ? "bg-surface-hover" : ""}`}
+      onDragOver={event => {
+        event.preventDefault();
+        setDragging(true);
+      }}
+      onDragLeave={() => setDragging(false)}
+      onDrop={onDrop}
+    >
+      <div className="flex items-center gap-2">
+        <h2 className="font-bold text-text-primary">画像</h2>
+        <DesignerButton
+          icon="i-lucide-image-plus"
+          label="画像を追加"
+          className="ml-auto"
+          onClick={() => inputRef.current?.click()}
+        />
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          multiple
+          hidden
+          onChange={event => {
+            void add([...(event.currentTarget.files ?? [])]);
+            event.currentTarget.value = "";
+          }}
+        />
+      </div>
+      <p className="text-xs text-text-secondary">
+        PNG・JPEG・WebP・SVG を登録できます（ここへのドロップも可）。1枚{" "}
+        {formatBytes(props.limits.bytes)}
+        、合計 {formatBytes(props.limits.totalBytes)} まで。画像の部品から名前で選びます。
+      </p>
+      <p className="text-xs text-text-secondary">
+        使用量: {formatBytes(props.totalBytes)} / {formatBytes(props.limits.totalBytes)}
+      </p>
+
+      {errors.length > 0 && (
+        <ul role="alert" className="flex flex-col gap-1 text-xs text-status-error">
+          {errors.map(error => (
+            <li key={error}>{error}</li>
+          ))}
+        </ul>
+      )}
+
+      {props.items.length === 0 ? (
+        <p className="text-sm text-text-secondary">画像がありません。</p>
+      ) : (
+        <ul aria-label="画像の一覧" className="flex flex-col gap-2">
+          {props.items.map((item, index) => (
+            <AssetRow
+              // 名前で区別すると、名前を1文字打つたびに行が作り直されてフォーカスが外れる。
+              // 名前を変えても一覧の中の位置は変わらないため、位置で区別する。
+              key={index}
+              item={item}
+              otherNames={props.items.filter(other => other !== item).map(other => other.name)}
+              onReplace={async file => {
+                const error = await props.onReplace(item.name, file);
+                setErrors(error ? [error] : []);
+              }}
+              onRename={to => props.onRename(item.name, to)}
+              onRemove={() => props.onRemove(item.name)}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function AssetRow(props: {
+  item: AssetItem;
+  otherNames: string[];
+  onReplace: (file: File) => void;
+  onRename: (name: string) => void;
+  onRemove: () => void;
+}) {
+  const { item } = props;
+  const [text, setText] = useSyncedText(item.name, text => text.trim() === item.name);
+  const replaceRef = useRef<HTMLInputElement>(null);
+
+  const trimmed = text.trim();
+  const error =
+    trimmed === ""
+      ? "名前を入力してください。"
+      : props.otherNames.includes(trimmed)
+        ? "同じ名前の画像があります。"
+        : undefined;
+
+  const remove = () => {
+    const used = item.usage.length;
+    if (used > 0 && !confirm(`「${item.name}」は ${used} 個の部品で使っています。削除しますか？`)) {
+      return;
+    }
+    props.onRemove();
+  };
+
+  return (
+    <li className="flex gap-2 rounded-lg border border-surface-border p-2">
+      <div className="size-16 shrink-0 rounded bg-base flex items-center justify-center overflow-hidden">
+        {item.url ? (
+          <img src={item.url} alt="" className="max-w-full max-h-full object-contain" />
+        ) : (
+          <span className="text-xs text-status-error">表示できません</span>
+        )}
+      </div>
+      <div className="flex flex-1 min-w-0 flex-col gap-1">
+        <Input
+          type="text"
+          aria-label="画像の名前"
+          value={text}
+          error={error}
+          onChange={event => {
+            const next = event.currentTarget.value;
+            setText(next);
+            const name = next.trim();
+            if (name !== "" && name !== item.name && !props.otherNames.includes(name)) {
+              props.onRename(name);
+            }
+          }}
+        />
+        <span className="text-xs text-text-tertiary">
+          {item.type.replace("image/", "").replace("+xml", "").toUpperCase()}・
+          {formatBytes(item.bytes)}・
+          {item.usage.length > 0 ? `${item.usage.length} 個の部品で使用` : "未使用"}
+        </span>
+        <div className="flex gap-1">
+          <DesignerButton
+            icon="i-lucide-replace"
+            label="差し替え"
+            onClick={() => replaceRef.current?.click()}
+          />
+          <DesignerButton
+            icon="i-lucide-trash-2"
+            label={`${item.name} を削除`}
+            iconOnly
+            danger
+            onClick={remove}
+          />
+          <input
+            ref={replaceRef}
+            type="file"
+            accept={accept}
+            hidden
+            onChange={event => {
+              const file = event.currentTarget.files?.[0];
+              if (file) props.onReplace(file);
+              event.currentTarget.value = "";
+            }}
+          />
+        </div>
+      </div>
+    </li>
+  );
+}

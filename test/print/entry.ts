@@ -21,6 +21,7 @@ function addressLayout(preset: PaperPreset): Layout {
   const base = LayoutDocument.from(createLayout(preset).css);
   const postal = addFromPreset(base, postalCodePreset, {
     fields: ["郵便番号"],
+    assets: [],
     paper: { width, height },
   }).layout.css.replace("left: 44mm;", `left: ${width - 56}mm;`);
 

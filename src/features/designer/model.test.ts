@@ -1,6 +1,7 @@
 import { LayoutDocument } from "@src/features/designer/layoutCss";
 import {
   createLayout,
+  fromLayoutDocument,
   layoutSchema,
   paperPresetOf,
   paperSizeOf,
@@ -24,5 +25,27 @@ describe("レイアウト", () => {
   test("不正な値は拒否する", () => {
     expect(layoutSchema.safeParse({ version: 2, css: "" }).success).toBe(false);
     expect(layoutSchema.safeParse({ version: 1, css: 1 }).success).toBe(false);
+  });
+});
+
+describe("レイアウトの画像", () => {
+  const png = { type: "image/png", data: "iVBORw0KGgo=" } as const;
+
+  test("画像は保存する。なければ項目ごと省く", () => {
+    const layout = { version: 1, css: "", assets: { logo: png } } as const;
+    expect(fromLayoutDocument(toLayoutDocument(layout))).toEqual(layout);
+    expect(fromLayoutDocument(toLayoutDocument({ version: 1, css: "" }))).toEqual({
+      version: 1,
+      css: "",
+    });
+  });
+
+  test("読み込むときに、画像の形式・中身・大きさを確かめる", () => {
+    const parse = (assets: unknown) =>
+      layoutSchema.safeParse({ version: 1, css: "", assets }).success;
+    expect(parse({ logo: png })).toBe(true);
+    expect(parse({ logo: { type: "image/gif", data: png.data } })).toBe(false);
+    expect(parse({ logo: { type: "image/png", data: "<script>" } })).toBe(false);
+    expect(parse({ logo: { type: "image/png", data: "A".repeat(2_000_000) } })).toBe(false);
   });
 });

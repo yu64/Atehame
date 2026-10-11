@@ -5,10 +5,12 @@ import { parse, type AttributeSelector, type CssNode, type Declaration, type Rul
  * レイアウトの CSS の約束事。
  * - 最上位にあり、セレクタが [data-name="名前"] だけの規則を「部品」とみなす。
  * - 部品に表示する文字は --atehame-text、1文字ずつ分けるかは --atehame-split で指定する。
+ * - 画像の部品は --atehame-image で、レイアウトに登録した画像の名前を指定する。
  * - 用紙サイズは @page の size で指定する。
  */
 export const textProperty = "--atehame-text";
 export const splitProperty = "--atehame-split";
+export const imageProperty = "--atehame-image";
 
 export interface TextRange {
   start: number;

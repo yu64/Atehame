@@ -1,5 +1,10 @@
 import DesignerButton from "@src/features/designer/DesignerButton";
-import { decodeCssString, textProperty, type ElementRule } from "@src/features/designer/layoutCss";
+import {
+  decodeCssString,
+  imageProperty,
+  textProperty,
+  type ElementRule,
+} from "@src/features/designer/layoutCss";
 
 export interface Props {
   elements: ElementRule[];
@@ -25,7 +30,11 @@ export default function ElementList(props: Props) {
     <ul aria-label="部品の一覧" className="flex flex-col gap-1 p-2">
       {elements.map(element => {
         const selected = element.name === props.selected;
-        const text = decodeCssString(element.declarations.get(textProperty)?.value ?? "") ?? "";
+        const image = element.declarations.get(imageProperty)?.value;
+        const text =
+          image !== undefined
+            ? `画像: ${decodeCssString(image) ?? ""}`
+            : (decodeCssString(element.declarations.get(textProperty)?.value ?? "") ?? "");
 
         return (
           <li

@@ -1,4 +1,12 @@
+import {
+  assetBytes,
+  assetLimits,
+  isValidAsset,
+  totalAssetBytes,
+  type Assets,
+} from "@src/features/designer/assets/assets";
 import { LayoutDocument, type PageSize } from "@src/features/designer/layoutCss";
+import { imageTypes } from "@src/shared/lib/imageFile";
 import { z } from "zod";
 
 /**
@@ -8,6 +16,8 @@ import { z } from "zod";
 export interface Layout {
   version: 1;
   css: string;
+  /** 画像。名前ごとに持ち、部品は `--atehame-image: "名前";` で参照する。なければ省く。 */
+  assets?: Assets;
 }
 
 export type PaperPreset = "hagaki" | "nagagata3" | "nagagata4" | "kakugata2" | "a4";
@@ -36,12 +46,13 @@ export function paperSizeOf(layoutDocument: LayoutDocument): PageSize {
 
 /** レイアウトの CSS を扱う文書にする。 */
 export function toLayoutDocument(layout: Layout): LayoutDocument {
-  return LayoutDocument.from(layout.css);
+  return LayoutDocument.from(layout.css, layout.assets);
 }
 
 /** 文書を保存用のレイアウトにする。 */
 export function fromLayoutDocument(layoutDocument: LayoutDocument): Layout {
-  return { version: 1, css: layoutDocument.css };
+  const { css, assets } = layoutDocument;
+  return Object.keys(assets).length === 0 ? { version: 1, css } : { version: 1, css, assets };
 }
 
 /** レイアウトの概要。CSS の中身を知らない側（保存画面など）に見せる。 */
@@ -61,7 +72,19 @@ export function paperPresetOf(size: PageSize): PaperPreset | undefined {
 
 export const maxLayoutCssLength = 100_000;
 
+const assetSchema = z
+  .object({ type: z.enum(imageTypes), data: z.string() })
+  .refine(isValidAsset, "画像の形式が正しくありません。")
+  .refine(asset => assetBytes(asset) <= assetLimits.bytes, "画像が大きすぎます。");
+
 export const layoutSchema = z.object({
   version: z.literal(1),
   css: z.string().max(maxLayoutCssLength),
+  assets: z
+    .record(z.string().min(1).max(assetLimits.nameLength), assetSchema)
+    .refine(
+      assets => totalAssetBytes(assets) <= assetLimits.totalBytes,
+      "画像の合計が大きすぎます。",
+    )
+    .optional(),
 });

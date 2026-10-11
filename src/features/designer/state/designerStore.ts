@@ -9,6 +9,7 @@ import {
   setPaperSize,
   type ElementRect,
 } from "@src/features/designer/state/operations";
+import type { LayoutAsset } from "@src/features/designer/assets/assets";
 import type { ElementPreset, RevealRequest } from "@src/features/designer/types";
 import {
   canRedo,
@@ -20,7 +21,7 @@ import {
 } from "@src/shared/lib/history";
 import { Store } from "@src/shared/lib/store";
 
-export type SidePanelTab = "properties" | "list" | "css";
+export type SidePanelTab = "properties" | "list" | "assets" | "css";
 
 export interface DesignerState {
   history: History<LayoutDocument>;
@@ -121,9 +122,9 @@ export class DesignerStore extends Store<DesignerState> {
     return this.getState().history.present;
   }
 
-  /** 外から渡された文書を受け取る。知らせた文書と同じ CSS なら何もしない。 */
+  /** 外から渡された文書を受け取る。知らせた文書と同じ内容（CSS と画像）なら何もしない。 */
   receive(layout: LayoutDocument) {
-    if (layout.css === this.#committed.css) return;
+    if (layout.css === this.#committed.css && layout.assets === this.#committed.assets) return;
     this.#committed = layout;
     this.#history({ type: "reset", present: layout });
   }
@@ -151,11 +152,20 @@ export class DesignerStore extends Store<DesignerState> {
     this.#set(state => (state.selectedId === id ? state : { ...state, selectedId: id }));
   };
 
-  /** 雛形から部品を追加して選択し、設定タブを開く。 */
+  /**
+   * 雛形から部品を追加して選択し、設定タブを開く。
+   * 画像が必要な雛形で、画像がまだ登録されていなければ、追加せずに画像タブを開く。
+   */
   add = (preset: ElementPreset, fields: string[], key?: string) => {
+    const assets = Object.keys(this.layout.assets);
+    if (preset.requiresAsset && assets.length === 0) {
+      this.setTab("assets");
+      return;
+    }
     const result = addFromPreset(this.layout, preset, {
       key,
       fields,
+      assets,
       paper: this.paperSize(),
     });
     this.#edit(() => result.layout, undefined, { tab: "properties" });
@@ -208,6 +218,20 @@ export class DesignerStore extends Store<DesignerState> {
       cssReveal: line !== undefined ? { line, key: Date.now() } : state.cssReveal,
     }));
   };
+
+  // 画像
+
+  /** 画像を登録する。同じ名前があれば差し替える。 */
+  setAsset = (name: string, asset: LayoutAsset) =>
+    this.#edit(layout => layout.setAsset(name, asset));
+
+  /** 画像の名前を変え、参照している部品も書き換える。 */
+  renameAsset = (from: string, to: string) =>
+    // 名前は1文字打つたびに変わるため、名前ではなく「画像の名前の変更」でまとめる。
+    this.#edit(layout => layout.renameAsset(from, to), "asset-rename");
+
+  /** 画像を取り除く。参照している部品は「画像がありません」になる。 */
+  removeAsset = (name: string) => this.#edit(layout => layout.removeAsset(name));
 
   // ドラッグ
 

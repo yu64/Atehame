@@ -23,3 +23,10 @@ export function lengthToMm(value: string): number | undefined {
 export function formatMm(value: number): string {
   return `${Math.round(value * 100) / 100}mm`;
 }
+
+/** バイト数を読みやすい単位にする（例: 820KB、1.2MB）。 */
+export function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes}B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)}KB`;
+  return `${Math.round((bytes / 1024 / 1024) * 10) / 10}MB`;
+}

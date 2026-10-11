@@ -116,3 +116,26 @@ describe("ページの描画", () => {
     ]);
   });
 });
+
+describe("画像の部品", () => {
+  const png = { type: "image/png", data: "iVBORw0KGgo=" } as const;
+  const css = `[data-name="ロゴ"] { --atehame-image: "logo"; object-fit: contain; }`;
+
+  test("登録した画像を img で表示する（src は検証した data: URL だけ）", () => {
+    const page = renderPage(doc, layout(css).setAsset("logo", png), {});
+    const img = page.querySelector<HTMLImageElement>('[data-name="ロゴ"] > img[data-part="image"]');
+    expect(img?.getAttribute("src")).toBe("data:image/png;base64,iVBORw0KGgo=");
+    expect(img?.getAttribute("alt")).toBe("");
+  });
+
+  test("画像が見つからなければ、デザイナーでは名前を薄く表示し、印刷では何も表示しない", () => {
+    expect(renderPage(doc, layout(css), {}, { placeholder: true }).textContent).toContain("logo");
+    const printed = renderPage(doc, layout(css), {});
+    expect(printed.querySelector('[data-name="ロゴ"]')?.childElementCount).toBe(0);
+  });
+
+  test("見つからない画像を警告する", () => {
+    expect(applyLayoutStyles(doc, layout(css))).toContain("画像「logo」が登録されていません。");
+    expect(applyLayoutStyles(doc, layout(css).setAsset("logo", png))).toEqual([]);
+  });
+});

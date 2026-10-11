@@ -1,13 +1,17 @@
+import { emptyAssets, type Assets, type LayoutAsset } from "@src/features/designer/assets/assets";
+import { decodeCssString } from "@src/features/designer/layoutCss/cssString";
 import {
   addElementRule,
   duplicateElementRule,
   moveElementRule,
   renameElement,
+  replaceStringValues,
   setDeclaration,
   setDeclarations,
   type RuleTarget,
 } from "@src/features/designer/layoutCss/edit";
 import {
+  imageProperty,
   parseLayoutCss,
   readPageSize,
   type ElementRule,
@@ -17,7 +21,7 @@ import {
 import { removeElementRule } from "@src/features/designer/layoutCss/remove";
 
 /**
- * レイアウトの CSS と、その解析結果。
+ * レイアウトの CSS と、その解析結果。画像（アセット）も一緒に持つ。
  *
  * 不変（immutable）で、書き換えると新しい文書を返す。CSS が変わらなければ同じ文書を返すため、
  * 参照の比較で変更の有無がわかる（React の再描画や、元に戻すの履歴はこれを前提にしている）。
@@ -25,14 +29,18 @@ import { removeElementRule } from "@src/features/designer/layoutCss/remove";
  */
 export class LayoutDocument {
   readonly css: string;
+  /** 画像。部品は `--atehame-image: "名前";` で参照する。 */
+  readonly assets: Assets;
   #parsed: LayoutCss | undefined;
 
-  private constructor(css: string) {
+  private constructor(css: string, assets: Assets, parsed?: LayoutCss) {
     this.css = css;
+    this.assets = assets;
+    this.#parsed = parsed;
   }
 
-  static from(css: string): LayoutDocument {
-    return new LayoutDocument(css);
+  static from(css: string, assets: Assets = emptyAssets): LayoutDocument {
+    return new LayoutDocument(css, assets);
   }
 
   /** 解析結果。位置の情報はこの文書の css に対するもの。 */
@@ -57,7 +65,43 @@ export class LayoutDocument {
 
   /** CSS を置き換えた文書。同じ CSS なら自身を返す。 */
   withCss(css: string): LayoutDocument {
-    return css === this.css ? this : new LayoutDocument(css);
+    return css === this.css ? this : new LayoutDocument(css, this.assets);
+  }
+
+  /** 画像を置き換えた文書。CSS はそのままなので、解析結果も引き継ぐ。 */
+  withAssets(assets: Assets): LayoutDocument {
+    return assets === this.assets ? this : new LayoutDocument(this.css, assets, this.#parsed);
+  }
+
+  /** 画像を登録する。同じ名前があれば置き換える（差し替え）。 */
+  setAsset(name: string, asset: LayoutAsset): LayoutDocument {
+    return this.withAssets({ ...this.assets, [name]: asset });
+  }
+
+  /** 画像を取り除く。参照している部品はそのまま残る（画像が見つからない状態になる）。 */
+  removeAsset(name: string): LayoutDocument {
+    if (!(name in this.assets)) return this;
+    const { [name]: _removed, ...rest } = this.assets;
+    return this.withAssets(rest);
+  }
+
+  /** 画像の名前を変え、参照している部品の `--atehame-image` も書き換える。 */
+  renameAsset(from: string, to: string): LayoutDocument {
+    const asset = this.assets[from];
+    if (asset === undefined || from === to || to in this.assets) return this;
+    const assets = Object.fromEntries(
+      Object.entries(this.assets).map(([name, value]) => [name === from ? to : name, value]),
+    );
+    return LayoutDocument.from(replaceStringValues(this.css, imageProperty, from, to), assets);
+  }
+
+  /** 画像を参照している部品の名前。 */
+  assetUsage(name: string): string[] {
+    return this.elements
+      .filter(
+        element => decodeCssString(element.declarations.get(imageProperty)?.value ?? "") === name,
+      )
+      .map(element => element.name);
   }
 
   /** 宣言の値を設定する。value が undefined なら宣言を取り除く。 */

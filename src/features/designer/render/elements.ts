@@ -1,5 +1,7 @@
+import { assetDataUrl, type Assets } from "@src/features/designer/assets/assets";
 import {
   decodeCssString,
+  imageProperty,
   parseTextTemplate,
   splitProperty,
   textProperty,
@@ -35,10 +37,17 @@ export function renderElement(
   rule: ElementRule,
   values: Values,
   options: RenderOptions,
+  assets: Assets,
 ): HTMLElement {
   const element = doc.createElement("div");
   element.className = "atehame-element";
   element.dataset.name = rule.name;
+
+  const image = rule.declarations.get(imageProperty);
+  if (image !== undefined) {
+    renderImage(doc, element, decodeCssString(image.value) ?? "", options, assets);
+    return element;
+  }
 
   const template = decodeCssString(rule.declarations.get(textProperty)?.value ?? "") ?? "";
   const pieces = fillTemplate(template, values, options);
@@ -81,6 +90,36 @@ export function renderElement(
   }
   element.append(content);
   return element;
+}
+
+/**
+ * 画像を表示する。src は登録した画像から検証して組み立てた data: URL だけを使う。
+ * 画像が見つからなければ、デザイナーでは名前を薄く表示し、印刷では何も表示しない。
+ */
+function renderImage(
+  doc: Document,
+  element: HTMLElement,
+  name: string,
+  options: RenderOptions,
+  assets: Assets,
+) {
+  const asset = Object.hasOwn(assets, name) ? assets[name] : undefined;
+  const url = asset ? assetDataUrl(asset) : undefined;
+  if (url === undefined) {
+    if (!options.placeholder) return;
+    const span = doc.createElement("span");
+    span.dataset.part = "content";
+    span.className = "atehame-placeholder";
+    span.textContent = `画像がありません（${name}）`;
+    element.append(span);
+    return;
+  }
+  const img = doc.createElement("img");
+  img.dataset.part = "image";
+  img.alt = "";
+  img.draggable = false;
+  img.src = url;
+  element.append(img);
 }
 
 /** {名前} に値を埋め込む。値がない場合、デザイナーでは名前を表示する。 */

@@ -4,6 +4,7 @@ export {
   duplicateElementRule,
   moveElementRule,
   renameElement,
+  replaceStringValues,
   selectorFor,
   setDeclaration,
   setDeclarations,
@@ -12,6 +13,7 @@ export {
 export { LayoutDocument } from "@src/features/designer/layoutCss/LayoutDocument";
 export { removeElementRule } from "@src/features/designer/layoutCss/remove";
 export {
+  imageProperty,
   parseLayoutCss,
   readPageSize,
   splitProperty,

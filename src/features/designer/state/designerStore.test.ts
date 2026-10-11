@@ -1,5 +1,5 @@
 import { LayoutDocument } from "@src/features/designer/layoutCss";
-import { textPreset } from "@src/features/designer/presets";
+import { imagePreset, textPreset } from "@src/features/designer/presets";
 import { DesignerStore } from "@src/features/designer/state/designerStore";
 import { describe, expect, test, vi } from "vitest";
 
@@ -115,5 +115,31 @@ describe("デザイナーの状態", () => {
     unsubscribe();
     store.setZoom(1);
     expect(listener).toHaveBeenCalledTimes(1);
+  });
+
+  test("画像の登録・名前の変更・削除は、元に戻せる", () => {
+    const { store } = createStore();
+    const png = { type: "image/png", data: "iVBORw0KGgo=" } as const;
+    store.setAsset("logo", png);
+    store.renameAsset("logo", "印影");
+    expect(Object.keys(store.layout.assets)).toEqual(["印影"]);
+    store.undo();
+    expect(Object.keys(store.layout.assets)).toEqual(["logo"]);
+    store.removeAsset("logo");
+    expect(store.layout.assets).toEqual({});
+    store.undo();
+    expect(store.layout.assets).toEqual({ logo: png });
+  });
+
+  test("画像が必要な雛形は、画像がなければ追加せずに画像タブを開く", () => {
+    const { store, onCommit } = createStore();
+    store.add(imagePreset, []);
+    expect(store.getState().tab).toBe("assets");
+    expect(onCommit).not.toHaveBeenCalled();
+
+    store.setAsset("logo", { type: "image/png", data: "iVBORw0KGgo=" });
+    store.add(imagePreset, []);
+    expect(store.getState().selected).toBe("画像");
+    expect(store.layout.assetUsage("logo")).toEqual(["画像"]);
   });
 });

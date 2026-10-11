@@ -1,8 +1,16 @@
+import {
+  assetBytes,
+  assetDataUrl,
+  assetLimits,
+  totalAssetBytes,
+} from "@src/features/designer/assets/assets";
+import { useDesignerAssets } from "@src/features/designer/hooks/useDesignerAssets";
 import { useDesignerCss } from "@src/features/designer/hooks/useDesignerCss";
 import { useDesignerElements } from "@src/features/designer/hooks/useDesignerElements";
 import { useDesignerPaper } from "@src/features/designer/hooks/useDesignerPaper";
 import { useDesignerTab } from "@src/features/designer/hooks/useDesignerTab";
 import { useSelectedElement } from "@src/features/designer/hooks/useSelectedElement";
+import AssetsPanel from "@src/features/designer/properties/AssetsPanel";
 import CssPanel from "@src/features/designer/properties/CssPanel";
 import ElementList from "@src/features/designer/properties/ElementList";
 import ElementProperties from "@src/features/designer/properties/ElementProperties";
@@ -10,11 +18,12 @@ import PaperProperties from "@src/features/designer/properties/PaperProperties";
 import { useDesignerConfig } from "@src/features/designer/state/DesignerContext";
 import type { SidePanelTab } from "@src/features/designer/state/designerStore";
 import PaneResizer from "@src/shared/ui/PaneResizer";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 const tabs: Array<{ id: SidePanelTab; label: string }> = [
   { id: "properties", label: "設定" },
   { id: "list", label: "一覧" },
+  { id: "assets", label: "画像" },
   { id: "css", label: "CSS" },
 ];
 
@@ -79,6 +88,7 @@ export default function SidePanel(props: Props) {
       <div className="flex-1 min-h-0 overflow-auto">
         {tab === "properties" && <PropertiesTab />}
         {tab === "list" && <ListTab />}
+        {tab === "assets" && <AssetsTab />}
         {tab === "css" && <CssTab />}
       </div>
     </aside>
@@ -89,6 +99,8 @@ export default function SidePanel(props: Props) {
 function PropertiesTab() {
   const element = useSelectedElement();
   const { fields } = useDesignerConfig();
+  const { assets } = useDesignerAssets();
+  const assetNames = useMemo(() => Object.keys(assets), [assets]);
   if (!element) return <PaperTab />;
 
   return (
@@ -98,6 +110,7 @@ function PropertiesTab() {
       rule={element.rule}
       otherNames={element.otherNames}
       fields={fields}
+      assetNames={assetNames}
       onDeclaration={element.setDeclaration}
       onRename={element.rename}
       onRemove={element.remove}
@@ -121,6 +134,35 @@ function ListTab() {
       selected={list.selected}
       onSelect={list.select}
       onRemove={list.remove}
+    />
+  );
+}
+
+function AssetsTab() {
+  const assets = useDesignerAssets();
+  // 使っている部品は今の文書から引くため、部品が変わったときも作り直す。
+  const { elements } = useDesignerElements();
+  const items = useMemo(
+    () =>
+      Object.entries(assets.assets).map(([name, asset]) => ({
+        name,
+        url: assetDataUrl(asset),
+        type: asset.type,
+        bytes: assetBytes(asset),
+        usage: assets.usage(name),
+      })),
+    // usage は assets から作った関数で、今の文書を読むため、elements を目印にする。
+    [assets.assets, elements],
+  );
+  return (
+    <AssetsPanel
+      items={items}
+      totalBytes={totalAssetBytes(assets.assets)}
+      limits={assetLimits}
+      onAdd={assets.add}
+      onReplace={assets.replace}
+      onRename={assets.rename}
+      onRemove={assets.remove}
     />
   );
 }

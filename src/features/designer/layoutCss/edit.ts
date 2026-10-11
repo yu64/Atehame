@@ -1,4 +1,4 @@
-import { encodeCssString } from "@src/features/designer/layoutCss/cssString";
+import { decodeCssString, encodeCssString } from "@src/features/designer/layoutCss/cssString";
 import {
   dataNameOf,
   parseCss,
@@ -149,6 +149,31 @@ export function renameElement(css: string, from: string, to: string): string {
     enter(node) {
       if (dataNameOf(node) !== from || !node.value?.loc) return;
       ranges.push({ start: node.value.loc.start.offset, end: node.value.loc.end.offset });
+    },
+  });
+  return replaceRanges(css, ranges, encodeCssString(to));
+}
+
+/**
+ * 文字列を値に持つ宣言（`--atehame-image: "名前";` など）のうち、値が from のものを to に書き換える。
+ * 部品の規則以外（@media の中など）に書いたものも書き換える。
+ */
+export function replaceStringValues(
+  css: string,
+  property: string,
+  from: string,
+  to: string,
+): string {
+  if (from === to) return css;
+  const ranges: TextRange[] = [];
+  walk(parseCss(css), {
+    visit: "Declaration",
+    enter(node) {
+      if (node.property !== property || node.value.type !== "Raw" || !node.value.loc) return;
+      const raw = css.slice(node.value.loc.start.offset, node.value.loc.end.offset);
+      if (decodeCssString(raw.trim()) !== from) return;
+      const start = node.value.loc.start.offset + (raw.length - raw.trimStart().length);
+      ranges.push({ start, end: start + raw.trim().length });
     },
   });
   return replaceRanges(css, ranges, encodeCssString(to));

@@ -1,4 +1,8 @@
-import type { LayoutDocument } from "@src/features/designer/layoutCss";
+import {
+  decodeCssString,
+  imageProperty,
+  type LayoutDocument,
+} from "@src/features/designer/layoutCss";
 import { paperSizeOf } from "@src/features/designer/model";
 import {
   renderElement,
@@ -30,6 +34,10 @@ html, body { margin: 0; padding: 0; background: #fff; color: #000; }
   white-space: pre-wrap; overflow-wrap: anywhere;
 }
 :where(.atehame-tcy) { text-combine-upright: all; }
+:where(.atehame-element > [data-part="image"]) {
+  position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+  object-fit: inherit; object-position: inherit;
+}
 :where(.atehame-placeholder) { color: #9ca3af; }
 @media print {
   .atehame-page { break-after: page; }
@@ -64,7 +72,20 @@ export function applyLayoutStyles(doc: Document, layout: LayoutDocument): string
 
   const sanitized = sanitizeCss(layout.css);
   setStyleText(doc, "atehame-author", sanitized.css);
-  return sanitized.warnings;
+  return [...sanitized.warnings, ...missingAssetWarnings(layout)];
+}
+
+/** 部品が参照している画像のうち、登録されていないものの警告。 */
+function missingAssetWarnings(layout: LayoutDocument): string[] {
+  const names = new Set(
+    layout.elements
+      .map(element => element.declarations.get(imageProperty)?.value)
+      .filter(value => value !== undefined)
+      .map(value => decodeCssString(value) ?? ""),
+  );
+  return [...names]
+    .filter(name => !Object.hasOwn(layout.assets, name))
+    .map(name => `画像「${name}」が登録されていません。`);
 }
 
 /** 1ページ分の要素を組み立てる。部品は CSS の記述順に並べる。 */
@@ -77,7 +98,7 @@ export function renderPage(
   const page = doc.createElement("div");
   page.className = "atehame-page";
   for (const rule of layout.elements) {
-    page.append(renderElement(doc, rule, values, options));
+    page.append(renderElement(doc, rule, values, options, layout.assets));
   }
   return page;
 }
