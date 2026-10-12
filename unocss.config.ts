@@ -149,7 +149,9 @@ export default defineConfig({
         mono: "Fira Code:400,500",
       },
     }),
-    presetDaisy(),
+    // アプリの配色はいまは明るいものだけのため、daisyUI も prefers-color-scheme で
+    // 暗い配色に切り替わらないよう light に固定する。
+    presetDaisy({ themes: ["light --default"] }),
     presetTheme({
       theme: {
         dark: themeConfig.dark,
