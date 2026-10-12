@@ -1,11 +1,14 @@
 import { Store } from "@src/shared/lib/store";
 import { describe, expect, test, vi } from "vitest";
 
+/** テスト用の数を数える状態。 */
 class Counter extends Store<{ count: number }> {
   constructor() {
     super({ count: 0 });
   }
+  /** 数を1増やす。 */
   increment = () => this.replaceState({ count: this.getState().count + 1 });
+  /** 同じ状態のまま更新する（購読者には知らせない）。 */
   keep = () => this.replaceState(this.getState());
 }
 

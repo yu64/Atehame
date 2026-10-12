@@ -1,6 +1,9 @@
 import { lengthToMm } from "@src/shared/lib/units";
 import { type AttributeSelector, type CssNode, type Declaration, parse, type Rule } from "css-tree";
 
+// #############################################################################
+// MARK: 約束事
+
 /**
  * レイアウトの CSS の約束事。
  * - 最上位にあり、セレクタが [data-name="名前"] だけの規則を「部品」とみなす。
@@ -11,6 +14,9 @@ import { type AttributeSelector, type CssNode, type Declaration, parse, type Rul
 export const textProperty = "--atehame-text";
 export const splitProperty = "--atehame-split";
 export const imageProperty = "--atehame-image";
+
+// #############################################################################
+// MARK: 解析の結果
 
 export interface TextRange {
   start: number;
@@ -58,6 +64,9 @@ export interface LayoutCss {
   /** @page の規則（最初のもの）。 */
   page?: RuleInfo;
 }
+
+// #############################################################################
+// MARK: 解析
 
 /**
  * 位置付きで CSS を解析する。書きかけの CSS も解析できる範囲で読む。
@@ -116,6 +125,7 @@ function elementNameOf(rule: Rule): string | undefined {
   return dataNameOf(attribute);
 }
 
+/** 規則のセレクタ・範囲・宣言を読む。中身が読めなければ undefined。 */
 function readRule(css: string, node: CssNode, block: CssNode): RuleInfo | undefined {
   if (!node.loc || !block.loc || block.type !== "Block") return undefined;
 
@@ -143,6 +153,7 @@ function readRule(css: string, node: CssNode, block: CssNode): RuleInfo | undefi
   };
 }
 
+/** 宣言の名前・値・範囲を読む。値のない宣言は undefined。 */
 function readDeclaration(css: string, node: Declaration): DeclarationInfo | undefined {
   if (!node.loc) return undefined;
   const property = (node.property.startsWith("--") ? node.property : node.property.toLowerCase());
@@ -170,6 +181,9 @@ function readDeclaration(css: string, node: Declaration): DeclarationInfo | unde
     valueRange,
   };
 }
+
+// #############################################################################
+// MARK: 用紙
 
 const namedPageSizes: Record<string, [number, number]> = {
   a3: [297, 420],

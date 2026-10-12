@@ -3,6 +3,9 @@ import { Button } from "@src/shared/ui/Button";
 import { DropdownMenu } from "@src/shared/ui/DropdownMenu";
 import type { Key, ReactNode } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface EditableListProps<T> {
   items: T[];
   getKey: (item: T) => Key;
@@ -13,7 +16,24 @@ export interface EditableListProps<T> {
   onChange: (items: T[]) => void;
 }
 
+interface CardProps {
+  label: string;
+  first: boolean;
+  last: boolean;
+  children: ReactNode;
+  onPrev: () => void;
+  onNext: () => void;
+  onAddBefore: () => void;
+  onAddAfter: () => void;
+  onRemove: () => void;
+}
+
+// #############################################################################
+// MARK: コンポーネント
+
+/** 項目を追加・削除・並べ替えできる一覧。項目の中身は children で描く。 */
 export function EditableList<T>(props: EditableListProps<T>) {
+  /** index の位置に新しい項目を追加する。 */
   function addAt(index: number) {
     props.onChange(insertAt(props.items, index, props.dataFactory(index)));
   }
@@ -49,17 +69,8 @@ export function EditableList<T>(props: EditableListProps<T>) {
   );
 }
 
-interface CardProps {
-  label: string;
-  first: boolean;
-  last: boolean;
-  children: ReactNode;
-  onPrev: () => void;
-  onNext: () => void;
-  onAddBefore: () => void;
-  onAddAfter: () => void;
-  onRemove: () => void;
-}
+// #############################################################################
+// MARK: 内部部品
 
 /** リスト専用のカード。内容の種類や入力欄の配置には依存しない。 */
 function Card(props: CardProps) {

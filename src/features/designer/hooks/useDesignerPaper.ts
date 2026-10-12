@@ -7,6 +7,9 @@ import {
 import { selectLayout } from "@src/features/designer/state/designerStore";
 import { useMemo } from "react";
 
+// #############################################################################
+// MARK: フック
+
 /** 用紙の大きさ（mm）。 */
 export function useDesignerPaper(): { size: PageSize; setSize: (size: PageSize) => void } {
   const store = useDesignerStore();

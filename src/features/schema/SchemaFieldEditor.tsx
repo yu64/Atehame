@@ -2,11 +2,18 @@ import { type FieldType, fieldTypeLabels, type SchemaField } from "@src/features
 import { Input } from "@src/shared/ui/Input";
 import { Select } from "@src/shared/ui/Select";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   value: SchemaField;
   onChange: (value: SchemaField) => void;
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** カラム1つの設定（名前・データ型・メモ）。 */
 export function SchemaFieldEditor(props: Props) {
   return (
     <div

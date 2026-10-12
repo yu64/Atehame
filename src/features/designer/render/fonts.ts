@@ -1,3 +1,11 @@
+// #############################################################################
+// MARK: 型定義
+
+export type FontKey = keyof typeof fontVariables;
+
+// #############################################################################
+// MARK: 定数
+
 /**
  * テンプレートの CSS で使えるフォントの変数。フォントファイルは配信せず、閲覧者の端末のフォントを使う。
  * MS明朝などの Windows 付属フォントは、CSS で名前を指定して使うことは許可されているが、
@@ -18,10 +26,11 @@ export const fontVariables = {
   },
 } as const;
 
-export type FontKey = keyof typeof fontVariables;
-
 /** CSS でフォントを指定していない部品のフォント。 */
 export const defaultFont: FontKey = "mincho";
+
+// #############################################################################
+// MARK: 関数
 
 /** font-family に指定する値（例: var(--atehame-font-mincho)）。 */
 export function fontFamilyValue(key: FontKey): string {

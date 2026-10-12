@@ -1,6 +1,9 @@
 import { layoutWarnings } from "@src/features/designer";
 import { type Template, toFileName } from "@src/features/template/model";
 
+// #############################################################################
+// MARK: 関数
+
 /**
  * 保存の前に知らせる問題（保存はできるが、使うときに困るもの）。
  * 加工のコードの実行結果は、実行エンジンが要るため含めない（保存画面で合わせる）。

@@ -7,11 +7,18 @@ import { UseDialog } from "@src/features/home/UseDialog";
 import { SelectCard } from "@src/shared/ui/SelectCard";
 import { useState } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 type HomeDialog = "standard" | "create" | "use";
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** トップ。3つの使い方から選び、それぞれのダイアログで始め方を選ぶ。 */
 export function HomePage() {
   const [dialog, setDialog] = useState<HomeDialog>();
+  /** 開いているダイアログを閉じる。 */
   function close() {
     setDialog(undefined);
   }

@@ -7,6 +7,9 @@ import { usingTemplateAtom } from "@src/features/use/store";
 import { useAtomValue } from "jotai";
 import { navigate } from "vike/client/router";
 
+// #############################################################################
+// MARK: コンポーネント
+
 /** テンプレートを使う画面。CSV を入れてプレビュー・出力する（準備中）。 */
 export function UsePage() {
   const template = useAtomValue(usingTemplateAtom);

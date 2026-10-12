@@ -1,5 +1,8 @@
 import { parse } from "css-tree";
 
+// #############################################################################
+// MARK: 関数
+
 /** 文字列を CSS の文字列（"..."）として書ける形にする。改行は \A にする。 */
 export function encodeCssString(value: string): string {
   const escaped = value

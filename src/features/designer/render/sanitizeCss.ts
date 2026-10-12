@@ -1,10 +1,16 @@
 import { type CssNode, generate, type List, type ListItem, parse, walk } from "css-tree";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface SanitizedCss {
   css: string;
   /** 取り除いた記述の説明。作成者に表示する。 */
   warnings: string[];
 }
+
+// #############################################################################
+// MARK: 定数
 
 /** 外部の読み込みにつながる @ 規則。 */
 const blockedAtRules = new Set(["import", "font-face", "namespace", "charset"]);
@@ -33,6 +39,9 @@ const blockedFunctions = new Set([
 ]);
 
 export const maxCssLength = 100_000;
+
+// #############################################################################
+// MARK: 関数
 
 /**
  * テンプレートの CSS から、外部への通信につながる記述を取り除く。
@@ -90,15 +99,6 @@ export function sanitizeCss(source: string): SanitizedCss {
   return { css: generate(ast), warnings: [...warnings] };
 }
 
-function loadsResource(declaration: CssNode): boolean {
-  let found = false;
-  walk(declaration, node => {
-    if (node.type === "Url") found = true;
-    if (node.type === "Function" && blockedFunctions.has(normalizeName(node.name))) found = true;
-  });
-  return found;
-}
-
 /**
  * 名前のエスケープ（例: u\72 l）を戻して小文字にする。
  * ブラウザはエスケープを戻してから解釈するため、判定も同じ形で行う。
@@ -109,4 +109,17 @@ export function normalizeName(name: string): string {
       (hex ? String.fromCodePoint(parseInt(hex, 16)) : char),
     )
     .toLowerCase();
+}
+
+// #############################################################################
+// MARK: 内部関数
+
+/** 外部の資源（url() や @import）を読み込む宣言か。 */
+function loadsResource(declaration: CssNode): boolean {
+  let found = false;
+  walk(declaration, node => {
+    if (node.type === "Url") found = true;
+    if (node.type === "Function" && blockedFunctions.has(normalizeName(node.name))) found = true;
+  });
+  return found;
 }

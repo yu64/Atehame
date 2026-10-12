@@ -1,5 +1,8 @@
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props extends Omit<ComponentPropsWithoutRef<"button">, "children"> {
   /** 操作の名前。iconOnly のときは、ツールチップと読み上げに使う。 */
   label: ReactNode;
@@ -14,7 +17,13 @@ export interface Props extends Omit<ComponentPropsWithoutRef<"button">, "childre
   size?: "sm" | "md";
 }
 
+// #############################################################################
+// MARK: 定数
+
 const iconSizes = { sm: "size-4", md: "size-5" };
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * ボタン。見た目は variant・size・danger で選ぶ。

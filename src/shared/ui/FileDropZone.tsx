@@ -1,6 +1,9 @@
 import { Button } from "@src/shared/ui/Button";
 import { type ReactNode, useRef, useState } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   /** 選べるファイルの種類（input の accept と同じ書き方）。 */
   accept?: string;
@@ -14,11 +17,15 @@ export interface Props {
   disabled?: boolean;
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
 /** ファイルを選ぶか、ドロップして受け取る場所。 */
 export function FileDropZone(props: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
+  /** 受け取ったファイルを知らせる（複数を受け付けない場合は1つだけ）。 */
   function receive(files: File[]) {
     if (props.disabled || files.length === 0) return;
     props.onFiles(props.multiple ? files : files.slice(0, 1));

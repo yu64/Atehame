@@ -6,6 +6,9 @@ import {
 import { selectLayout } from "@src/features/designer/state/designerStore";
 import { useMemo } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface SelectedElement {
   rule: ElementRule;
   /** 部品の固有の ID。名前を変えても変わらない（設定欄の作り直しの目印に使う）。 */
@@ -19,6 +22,9 @@ export interface SelectedElement {
   reorder: (to: "front" | "back") => void;
   showCss: () => void;
 }
+
+// #############################################################################
+// MARK: フック
 
 /** 選択中の部品と、その部品だけへの操作。選択していなければ undefined。 */
 export function useSelectedElement(): SelectedElement | undefined {

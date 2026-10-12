@@ -6,12 +6,18 @@ import {
 } from "@src/features/designer/layoutCss";
 import { Button } from "@src/shared/ui/Button";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   elements: ElementRule[];
   selected: string | undefined;
   onSelect: (name: string) => void;
   onRemove: (name: string) => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 部品の一覧。前面の部品（CSS で後ろに書かれた部品）を上に並べる。 */
 export function ElementList(props: Props) {

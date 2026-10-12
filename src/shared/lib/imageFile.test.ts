@@ -7,6 +7,7 @@ import {
 } from "@src/shared/lib/imageFile";
 import { describe, expect, test } from "vitest";
 
+/** 文字列を UTF-8 のバイト列にする。 */
 function text(value: string) {
   return new TextEncoder().encode(value);
 }

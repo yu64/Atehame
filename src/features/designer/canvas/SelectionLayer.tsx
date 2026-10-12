@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import Moveable from "react-moveable";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   /** 部品の名前（重なり順）。 */
   names: string[];
@@ -20,6 +23,9 @@ export interface Props {
   /** ドラッグの終了。直前までの変更を1回分として記録する。 */
   onCommit: () => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * 用紙の上に重ねる透明な操作レイヤー。部品の枠は、描画した結果を測った位置に置く。
@@ -50,6 +56,7 @@ export function SelectionLayer(props: Props) {
     .filter(([name]) => name !== props.selected)
     .map(([, box]) => box);
 
+  /** 表示上の px を mm に直す（拡大率を含む）。 */
   function toMm(px: number) {
     return px / unit;
   }

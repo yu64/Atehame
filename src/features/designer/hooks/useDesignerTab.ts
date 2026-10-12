@@ -4,6 +4,9 @@ import {
 } from "@src/features/designer/state/DesignerContext";
 import type { SidePanelTab } from "@src/features/designer/state/designerStore";
 
+// #############################################################################
+// MARK: フック
+
 /** 右の欄のタブと、CSS タブに警告の印を付けるか。 */
 export function useDesignerTab(): {
   tab: SidePanelTab;

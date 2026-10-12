@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export type AlertKind = "error" | "warning" | "success" | "info";
 
 export interface Props {
@@ -12,12 +15,18 @@ export interface Props {
   className?: string;
 }
 
+// #############################################################################
+// MARK: 定数
+
 const styles: Record<AlertKind, { color: string; icon: string }> = {
   error: { color: "bg-status-error-bg text-status-error", icon: "i-lucide-circle-x" },
   warning: { color: "bg-status-warning-bg text-status-warning", icon: "i-lucide-triangle-alert" },
   success: { color: "bg-status-success-bg text-status-success", icon: "i-lucide-circle-check" },
   info: { color: "bg-base text-text-secondary", icon: "i-lucide-info" },
 };
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * エラー・注意・成功などを文章で示す枠。

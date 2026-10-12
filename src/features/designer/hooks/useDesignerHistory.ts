@@ -3,6 +3,9 @@ import {
   useDesignerStore,
 } from "@src/features/designer/state/DesignerContext";
 
+// #############################################################################
+// MARK: フック
+
 /** 元に戻す・やり直す。 */
 export function useDesignerHistory() {
   const store = useDesignerStore();

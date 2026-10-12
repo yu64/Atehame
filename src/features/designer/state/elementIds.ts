@@ -1,5 +1,8 @@
 import type { LayoutDocument } from "@src/features/designer/layoutCss";
 
+// #############################################################################
+// MARK: クラス
+
 /**
  * 部品ごとの固有の ID。名前を変えても、元に戻しても同じ部品を指すために使う。
  *
@@ -34,11 +37,13 @@ export class ElementIds {
     this.#maps.set(layout, map);
   }
 
+  /** 部品の名前から ID を引く。 */
   idOf(layout: LayoutDocument, name: string): string | undefined {
     this.register(layout);
     return this.#maps.get(layout)!.get(name);
   }
 
+  /** ID から今の部品の名前を引く。部品がなくなっていれば undefined。 */
   nameOf(layout: LayoutDocument, id: string): string | undefined {
     this.register(layout);
     for (const [name, value] of this.#maps.get(layout)!) {
@@ -47,6 +52,7 @@ export class ElementIds {
     return undefined;
   }
 
+  /** まだ使っていない ID を作る。 */
   #newId(): string {
     this.#count++;
     return `element-${this.#count}`;

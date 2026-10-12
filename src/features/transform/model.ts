@@ -1,6 +1,9 @@
 import type { DataSchema, FieldType } from "@src/features/template";
 import type { JsonValue } from "@src/shared/lib/json";
 
+// #############################################################################
+// MARK: 型定義
+
 /** CSVの1行。フィールドIDからセルの文字列を引く。 */
 export type RowCells = Record<string, string>;
 
@@ -19,6 +22,19 @@ export interface InputConversion {
   input: TransformInput;
   problems: InputProblem[];
 }
+
+// #############################################################################
+// MARK: 定数
+
+const declarationTypes: Record<FieldType, string> = {
+  string: "string",
+  number: "number | null",
+  boolean: "boolean | null",
+  datetime: "string | null",
+};
+
+// #############################################################################
+// MARK: 関数
 
 /** セルの文字列をスキーマの型へ変換する。空欄は文字列以外では null とする。 */
 export function convertCell(
@@ -74,13 +90,6 @@ export function createTransformInput(schema: DataSchema, cells: RowCells): Input
 
   return { input, problems };
 }
-
-const declarationTypes: Record<FieldType, string> = {
-  string: "string",
-  number: "number | null",
-  boolean: "boolean | null",
-  datetime: "string | null",
-};
 
 /** エディターの補完用に、`input` の型宣言を生成する。 */
 export function createInputDeclaration(schema: DataSchema): string {

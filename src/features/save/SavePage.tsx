@@ -20,12 +20,19 @@ import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
 import { navigate } from "vike/client/router";
 
+// #############################################################################
+// MARK: 型定義
+
 type SaveStatus =
   | { type: "idle" }
   | { type: "saving" }
   | { type: "saved"; label: string }
   | { type: "error"; message: string };
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** 保存の工程。名前と保存の方法を選び、テンプレートのファイルとして書き出す。 */
 export function SavePage() {
   const template = useAtomValue(currentTemplateAtom);
   const { schema, layout } = template;
@@ -54,6 +61,7 @@ export function SavePage() {
     else setConfirming(warnings);
   }
 
+  /** 選んだ方法でテンプレートを書き出し、結果を表示する。 */
   async function save() {
     setConfirming(undefined);
     setStatus({ type: "saving" });

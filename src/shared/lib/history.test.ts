@@ -10,6 +10,7 @@ import {
 } from "@src/shared/lib/history";
 import { describe, expect, test } from "vitest";
 
+/** 履歴に操作を順に適用する。 */
 function apply<T>(history: History<T>, ...actions: HistoryAction<T>[]): History<T> {
   return actions.reduce(historyReducer<T>, history);
 }
@@ -61,6 +62,7 @@ describe("元に戻す・やり直す", () => {
   });
 
   test("直前の値から計算する変更は、連続しても取りこぼさない", () => {
+    /** 数を1増やす操作。 */
     function increment(value: number) {
       return value + 1;
     }

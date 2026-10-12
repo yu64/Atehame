@@ -8,6 +8,9 @@ import {
 import { expandRuleRange, replaceRanges } from "@src/features/designer/layoutCss/ranges";
 import { type CssNode, type List, walk } from "css-tree";
 
+// #############################################################################
+// MARK: 関数
+
 /**
  * 部品を取り除く。部品の規則に加えて、その部品だけを指定する規則（@media などの中も含む）と、
  * その直前のコメントも取り除く。ほかの部品と並べて指定しているセレクタは、その部分だけ取り除く。
@@ -23,6 +26,9 @@ export function removeElementRule(
   if (ast.type !== "StyleSheet") return css;
   return replaceRanges(css, collectRemovals(css, ast.children, name).ranges, "");
 }
+
+// #############################################################################
+// MARK: 内部関数
 
 /** 並んだ規則のうち、取り除く範囲。all はすべての規則を取り除くか。 */
 function collectRemovals(

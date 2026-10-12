@@ -6,7 +6,13 @@ import { Button } from "@src/shared/ui/Button";
 import { Checkbox } from "@src/shared/ui/Checkbox";
 import { useState } from "react";
 
+// #############################################################################
+// MARK: 定数
+
 export const zoomSteps = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3];
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** デザイナーの操作バー。元に戻す、拡大率、吸着、サンプルの印刷。 */
 export function DesignerToolbar() {
@@ -18,6 +24,7 @@ export function DesignerToolbar() {
   const zoomIn = zoomSteps.find(step => step > view.zoom + 0.001) ?? view.zoom;
   const zoomOut = [...zoomSteps].reverse().find(step => step < view.zoom - 0.001) ?? view.zoom;
 
+  /** サンプルの値でレイアウトを印刷する。失敗したら理由を表示する。 */
   async function printSample() {
     setPrintError(undefined);
     try {

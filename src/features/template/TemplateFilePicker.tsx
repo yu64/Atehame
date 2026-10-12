@@ -5,8 +5,8 @@ import { Alert } from "@src/shared/ui/Alert";
 import { FileDropZone } from "@src/shared/ui/FileDropZone";
 import { useState } from "react";
 
-/** 読み込むファイルの大きさの上限。画像を含めても、これより大きいテンプレートは作れない。 */
-const maxFileBytes = 10 * 1024 * 1024;
+// #############################################################################
+// MARK: 型定義
 
 export interface Props {
   /** 読み込めたテンプレート。読み込んでいなければ undefined。 */
@@ -14,11 +14,21 @@ export interface Props {
   onChange: (template: Template | undefined) => void;
 }
 
+// #############################################################################
+// MARK: 定数
+
+/** 読み込むファイルの大きさの上限。画像を含めても、これより大きいテンプレートは作れない。 */
+const maxFileBytes = 10 * 1024 * 1024;
+
+// #############################################################################
+// MARK: コンポーネント
+
 /** テンプレートのファイルを選んで検証する。読めなければ理由を、読めれば概要を表示する。 */
 export function TemplateFilePicker(props: Props) {
   const [error, setError] = useState<string>();
   const [fileName, setFileName] = useState<string>();
 
+  /** ファイルを読み、テンプレートとして検証する。 */
   async function read(file: File) {
     setFileName(file.name);
     props.onChange(undefined);

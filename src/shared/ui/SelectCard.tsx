@@ -1,5 +1,8 @@
 import { If } from "@src/shared/ui/If";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   title?: string;
   description?: string;
@@ -7,6 +10,10 @@ export interface Props {
   onClick?: () => void;
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** 見出し・説明・ボタンを持つ、選ぶためのカード。 */
 export function SelectCard(props: Props) {
   return (
     <div

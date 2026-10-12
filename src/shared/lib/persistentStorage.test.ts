@@ -2,6 +2,7 @@
 import { createPersistentStorage } from "@src/shared/lib/persistentStorage";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
+/** 数だけを正しい値として受け取る。 */
 function parse(value: unknown) {
   return (typeof value === "number" ? value : undefined);
 }

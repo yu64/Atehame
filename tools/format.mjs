@@ -13,8 +13,14 @@ import { readFile, writeFile } from "node:fs/promises";
 import { extname } from "node:path";
 import * as prettier from "prettier";
 
+// #############################################################################
+// MARK: 定数
+
 const check = process.argv.includes("--check");
 const lintable = new Set([".ts", ".tsx", ".mjs", ".js"]);
+
+// #############################################################################
+// MARK: 内部関数
 
 /** Git が管理している（または無視していない新しい）ファイル。 */
 function listFiles() {
@@ -28,6 +34,7 @@ function listFiles() {
   return output.split("\0").filter(Boolean);
 }
 
+/** 整形が必要なファイルを探し、書き込むか一覧を表示する。 */
 async function main() {
   const eslint = new ESLint({ fix: true });
   const changed = [];
@@ -73,5 +80,8 @@ async function main() {
     console.log(`${changed.length} 件のファイルを整形しました。`);
   }
 }
+
+// #############################################################################
+// MARK: 初期化
 
 await main();

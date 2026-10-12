@@ -11,15 +11,8 @@ import {
 import { selectLayout } from "@src/features/designer/state/designerStore";
 import { readImageFile } from "@src/shared/lib/imageFile";
 
-/** ファイルから画像を作る。できなければ理由を返す。 */
-async function readAsset(file: File, assets: Assets) {
-  const image = await readImageFile(file);
-  if (!image) return { error: `「${file.name}」は PNG・JPEG・WebP・SVG の画像ではありません。` };
-  const asset = createAsset(image.type, image.bytes);
-  if (!asset) return { error: `「${file.name}」は SVG として読み込めませんでした。` };
-  const error = checkAssetLimits(assets, asset);
-  return (error ? { error } : { asset });
-}
+// #############################################################################
+// MARK: フック
 
 /** 画像（アセット）の一覧と、登録・差し替え・名前の変更・削除。どれも元に戻せる。 */
 export function useDesignerAssets() {
@@ -52,4 +45,17 @@ export function useDesignerAssets() {
     /** 画像を参照している部品の名前。 */
     usage: (name: string) => store.layout.assetUsage(name),
   };
+}
+
+// #############################################################################
+// MARK: 内部関数
+
+/** ファイルから画像を作る。できなければ理由を返す。 */
+async function readAsset(file: File, assets: Assets) {
+  const image = await readImageFile(file);
+  if (!image) return { error: `「${file.name}」は PNG・JPEG・WebP・SVG の画像ではありません。` };
+  const asset = createAsset(image.type, image.bytes);
+  if (!asset) return { error: `「${file.name}」は SVG として読み込めませんでした。` };
+  const error = checkAssetLimits(assets, asset);
+  return (error ? { error } : { asset });
 }

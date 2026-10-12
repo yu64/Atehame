@@ -1,6 +1,9 @@
 import { Button } from "@src/shared/ui/Button";
 import { type ReactNode, useEffect, useId, useRef } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   open: boolean;
   /** Esc キー・背景のクリック・閉じるボタンで閉じたとき。 */
@@ -11,6 +14,9 @@ export interface Props {
   /** 下に並べるボタン。 */
   actions?: ReactNode;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * モーダルのダイアログ。HTML 標準の dialog（showModal）を使うため、
@@ -37,12 +43,12 @@ export function Dialog(props: Props) {
   useEffect(() => {
     const dialog = ref.current;
     if (!dialog) return;
-    // Esc キー。ブラウザに閉じさせず、呼び出し側に閉じてもらう。
+    /** Esc キー。ブラウザに閉じさせず、呼び出し側に閉じてもらう。 */
     function onCancel(event: Event) {
       event.preventDefault();
       onCloseRef.current();
     }
-    // ほかの理由でブラウザが閉じた場合も知らせる（閉じたままのときだけ。遅れて届くことがある）。
+    /** ほかの理由でブラウザが閉じた場合も知らせる（閉じたままのときだけ。遅れて届くことがある）。 */
     function onClose() {
       if (!ref.current?.open) onCloseRef.current();
     }

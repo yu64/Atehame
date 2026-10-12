@@ -1,6 +1,9 @@
 import type { CssEditorComponent, RevealRequest } from "@src/features/designer/types";
 import { Alert } from "@src/shared/ui/Alert";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   css: string;
   warnings: string[];
@@ -8,6 +11,9 @@ export interface Props {
   reveal?: RevealRequest;
   onChange: (css: string) => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** レイアウトの CSS。部品も用紙もここに書かれた内容がすべて。 */
 export function CssPanel(props: Props) {

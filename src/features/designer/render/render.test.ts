@@ -15,6 +15,7 @@ beforeEach(() => {
   doc = document.implementation.createHTMLDocument("render");
 });
 
+/** CSS だけのレイアウトの文書を作る。 */
 function layout(css: string) {
   return LayoutDocument.from(css);
 }

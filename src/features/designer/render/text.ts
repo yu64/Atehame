@@ -1,16 +1,22 @@
 import type { JsonValue } from "@src/shared/lib/json";
 
-/** 加工の出力の値を表示用の文字列にする。オブジェクトや配列は表示できないため空にする。 */
-export function formatValue(value: JsonValue | undefined): string {
-  if (value === null || value === undefined) return "";
-  if (typeof value === "object") return "";
-  return String(value);
-}
+// #############################################################################
+// MARK: 型定義
 
 export interface TextRun {
   text: string;
   /** 縦中横（縦書きの中で横に並べる）にするか。 */
   combine: boolean;
+}
+
+// #############################################################################
+// MARK: 関数
+
+/** 加工の出力の値を表示用の文字列にする。オブジェクトや配列は表示できないため空にする。 */
+export function formatValue(value: JsonValue | undefined): string {
+  if (value === null || value === undefined) return "";
+  if (typeof value === "object") return "";
+  return String(value);
 }
 
 /** maxDigits 桁以下の半角数字の並びを縦中横にするよう分割する。 */

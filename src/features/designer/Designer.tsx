@@ -17,6 +17,9 @@ import { DesignerToolbar } from "@src/features/designer/toolbar/DesignerToolbar"
 import type { CssEditorComponent, ElementPreset } from "@src/features/designer/types";
 import { type ReactNode, useEffect, useLayoutEffect, useMemo, useState } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface DesignerProps {
   value: Layout;
   /** 確定した変更を通知する（ドラッグ中などの途中経過は通知しない）。 */
@@ -36,12 +39,16 @@ export interface DesignerProps {
   children?: ReactNode;
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
 /**
  * レイアウトのデザイナー。レイアウトはすべて CSS で表し、操作はすべて CSS の書き換えになる。
  * 状態を作って配り、中の領域どうしを連携させるだけで、各領域は必要な状態と操作だけを使う。
  * アプリの状態には依存せず、値は props で受け取る。
  */
 export function Designer(props: DesignerProps) {
+  /** 確定したレイアウトを、保存用の形にして呼び出し側へ知らせる。 */
   function notify(layout: LayoutDocument) {
     props.onChange(fromLayoutDocument(layout));
   }
@@ -76,6 +83,9 @@ export function Designer(props: DesignerProps) {
   );
 }
 
+// #############################################################################
+// MARK: 内部部品
+
 /** 既定の構成。 */
 function DefaultLayout() {
   return (
@@ -96,6 +106,10 @@ function DesignerBody(props: { children: ReactNode }) {
   return <div className="flex flex-1 min-h-0">{props.children}</div>;
 }
 
+// #############################################################################
+// MARK: 部品の登録
+
+// Designer.Toolbar などとして、構成の部品を差し替えられるように公開する。
 Designer.Toolbar = DesignerToolbar;
 Designer.Body = DesignerBody;
 Designer.Palette = ElementPalette;

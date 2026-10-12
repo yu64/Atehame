@@ -2,6 +2,9 @@ import { Button } from "@src/shared/ui/Button";
 import { Dialog } from "@src/shared/ui/Dialog";
 import type { ReactNode } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   open: boolean;
   title: string;
@@ -15,6 +18,9 @@ export interface Props {
   /** やめるボタン・Esc キー・背景のクリックで閉じたとき。 */
   onCancel: () => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * 実行してよいかを確かめるダイアログ。ほかのダイアログの上にも重ねて開ける

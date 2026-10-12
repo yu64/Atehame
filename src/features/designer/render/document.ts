@@ -13,6 +13,9 @@ import { defaultFont, fontVariables } from "@src/features/designer/render/fonts"
 import { sanitizeCss } from "@src/features/designer/render/sanitizeCss";
 import { createIsolatedFrameHtml, setStyleText } from "@src/shared/lib/frame/isolatedFrame";
 
+// #############################################################################
+// MARK: 文書の準備
+
 const fontCss = Object.values(fontVariables)
   .map(font => `${font.variable}: ${font.family};`)
   .join(" ");
@@ -75,6 +78,9 @@ export function applyLayoutStyles(doc: Document, layout: LayoutDocument): string
   return [...sanitized.warnings, ...missingAssetWarnings(layout)];
 }
 
+// #############################################################################
+// MARK: 警告
+
 /**
  * レイアウトの警告。安全化で取り除く記述と、登録されていない画像。
  * 描画と同じ確認を、描画せずに行う（保存の前の確認などで使う）。
@@ -95,6 +101,9 @@ function missingAssetWarnings(layout: LayoutDocument): string[] {
     .filter(name => !Object.hasOwn(layout.assets, name))
     .map(name => `画像「${name}」が登録されていません。`);
 }
+
+// #############################################################################
+// MARK: 描画
 
 /** 1ページ分の要素を組み立てる。部品は CSS の記述順に並べる。 */
 export function renderPage(

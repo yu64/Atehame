@@ -8,6 +8,9 @@ import { selectLayout } from "@src/features/designer/state/designerStore";
 import type { ElementRect } from "@src/features/designer/state/operations";
 import { useMemo } from "react";
 
+// #############################################################################
+// MARK: フック
+
 /** 用紙の表示と操作。キャンバスで使う。 */
 export function useDesignerCanvas() {
   const store = useDesignerStore();

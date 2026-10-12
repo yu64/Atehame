@@ -1,14 +1,22 @@
+// #############################################################################
+// MARK: 型定義
+
 /**
  * 部品に表示する文字。{カラム名} の部分に加工の出力の値を埋め込む。
  * 波括弧そのものは {{ と }} で書く。閉じていない { はそのまま文字として扱う。
  */
 export type TemplateSegment = { kind: "text"; text: string } | { kind: "field"; key: string };
 
+// #############################################################################
+// MARK: 関数
+
+/** 表示する文字の雛形を、文字と {項目} の並びに分ける。{{ と }} は波かっこそのもの。 */
 export function parseTextTemplate(template: string): TemplateSegment[] {
   const segments: TemplateSegment[] = [];
   let text = "";
   let index = 0;
 
+  /** ためた文字を、文字の区切りとして出す。 */
   function flush() {
     if (text !== "") segments.push({ kind: "text", text });
     text = "";

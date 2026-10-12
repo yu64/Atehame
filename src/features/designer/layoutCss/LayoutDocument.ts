@@ -20,6 +20,9 @@ import {
 } from "@src/features/designer/layoutCss/parse";
 import { removeElementRule } from "@src/features/designer/layoutCss/remove";
 
+// #############################################################################
+// MARK: クラス
+
 /**
  * レイアウトの CSS と、その解析結果。画像（アセット）も一緒に持つ。
  *
@@ -39,6 +42,7 @@ export class LayoutDocument {
     this.#parsed = parsed;
   }
 
+  /** CSS とアセットから文書を作る。CSS はまだ解析しない。 */
   static from(css: string, assets: Assets = emptyAssets): LayoutDocument {
     return new LayoutDocument(css, assets);
   }
@@ -54,6 +58,7 @@ export class LayoutDocument {
     return this.parsed.elements;
   }
 
+  /** 名前の部品。なければ undefined。 */
   element(name: string): ElementRule | undefined {
     return this.elements.find(element => element.name === name);
   }
@@ -109,6 +114,7 @@ export class LayoutDocument {
     return this.withCss(setDeclaration(this.css, target, property, value, this.parsed));
   }
 
+  /** 部品または @page に、複数の宣言をまとめて設定した文書を返す。 */
   setDeclarations(
     target: RuleTarget,
     entries: Array<[property: string, value: string | undefined]>,

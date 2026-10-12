@@ -10,14 +10,13 @@ import { CssChoiceField } from "@src/features/designer/properties/CssChoiceField
 import { CssValueField } from "@src/features/designer/properties/CssValueField";
 import { NameField } from "@src/features/designer/properties/NameField";
 import { TextTemplateField } from "@src/features/designer/properties/TextTemplateField";
-import {
-  defaultFont,
-  fontFamilyValue,
-  type FontKey,
-  fontVariables,
-} from "@src/features/designer/render";
+import { defaultFont, fontFamilyValue, fontVariables } from "@src/features/designer/render";
+import { keysOf } from "@src/shared/lib/util/object";
 import { Button } from "@src/shared/ui/Button";
 import { Checkbox } from "@src/shared/ui/Checkbox";
+
+// #############################################################################
+// MARK: 型定義
 
 export interface Props {
   rule: ElementRule;
@@ -35,10 +34,20 @@ export interface Props {
   onShowCss: () => void;
 }
 
-const fontOptions = (Object.keys(fontVariables) as FontKey[]).map(key => ({
+type ValueOf = (property: string) => string | undefined;
+
+type SetterOf = (property: string) => (next: string | undefined) => void;
+
+// #############################################################################
+// MARK: 定数
+
+const fontOptions = keysOf(fontVariables).map(key => ({
   value: fontFamilyValue(key),
   label: fontVariables[key].label,
 }));
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * 部品の設定。値はすべて部品の CSS の規則（[data-name="名前"]）を読み書きする。
@@ -46,9 +55,11 @@ const fontOptions = (Object.keys(fontVariables) as FontKey[]).map(key => ({
  */
 export function ElementProperties(props: Props) {
   const { rule } = props;
+  /** 部品に書かれた宣言の値。 */
   function value(property: string) {
     return rule.declarations.get(property)?.value;
   }
+  /** 宣言を書き換える関数（入力欄の onChange に渡す）。 */
   function set(property: string) {
     return (next: string | undefined) => props.onDeclaration(property, next);
   }
@@ -125,8 +136,8 @@ export function ElementProperties(props: Props) {
   );
 }
 
-type ValueOf = (property: string) => string | undefined;
-type SetterOf = (property: string) => (next: string | undefined) => void;
+// #############################################################################
+// MARK: 内部部品
 
 /** 画像の部品の設定。合わせ方と位置は、中の画像が部品の規則から受け継ぐ。 */
 function ImageFields(props: { value: ValueOf; set: SetterOf; assetNames: string[] }) {

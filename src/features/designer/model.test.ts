@@ -56,6 +56,7 @@ describe("レイアウトの画像", () => {
   });
 
   test("読み込むときに、画像の形式・中身・大きさを確かめる", () => {
+    /** 画像だけを差し替えたレイアウトを検証する。 */
     function parse(assets: unknown) {
       return layoutSchema.safeParse({ version: 1, css: "", assets }).success;
     }

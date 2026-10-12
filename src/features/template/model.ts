@@ -2,6 +2,9 @@ import { createLayout, type Layout, layoutSchema } from "@src/features/designer"
 import type { DataSchema } from "@src/features/template/schema";
 import { z } from "zod";
 
+// #############################################################################
+// MARK: テンプレート
+
 /**
  * テンプレート。CSV で受け取るカラム（スキーマ）・加工のコード・レイアウトをまとめて持つ。
  * 編集中はアプリでこれを1つの状態として持ち、保存するとそのままファイルになる。
@@ -30,6 +33,9 @@ export function createTemplate(): Template {
   };
 }
 
+// #############################################################################
+// MARK: ファイルの形式
+
 export const templateFileFormat = "atehame-template";
 
 /** テンプレートとして書き出すファイルの内容。 */
@@ -37,6 +43,9 @@ export interface TemplateFile extends Template {
   format: typeof templateFileFormat;
   version: 1;
 }
+
+// #############################################################################
+// MARK: 検証
 
 /** テンプレートの検証。ファイルの読み込みと、自動保存した内容の読み込みで使う。 */
 const templateSchema = z.object({
@@ -69,16 +78,22 @@ export function parseTemplate(value: unknown): Template | undefined {
   return (result.success ? result.data : undefined);
 }
 
+// #############################################################################
+// MARK: ファイルとの変換
+
+/** テンプレートを、書き出すファイルの内容にする。 */
 export function toTemplateFile(template: Template): TemplateFile {
   const { name, schema, transform, layout } = template;
   return { format: templateFileFormat, version: 1, name, schema, transform, layout };
 }
 
+/** 読み込んだファイルの内容から、テンプレートを取り出す。 */
 export function fromTemplateFile(file: TemplateFile): Template {
   const { name, schema, transform, layout } = file;
   return { name, schema, transform, layout };
 }
 
+/** ファイルの内容を、読みやすい JSON の文字列にする。 */
 export function serializeTemplateFile(file: TemplateFile): string {
   return JSON.stringify(file, null, 2);
 }

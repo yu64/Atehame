@@ -1,5 +1,8 @@
 import { type ReactNode, useEffect, useRef } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface DropdownMenuItem {
   id: string;
   label: ReactNode;
@@ -13,10 +16,15 @@ export interface Props {
   items: DropdownMenuItem[];
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** ボタンで開くメニュー。外を押すか Esc キーで閉じる。 */
 export function DropdownMenu(props: Props) {
   const menuRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
+    /** メニューの外を押したら閉じる。 */
     function closeOutside(event: PointerEvent) {
       if (event.target instanceof Node && !menuRef.current?.contains(event.target)) {
         menuRef.current?.removeAttribute("open");
@@ -26,6 +34,7 @@ export function DropdownMenu(props: Props) {
     return () => document.removeEventListener("pointerdown", closeOutside);
   }, []);
 
+  /** 閉じて、開くボタンにフォーカスを戻す。 */
   function closeAndFocusTrigger() {
     menuRef.current?.removeAttribute("open");
     menuRef.current?.querySelector("summary")?.focus();

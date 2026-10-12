@@ -7,9 +7,14 @@ import { EditableList } from "@src/shared/ui/EditableList";
 import { useAtom } from "jotai";
 import { navigate } from "vike/client/router";
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** スキーマの工程。CSV で受け取るカラムを並べて定義する。 */
 export function SchemaPage() {
   const [schema, setSchema] = useAtom(schemaAtom);
 
+  /** カラム1つを、同じ ID のものと置き換える。 */
   function updateField(value: SchemaField) {
     setSchema(current => ({
       ...current,
@@ -17,6 +22,7 @@ export function SchemaPage() {
     }));
   }
 
+  /** 末尾にカラムを追加する。 */
   function addField() {
     const field = createSchemaField();
     setSchema(current => ({ ...current, fields: [...current.fields, field] }));

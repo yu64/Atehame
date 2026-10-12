@@ -6,10 +6,16 @@ import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   open: boolean;
   onClose: () => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** レイアウトを使う：保存したテンプレートを読み込む。 */
 export function UseDialog(props: Props) {

@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   label: ReactNode;
   checked: boolean;
@@ -9,6 +12,9 @@ export interface Props {
   disabled?: boolean;
   className?: string;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 見出し付きのチェックボックス。見出しを押しても切り替わる。 */
 export function Checkbox(props: Props) {

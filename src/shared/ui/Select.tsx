@@ -9,12 +9,19 @@ import {
   useRef,
 } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props extends ComponentPropsWithRef<"select"> {
   label?: string;
   description?: string;
   children?: ReactElement<JSX.IntrinsicElements["option"]>[];
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** 選択欄。幅は最も長い選択肢に合わせる。 */
 export function Select(props: Props) {
   const { label, description, children, ref, ...selectProps } = props;
   const generatedId = useId();

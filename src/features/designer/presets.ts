@@ -9,6 +9,9 @@ import { defaultFont, fontFamilyValue } from "@src/features/designer/render";
 import type { ElementPreset } from "@src/features/designer/types";
 import { formatMm } from "@src/shared/lib/units";
 
+// #############################################################################
+// MARK: 定数
+
 /** 文字を表示する部品。縦長の用紙では縦書きにする。 */
 export const textPreset: ElementPreset = {
   id: "text",

@@ -21,6 +21,9 @@ import { walk } from "css-tree";
  * それ以外の記述（コメント、改行、書き方）はそのまま残す。
  */
 
+// #############################################################################
+// MARK: 対象の規則
+
 export type RuleTarget = { element: string } | { page: true };
 
 /** 部品を指定するセレクタ。 */
@@ -28,6 +31,7 @@ export function selectorFor(name: string): string {
   return `[data-name=${encodeCssString(name)}]`;
 }
 
+/** 対象の規則（部品または @page）を探す。 */
 function findRule(layout: LayoutCss, target: RuleTarget): RuleInfo | undefined {
   return (
     "page" in target
@@ -41,6 +45,9 @@ function indentOf(css: string, rule: RuleInfo): string {
   const body = css.slice(rule.bodyRange.start, rule.bodyRange.end);
   return body.match(/\n([ \t]+)\S/)?.[1] ?? "  ";
 }
+
+// #############################################################################
+// MARK: 宣言
 
 /**
  * 宣言の値を設定する。value が undefined なら宣言を取り除く。
@@ -120,6 +127,9 @@ function removeDeclarationText(css: string, range: TextRange, body: TextRange): 
   }
   return replaceRange(css, { start, end }, "");
 }
+
+// #############################################################################
+// MARK: 部品の規則
 
 /**
  * 部品の規則を末尾に追加する。nestedCss は規則の中、宣言の後ろに入れ子で書く

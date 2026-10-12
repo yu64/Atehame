@@ -4,6 +4,9 @@ import {
 } from "@src/features/designer/state/DesignerContext";
 import { selectLayout } from "@src/features/designer/state/designerStore";
 
+// #############################################################################
+// MARK: フック
+
 /** CSS 全体の読み書き。CSS タブで使う。 */
 export function useDesignerCss() {
   const store = useDesignerStore();

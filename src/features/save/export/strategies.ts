@@ -1,5 +1,8 @@
 import { serializeTemplateFile, type TemplateFile, toFileName } from "@src/features/template";
 
+// #############################################################################
+// MARK: 型定義
+
 /** テンプレートの出力方法。保存ページで選択する。 */
 export interface ExportStrategy {
   id: string;
@@ -10,6 +13,18 @@ export interface ExportStrategy {
   /** 出力する。ユーザーが中止した場合は false を返す。 */
   export(file: TemplateFile): Promise<boolean>;
 }
+
+interface SaveFilePickerWindow {
+  showSaveFilePicker(options: {
+    suggestedName: string;
+    types: Array<{ description: string; accept: Record<string, string[]> }>;
+  }): Promise<{
+    createWritable(): Promise<{ write(data: Blob): Promise<void>; close(): Promise<void> }>;
+  }>;
+}
+
+// #############################################################################
+// MARK: 定数
 
 /** JSON ファイルとしてダウンロードする。すべてのブラウザで使える。 */
 export const downloadJsonStrategy: ExportStrategy = {
@@ -32,15 +47,6 @@ export const downloadJsonStrategy: ExportStrategy = {
     return true;
   },
 };
-
-interface SaveFilePickerWindow {
-  showSaveFilePicker(options: {
-    suggestedName: string;
-    types: Array<{ description: string; accept: Record<string, string[]> }>;
-  }): Promise<{
-    createWritable(): Promise<{ write(data: Blob): Promise<void>; close(): Promise<void> }>;
-  }>;
-}
 
 /** 保存先を選んで保存する（File System Access API）。Chrome / Edge で使える。 */
 export const saveFilePickerStrategy: ExportStrategy = {

@@ -1,5 +1,8 @@
 import { Button } from "@src/shared/ui/Button";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   title: string;
   description?: React.ReactNode;
@@ -7,6 +10,9 @@ export interface Props {
   onBack?: () => void;
   onNext?: () => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 編集の各段階の見出しと、前後の段階へ移動するボタン。 */
 export function StepHeader(props: Props) {

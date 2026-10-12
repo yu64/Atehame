@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   label?: string;
   description?: ReactNode;
@@ -8,6 +11,9 @@ export interface Props {
   /** 入力欄など。 */
   children: ReactNode;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 入力欄の枠。見出し・入力欄・説明（またはエラー）を縦に並べる。 */
 export function Field(props: Props) {

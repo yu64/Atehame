@@ -3,6 +3,9 @@ import {
   useDesignerStore,
 } from "@src/features/designer/state/DesignerContext";
 
+// #############################################################################
+// MARK: フック
+
 /** 拡大率と吸着。 */
 export function useDesignerView() {
   const store = useDesignerStore();

@@ -9,8 +9,15 @@ import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { navigate } from "vike/client/router";
 
+// #############################################################################
+// MARK: 定数
+
 const emptyValues: Values = {};
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** レイアウトの工程。加工の出力を項目として、デザイナーで配置する。 */
 export function LayoutPage() {
   const [layout, setLayout] = useAtom(layoutAtom);
   const { preview } = useSampleOutput();

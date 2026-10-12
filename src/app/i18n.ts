@@ -3,6 +3,9 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { initReactI18next } from "react-i18next";
 
+// #############################################################################
+// MARK: 定数
+
 // 参考
 // https://zenn.dev/mtea/articles/react-i18next
 // https://qiita.com/Taira0222/items/09a86ff1113ad4de3304
@@ -11,6 +14,9 @@ export const supportedLanguages = {
   // en: "English",
   ja: "日本語",
 };
+
+// #############################################################################
+// MARK: 初期化
 
 i18n
   // ユーザーの言語設定を検知するため

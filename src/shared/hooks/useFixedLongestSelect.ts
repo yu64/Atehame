@@ -1,5 +1,8 @@
 import { type RefObject, useLayoutEffect } from "react";
 
+// #############################################################################
+// MARK: フック
+
 /**
  * select要素の幅を、選択肢（option）の中で最も長いテキストの幅に自動で固定するフック
  * @param selectRef 対象となるselect要素のReact Ref
@@ -8,6 +11,7 @@ export function useFixedLongestSelect(
   selectRef: RefObject<HTMLSelectElement | null>,
   enable: boolean = true,
 ) {
+  /** 最も長い選択肢を一時的に選んで幅を測り、その幅を最小の幅にする。 */
   function resize(select: HTMLSelectElement) {
     // 現在の選択状態と、width を退避
     const originalIndex = select.selectedIndex;

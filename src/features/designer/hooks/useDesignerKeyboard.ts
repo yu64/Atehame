@@ -2,8 +2,14 @@ import type { DesignerStore } from "@src/features/designer/state/designerStore";
 import { pxPerMm } from "@src/shared/lib/units";
 import { type KeyboardEvent, useCallback } from "react";
 
+// #############################################################################
+// MARK: 定数
+
 /** 矢印キーで 1px、Shift と矢印キーで 1mm 動かす。 */
 const pxInMm = 1 / pxPerMm;
+
+// #############################################################################
+// MARK: フック
 
 /**
  * デザイナーのキー操作。デザイナーの根の要素の onKeyDown に渡すため、
@@ -39,6 +45,10 @@ export function useDesignerKeyboard(store: DesignerStore) {
   );
 }
 
+// #############################################################################
+// MARK: 内部関数
+
+/** 文字を入力する場所か（そこではキー操作を横取りしない）。 */
 function isEditable(target: EventTarget): boolean {
   if (!(target instanceof HTMLElement)) return false;
   // CSS エディターの中と、ダイアログ（削除の確認など）の中では、それぞれの操作を優先する。

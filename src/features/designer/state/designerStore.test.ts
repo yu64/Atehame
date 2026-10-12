@@ -5,6 +5,7 @@ import { describe, expect, test, vi } from "vitest";
 
 const base = '@page { size: 100mm 148mm; }\n\n[data-name="a"] {\n  left: 10mm;\n  top: 10mm;\n}\n';
 
+/** テスト用のデザイナーの状態。確定したレイアウトは commits に記録する。 */
 function createStore(css = base) {
   const onCommit = vi.fn<(layout: LayoutDocument) => void>();
   const store = new DesignerStore(LayoutDocument.from(css), onCommit);

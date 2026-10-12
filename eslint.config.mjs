@@ -2,6 +2,7 @@
 import { atehamePlugin } from "./tools/eslint/plugin.mjs";
 import js from "@eslint/js";
 import { defineConfig, globalIgnores } from "eslint/config";
+import jsdoc from "eslint-plugin-jsdoc";
 import reactHooks from "eslint-plugin-react-hooks";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
@@ -25,6 +26,7 @@ export default defineConfig(
     files: ["**/*.{ts,tsx,mjs,js}"],
     plugins: {
       atehame: atehamePlugin,
+      jsdoc,
       // React Compiler 向けの規則（描画中の ref の読み書きの禁止など）は入れず、基本の2つだけ使う。
       "react-hooks": reactHooks,
       "simple-import-sort": simpleImportSort,
@@ -34,6 +36,27 @@ export default defineConfig(
     },
     rules: {
       "atehame/ternary": "error",
+
+      // 関数・クラス・メソッドには、公開していないものも JSDoc を付ける。
+      "jsdoc/require-jsdoc": [
+        "error",
+        {
+          publicOnly: false,
+          checkConstructors: false,
+          // 自動では空の JSDoc しか書けないため、直さずに知らせるだけにする。
+          enableFixer: false,
+          require: {
+            FunctionDeclaration: true,
+            ClassDeclaration: true,
+            MethodDefinition: true,
+            ArrowFunctionExpression: false,
+            FunctionExpression: false,
+          },
+          // クラスのフィールドに書いた関数（designerStore の操作など）。
+          contexts: ["PropertyDefinition > ArrowFunctionExpression"],
+        },
+      ],
+      "jsdoc/no-blank-blocks": "error",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "error",
 

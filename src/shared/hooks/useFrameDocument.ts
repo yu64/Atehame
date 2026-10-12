@@ -1,5 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 
+// #############################################################################
+// MARK: フック
+
 /**
  * iframe の読み込みを待ち、中の文書を返す。読み込み前は null。
  * 返した ref と onLoad を iframe に渡す。

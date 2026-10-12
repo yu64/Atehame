@@ -1,3 +1,6 @@
+// #############################################################################
+// MARK: 履歴
+
 /** 元に戻す・やり直すの履歴。値は丸ごと保存する（差分は持たないため、小さな値に向く）。 */
 export interface History<T> {
   past: T[];
@@ -27,10 +30,15 @@ export type HistoryAction<T> =
 export const historyLimit = 100;
 export const mergeWindowMs = 1000;
 
+// #############################################################################
+// MARK: 操作
+
+/** present だけを持つ、空の履歴。 */
 export function createHistory<T>(present: T): History<T> {
   return { past: [], present, future: [] };
 }
 
+/** 履歴に操作を適用した、新しい履歴を返す。 */
 export function historyReducer<T>(history: History<T>, action: HistoryAction<T>): History<T> {
   switch (action.type) {
     case "set": {
@@ -108,15 +116,21 @@ function settle<T>(history: History<T>): History<T> {
   };
 }
 
+/** 末尾に追加する。上限を超えたら古いものから捨てる。 */
 function pushLimited<T>(items: T[], item: T): T[] {
   const next = [...items, item];
   return (next.length > historyLimit ? next.slice(next.length - historyLimit) : next);
 }
 
+// #############################################################################
+// MARK: 状態
+
+/** 元に戻せるか（確定前の変更があれば、それも戻せる）。 */
 export function canUndo<T>(history: History<T>): boolean {
   return history.past.length > 0 || history.previewBase !== undefined;
 }
 
+/** やり直せるか。 */
 export function canRedo<T>(history: History<T>): boolean {
   return history.future.length > 0;
 }

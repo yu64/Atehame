@@ -9,6 +9,9 @@ import {
 import { sanitizeSvg } from "@src/shared/lib/sanitizeSvg";
 import { formatBytes } from "@src/shared/lib/units";
 
+// #############################################################################
+// MARK: アセット
+
 /**
  * レイアウトの画像（アセット）。CSS には書かず、レイアウトと一緒に名前ごとに持つ。
  * 部品は `--atehame-image: "名前";` で参照する。
@@ -30,13 +33,18 @@ export const assetLimits = {
   nameLength: 100,
 };
 
+/** アセット1つの大きさ（バイト）。 */
 export function assetBytes(asset: LayoutAsset): number {
   return base64ByteLength(asset.data);
 }
 
+/** アセットの合計の大きさ（バイト）。 */
 export function totalAssetBytes(assets: Assets): number {
   return Object.values(assets).reduce((sum, asset) => sum + assetBytes(asset), 0);
 }
+
+// #############################################################################
+// MARK: 作成と確認
 
 /** 保存されたアセットとして正しいか（形式と中身の文字だけを見る）。 */
 export function isValidAsset(asset: LayoutAsset): boolean {
@@ -78,6 +86,9 @@ export function uniqueAssetName(assets: Assets, fileName: string): string {
     if (!(name in assets)) return name;
   }
 }
+
+// #############################################################################
+// MARK: 表示
 
 const dataUrls = new WeakMap<LayoutAsset, string>();
 

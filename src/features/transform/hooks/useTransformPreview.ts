@@ -3,6 +3,9 @@ import { JsExecutionEngine, JsExecutionError } from "@src/features/runtime";
 import type { JsonValue } from "@src/shared/lib/json";
 import { useEffect, useRef, useState } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export type TransformPreview =
   | { status: "idle" }
   | { status: "success"; output: JsonValue; elapsedMs: number }
@@ -19,8 +22,14 @@ interface Request {
   input: JsonValue;
 }
 
+// #############################################################################
+// MARK: 定数
+
 /** 入力が落ち着いてから加工処理を実行する待ち時間（ミリ秒）。 */
 const debounceMs = 300;
+
+// #############################################################################
+// MARK: フック
 
 /**
  * コードと入力の変更に追従して加工処理を試行する。
@@ -51,6 +60,7 @@ export function useTransformPreview(code: string, input: JsonValue): TransformPr
     return () => clearTimeout(timer);
   }, [code, input]);
 
+  /** 待っている実行を順に行う。実行中に新しい要求が来たら、最後の1つだけを実行する。 */
   async function drain() {
     if (runningRef.current) return;
     runningRef.current = true;
@@ -73,6 +83,10 @@ export function useTransformPreview(code: string, input: JsonValue): TransformPr
   return preview;
 }
 
+// #############################################################################
+// MARK: 内部関数
+
+/** 1回実行し、プレビューの結果にする。 */
 async function run(engine: JsExecutionEngine, request: Request): Promise<TransformPreview> {
   const start = performance.now();
   try {

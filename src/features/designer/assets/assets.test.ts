@@ -11,6 +11,7 @@ import { base64ToBytes } from "@src/shared/lib/imageFile";
 import { describe, expect, test } from "vitest";
 
 const png: LayoutAsset = { type: "image/png", data: "iVBORw0KGgo=" };
+/** SVG のアセットの中身を文字列で取り出す。 */
 function svgText(asset: LayoutAsset) {
   return new TextDecoder().decode(base64ToBytes(asset.data));
 }

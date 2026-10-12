@@ -1,3 +1,6 @@
+// #############################################################################
+// MARK: 定数
+
 /** CSS の 1mm に相当する px（CSS の 1in = 96px）。 */
 export const pxPerMm = 96 / 25.4;
 
@@ -11,6 +14,9 @@ const mmPerUnit: Record<string, number> = {
   px: 25.4 / 96,
   q: 0.25,
 };
+
+// #############################################################################
+// MARK: 関数
 
 /** CSS の長さ（"10mm" や "12pt" など）を mm にする。読めない場合は undefined。 */
 export function lengthToMm(value: string): number | undefined {

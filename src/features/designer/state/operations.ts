@@ -6,6 +6,9 @@ import {
 import type { ElementPreset, PresetContext } from "@src/features/designer/types";
 import { formatMm, lengthToMm } from "@src/shared/lib/units";
 
+// #############################################################################
+// MARK: 型定義
+
 /** 部品の表示上の位置と大きさ（mm）。プレビューから測った値。 */
 export interface ElementRect {
   left: number;
@@ -13,6 +16,9 @@ export interface ElementRect {
   width: number;
   height: number;
 }
+
+// #############################################################################
+// MARK: 関数
 
 /** 既存と重ならない名前を付ける。 */
 export function uniqueName(names: Iterable<string>, base: string): string {
@@ -45,9 +51,11 @@ export function placeElement(
   name: string,
   rect: Partial<ElementRect>,
 ): LayoutDocument {
-  const entries = (["left", "top", "width", "height"] as const)
-    .filter(key => rect[key] !== undefined)
-    .map(key => [key, formatMm(rect[key]!)] as [string, string]);
+  const keys = ["left", "top", "width", "height"] as const;
+  const entries = keys.flatMap((key): Array<[string, string]> => {
+    const value = rect[key];
+    return (value === undefined ? [] : [[key, formatMm(value)]]);
+  });
   return layout.setDeclarations({ element: name }, entries);
 }
 
@@ -58,15 +66,6 @@ export function setPaperSize(layout: LayoutDocument, size: PageSize): LayoutDocu
     "size",
     `${formatMm(size.width)} ${formatMm(size.height)}`,
   );
-}
-
-/** CSS の left / top（mm）。mm で読めない場合は表示上の位置を使う。 */
-function positionOf(rule: ElementRule, shown: ElementRect | undefined) {
-  function read(property: "left" | "top") {
-    const value = rule.declarations.get(property)?.value;
-    return (value !== undefined ? lengthToMm(value) : undefined) ?? shown?.[property] ?? 0;
-  }
-  return { left: read("left"), top: read("top") };
 }
 
 /** 位置をずらす（mm）。 */
@@ -100,4 +99,17 @@ export function duplicateElement(
     layout: layout.duplicateElement(name, newName, { left: left + 3, top: top + 3 }),
     name: newName,
   };
+}
+
+// #############################################################################
+// MARK: 内部関数
+
+/** CSS の left / top（mm）。mm で読めない場合は表示上の位置を使う。 */
+function positionOf(rule: ElementRule, shown: ElementRect | undefined) {
+  /** left / top を mm で読む。読めなければ表示上の位置、それもなければ 0。 */
+  function read(property: "left" | "top") {
+    const value = rule.declarations.get(property)?.value;
+    return (value !== undefined ? lengthToMm(value) : undefined) ?? shown?.[property] ?? 0;
+  }
+  return { left: read("left"), top: read("top") };
 }

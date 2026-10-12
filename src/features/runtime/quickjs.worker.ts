@@ -4,17 +4,31 @@ import type { WorkerApi } from "@src/features/runtime/protocol";
 import { expose } from "comlink";
 import { newQuickJSWASMModuleFromVariant } from "quickjs-emscripten-core";
 
-// WASMは最初の要求で初期化し、Workerが生きている間は共有する。
+// #############################################################################
+// MARK: 型定義
+
 type ModulePromise = ReturnType<typeof newQuickJSWASMModuleFromVariant>;
+
+// #############################################################################
+// MARK: 状態
+
+/** WASMは最初の要求で初期化し、Workerが生きている間は共有する。 */
 let modulePromise: ModulePromise | undefined;
 
-// WASMの状態が壊れた後は、ホストがWorkerを破棄するまで実行を拒否する。
+/** WASMの状態が壊れた後は、ホストがWorkerを破棄するまで実行を拒否する。 */
 let broken = false;
 
+// #############################################################################
+// MARK: 内部関数
+
+/** QuickJS の WASM を読み込む（2回目からは同じものを返す）。 */
 function getModule() {
   modulePromise ??= newQuickJSWASMModuleFromVariant(variant);
   return modulePromise;
 }
+
+// #############################################################################
+// MARK: 初期化
 
 // 初期化待ちと加工処理を分け、ホスト側でそれぞれの期限を監視できるようにする。
 const api: WorkerApi = {

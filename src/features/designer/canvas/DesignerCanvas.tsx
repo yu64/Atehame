@@ -6,6 +6,9 @@ import { useDesignerView } from "@src/features/designer/hooks/useDesignerView";
 import { pxPerMm } from "@src/shared/lib/units";
 import { useEffect, useRef } from "react";
 
+// #############################################################################
+// MARK: コンポーネント
+
 /**
  * 用紙を表示する領域。用紙（描画）と、その上の操作レイヤーを重ねる。
  * 用紙の外（灰色の部分）を押すと選択を外し、用紙の設定を表示できるようにする。

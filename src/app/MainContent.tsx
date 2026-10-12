@@ -1,3 +1,6 @@
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   children?: React.ReactNode;
   /** 通常ページは外側でスクロール、エディターは内部でスクロールを管理する。 */
@@ -5,6 +8,10 @@ export interface Props {
   width?: "full" | "contained";
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** ページの本文の領域。幅と、スクロールのしかた（通常・キャンバス）を決める。 */
 export function MainContent(props: Props) {
   const canvas = props.mode === "canvas";
 

@@ -2,8 +2,14 @@ import { useAddElement } from "@src/features/designer/hooks/useAddElement";
 import { useDesignerConfig } from "@src/features/designer/state/DesignerContext";
 import { Button } from "@src/shared/ui/Button";
 
+// #############################################################################
+// MARK: 定数
+
 /** パレットの幅（px）。 */
 export const paletteWidth = 192;
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * 部品を追加するパレット（左の欄）。クリックで用紙に追加する。
@@ -54,6 +60,10 @@ export function ElementPalette() {
   );
 }
 
+// #############################################################################
+// MARK: 内部部品
+
+/** 部品を追加するボタン。ドラッグで用紙へ置くこともできる。 */
 function PaletteButton(props: { icon: string; label: string; onClick: () => void }) {
   return (
     <Button

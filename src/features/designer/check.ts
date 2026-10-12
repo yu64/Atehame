@@ -1,6 +1,9 @@
 import { type Layout, toLayoutDocument } from "@src/features/designer/model";
 import { layoutDocumentWarnings } from "@src/features/designer/render/document";
 
+// #############################################################################
+// MARK: 関数
+
 /**
  * レイアウトの問題。CSS の中身を知らない側（保存画面など）に見せる。
  * 部品がない・安全化で取り除く記述がある・登録されていない画像を参照している、など。

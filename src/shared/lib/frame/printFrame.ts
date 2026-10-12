@@ -1,3 +1,6 @@
+// #############################################################################
+// MARK: 型定義
+
 export interface PrintFrameOptions {
   /** iframe の srcdoc。 */
   html: string;
@@ -8,6 +11,9 @@ export interface PrintFrameOptions {
   /** afterprint が届かないブラウザに備えて片付けるまでの時間（ms）。 */
   timeoutMs?: number;
 }
+
+// #############################################################################
+// MARK: 関数
 
 /**
  * 画面に表示しない iframe に文書を組み立てて印刷する。

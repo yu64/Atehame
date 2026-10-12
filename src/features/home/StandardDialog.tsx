@@ -7,10 +7,16 @@ import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   open: boolean;
   onClose: () => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 標準レイアウトを使う：Atehame が用意したテンプレートから選ぶ。 */
 export function StandardDialog(props: Props) {

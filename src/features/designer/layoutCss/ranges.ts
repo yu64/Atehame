@@ -1,5 +1,8 @@
 import type { TextRange } from "@src/features/designer/layoutCss/parse";
 
+// #############################################################################
+// MARK: 関数
+
 /** 範囲を文字列で置き換える。 */
 export function replaceRange(css: string, range: TextRange, text: string): string {
   return css.slice(0, range.start) + text + css.slice(range.end);

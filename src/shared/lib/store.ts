@@ -1,8 +1,14 @@
+// #############################################################################
+// MARK: 型定義
+
 /** 状態を読み、変化を購読できるもの。React では useStoreSelector で使う。 */
 export interface ReadableStore<S> {
   getState(): S;
   subscribe(listener: () => void): () => void;
 }
+
+// #############################################################################
+// MARK: クラス
 
 /**
  * React に依存しない、購読できる状態の入れ物。
@@ -17,8 +23,10 @@ export class Store<S> implements ReadableStore<S> {
     this.#state = initial;
   }
 
+  /** 今の状態。 */
   getState = (): S => this.#state;
 
+  /** 状態が変わったときに呼ぶ関数を登録する。戻り値で登録を解除する。 */
   subscribe = (listener: () => void): (() => void) => {
     this.#listeners.add(listener);
     return () => this.#listeners.delete(listener);

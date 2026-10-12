@@ -1,3 +1,6 @@
+// #############################################################################
+// MARK: 型定義
+
 export interface PersistentStorageOptions<T> {
   /** 読み込んだ値を確かめる。正しくなければ undefined を返し、初めの値を使う。 */
   parse: (value: unknown) => T | undefined;
@@ -8,6 +11,9 @@ export interface PersistentStorageOptions<T> {
   /** 使う Storage。既定は localStorage。使えない環境では読み書きしない。 */
   storage?: () => Storage | undefined;
 }
+
+// #############################################################################
+// MARK: 関数
 
 /**
  * 値を JSON にして localStorage に保存する入れ物（jotai の atomWithStorage に渡せる形）。
@@ -24,6 +30,7 @@ export function createPersistentStorage<T>(options: PersistentStorageOptions<T>)
   const pending = new Map<string, T>();
   let timer: ReturnType<typeof setTimeout> | undefined;
 
+  /** 待っている書き込みを、すぐに行う。 */
   function flush() {
     if (timer !== undefined) clearTimeout(timer);
     timer = undefined;

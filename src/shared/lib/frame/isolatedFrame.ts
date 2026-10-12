@@ -1,3 +1,18 @@
+// #############################################################################
+// MARK: 型定義
+
+export interface IsolatedFrameOptions {
+  lang?: string;
+  /**
+   * head に置く style 要素。css はアプリが用意したものだけを渡す（利用者の入力は setStyleText で後から入れる）。
+   * css を省くと空の style 要素になり、後から setStyleText で中身を入れられる。
+   */
+  styles?: Array<{ id: string; css?: string }>;
+}
+
+// #############################################################################
+// MARK: 定数
+
 /**
  * 外部と切り離した iframe の文書。中身は親が DOM で組み立てる前提で、iframe の中ではスクリプトを動かさない。
  */
@@ -12,14 +27,8 @@ export const scriptlessFrameSandbox = "allow-same-origin allow-modals";
 export const isolatedFrameCsp =
   "default-src 'none'; style-src 'unsafe-inline'; img-src data:; font-src data:";
 
-export interface IsolatedFrameOptions {
-  lang?: string;
-  /**
-   * head に置く style 要素。css はアプリが用意したものだけを渡す（利用者の入力は setStyleText で後から入れる）。
-   * css を省くと空の style 要素になり、後から setStyleText で中身を入れられる。
-   */
-  styles?: Array<{ id: string; css?: string }>;
-}
+// #############################################################################
+// MARK: 関数
 
 /** iframe の srcdoc に使う HTML。CSP を meta で指定し、本文は空にする。 */
 export function createIsolatedFrameHtml(options: IsolatedFrameOptions = {}): string {

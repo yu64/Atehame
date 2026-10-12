@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface RadioCardOption<T extends string> {
   value: T;
   label: ReactNode;
@@ -18,6 +21,9 @@ export interface Props<T extends string> {
   value: T | undefined;
   onChange: (value: T) => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 枠付きのカードで選ぶラジオボタン。選んだカードは枠の色を変える。 */
 export function RadioCardGroup<T extends string>(props: Props<T>) {

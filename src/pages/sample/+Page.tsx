@@ -8,6 +8,7 @@ import { SelectCard } from "@src/shared/ui/SelectCard";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
 
+/** 部品の見た目を確かめるための見本のページ（開発用）。 */
 export default function Page() {
   const [dark, setDark] = useAtom(isDarkAtom);
 

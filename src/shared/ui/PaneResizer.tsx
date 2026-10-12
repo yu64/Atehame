@@ -1,5 +1,8 @@
 import { useRef } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   /** 区切りの右にある欄の幅（px）。 */
   width: number;
@@ -12,8 +15,14 @@ export interface Props {
   label: string;
 }
 
+// #############################################################################
+// MARK: 定数
+
 /** キーボードで1回に動かす幅（px）。 */
 const keyStep = 16;
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * 右の欄の左端に置く区切り。ドラッグで欄の幅を変える（左へ動かすと広がる）。
@@ -22,6 +31,7 @@ const keyStep = 16;
 export function PaneResizer(props: Props) {
   const dragRef = useRef<{ startX: number; startWidth: number } | null>(null);
 
+  /** 幅を最小と最大の間に収める。 */
   function clamp(width: number) {
     return Math.round(Math.max(props.min, Math.min(Math.max(props.min, props.max()), width)));
   }

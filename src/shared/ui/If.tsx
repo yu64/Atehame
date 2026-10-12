@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   /** 真なら children を表示する。 */
   value: unknown;
@@ -7,6 +10,9 @@ export interface Props {
   /** space: 偽でも場所は空けておく（表示を切り替えても周りが動かない）。 */
   mode?: "space" | "none";
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 条件に合うときだけ children を表示する。 */
 export function If(props: Props) {

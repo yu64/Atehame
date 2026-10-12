@@ -7,6 +7,9 @@ import { FileDropZone } from "@src/shared/ui/FileDropZone";
 import { Input } from "@src/shared/ui/Input";
 import { useRef, useState } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface AssetItem {
   name: string;
   /** 表示に使う data: URL。読めない画像なら undefined。 */
@@ -29,12 +32,19 @@ export interface Props {
   onRemove: (name: string) => void;
 }
 
+// #############################################################################
+// MARK: 定数
+
 const accept = "image/png,image/jpeg,image/webp,image/svg+xml,.svg";
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 画像（アセット）の一覧。登録した画像は、画像の部品から名前で選ぶ。 */
 export function AssetsPanel(props: Props) {
   const [errors, setErrors] = useState<string[]>([]);
 
+  /** 選んだファイルを画像として登録する。登録できなかったものは理由を表示する。 */
   async function add(files: File[]) {
     setErrors(await props.onAdd(files));
   }
@@ -83,6 +93,10 @@ export function AssetsPanel(props: Props) {
   );
 }
 
+// #############################################################################
+// MARK: 内部部品
+
+/** 登録した画像の1行。名前の変更・使っている部品の数・削除。 */
 function AssetRow(props: {
   item: AssetItem;
   otherNames: string[];

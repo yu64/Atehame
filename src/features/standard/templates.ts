@@ -1,6 +1,9 @@
 import { createLayout } from "@src/features/designer";
 import type { Template } from "@src/features/template";
 
+// #############################################################################
+// MARK: 型定義
+
 /** Atehame が用意するテンプレート。トップの「標準レイアウトを使う」から選ぶ。 */
 export interface StandardTemplate {
   id: string;
@@ -8,6 +11,9 @@ export interface StandardTemplate {
   description: string;
   create: () => Template;
 }
+
+// #############################################################################
+// MARK: 定数
 
 /** はがきの宛名面（縦書き）。郵便番号は枠の位置に1桁ずつ、住所と宛名は縦書きで置く。 */
 const hagakiAddress: StandardTemplate = {

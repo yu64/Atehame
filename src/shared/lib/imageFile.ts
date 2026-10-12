@@ -1,3 +1,6 @@
+// #############################################################################
+// MARK: 形式の判定
+
 /** 扱える画像の形式。 */
 export type ImageType = "image/png" | "image/jpeg" | "image/webp" | "image/svg+xml";
 
@@ -13,6 +16,7 @@ export const imageTypes: readonly ImageType[] = [
  * PNG・JPEG・WebP は先頭のバイト、SVG は先頭の文字列で判定する。
  */
 export function detectImageType(bytes: Uint8Array): ImageType | undefined {
+  /** 先頭のバイトが values と一致するか。 */
   function starts(...values: number[]) {
     return values.every((value, index) => bytes[index] === value);
   }
@@ -31,6 +35,10 @@ export function detectImageType(bytes: Uint8Array): ImageType | undefined {
   return undefined;
 }
 
+// #############################################################################
+// MARK: base64
+
+/** バイト列を base64 の文字列にする。 */
 export function bytesToBase64(bytes: Uint8Array): string {
   let binary = "";
   // 大きな配列を一度に渡すと引数の数の上限を超えるため、分けて変換する。
@@ -40,6 +48,7 @@ export function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
+/** base64 の文字列をバイト列に戻す。 */
 export function base64ToBytes(base64: string): Uint8Array {
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
@@ -57,6 +66,9 @@ export function base64ByteLength(base64: string): number {
   const padding = (base64.endsWith("==") ? 2 : (base64.endsWith("=") ? 1 : 0));
   return (base64.length / 4) * 3 - padding;
 }
+
+// #############################################################################
+// MARK: ファイルの読み込み
 
 export interface ImageFile {
   type: ImageType;

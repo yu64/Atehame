@@ -5,6 +5,9 @@ import { createPersistentStorage } from "@src/shared/lib/persistentStorage";
 import { atom, type SetStateAction, type WritableAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
+// #############################################################################
+// MARK: 自動保存
+
 /** 編集中の内容。テンプレートと、編集を始めたか（新しく作った・読み込んだ・どこかを書き換えた）。 */
 interface Draft {
   template: Template;
@@ -36,6 +39,9 @@ const draftAtom = atomWithStorage<Draft>(
   { getOnInit: true },
 );
 
+// #############################################################################
+// MARK: テンプレート全体
+
 /**
  * 編集中のテンプレート全体（保存に使う）。
  * 各画面は、下の派生の atom で自分の工程の部分だけを読み書きする。
@@ -44,6 +50,9 @@ export const currentTemplateAtom = atom(get => get(draftAtom).template);
 
 /** 編集中の内容があるか（「続きから編集」を出すかの判断に使う）。 */
 export const hasDraftAtom = atom(get => get(draftAtom).editing);
+
+// #############################################################################
+// MARK: 工程ごとの部分
 
 /** テンプレートの一部を読み書きする atom。書き換えたら編集中にする。 */
 function partAtom<T>(
@@ -80,6 +89,9 @@ export const layoutAtom = partAtom<Layout>(
   template => template.layout,
   (template, layout) => ({ ...template, layout }),
 );
+
+// #############################################################################
+// MARK: 編集の始め方
 
 /** 渡したテンプレートで編集を始める。編集中の内容は破棄する。 */
 export const startTemplateAtom = atom(null, (_get, set, template: Template) => {

@@ -14,6 +14,9 @@ import {
 } from "@src/features/designer/render/text";
 import type { JsonValue } from "@src/shared/lib/json";
 
+// #############################################################################
+// MARK: 型定義
+
 /** 部品に当てはめる値。加工の出力（オブジェクト）。 */
 export type Values = Record<string, JsonValue>;
 
@@ -27,6 +30,9 @@ interface Piece {
   text: string;
   placeholder: boolean;
 }
+
+// #############################################################################
+// MARK: 関数
 
 /**
  * 部品を1つ組み立てる。見た目と位置はすべて CSS（[data-name="名前"]）で決まる。
@@ -91,6 +97,9 @@ export function renderElement(
   element.append(content);
   return element;
 }
+
+// #############################################################################
+// MARK: 内部関数
 
 /**
  * 画像を表示する。src は登録した画像から検証して組み立てた data: URL だけを使う。

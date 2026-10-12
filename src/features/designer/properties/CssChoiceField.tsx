@@ -1,5 +1,8 @@
 import { Select } from "@src/shared/ui/Select";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface CssChoiceFieldProps {
   label: string;
   value: string | undefined;
@@ -7,6 +10,9 @@ export interface CssChoiceFieldProps {
   options: Array<{ value: string; label: string }>;
   onChange: (value: string | undefined) => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** CSS の値を選ぶ欄。選択肢にない値が書かれている場合も、その値を選択肢に残す。 */
 export function CssChoiceField(props: CssChoiceFieldProps) {

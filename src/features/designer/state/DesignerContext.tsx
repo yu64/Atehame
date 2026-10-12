@@ -4,6 +4,9 @@ import type { CssEditorComponent, ElementPreset } from "@src/features/designer/t
 import { useStoreSelector } from "@src/shared/hooks/useStoreSelector";
 import { createContext, useContext } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 /** Designer に渡された設定（props）。部品の雛形やプレビューの値など。 */
 export interface DesignerConfig {
   fields: string[];
@@ -12,8 +15,14 @@ export interface DesignerConfig {
   cssEditor?: CssEditorComponent;
 }
 
+// #############################################################################
+// MARK: 定数
+
 export const DesignerStoreContext = createContext<DesignerStore | undefined>(undefined);
 export const DesignerConfigContext = createContext<DesignerConfig | undefined>(undefined);
+
+// #############################################################################
+// MARK: フック
 
 /**
  * デザイナーの状態。外には公開せず、用途ごとのフック（hooks/）からだけ使う。
@@ -30,6 +39,7 @@ export function useDesignerSelector<T>(select: (state: DesignerState) => T): T {
   return useStoreSelector(useDesignerStore(), select);
 }
 
+/** デザイナーに渡された設定（項目・サンプル・雛形など）。Designer の外で使った場合は例外にする。 */
 export function useDesignerConfig(): DesignerConfig {
   const config = useContext(DesignerConfigContext);
   if (!config) throw new Error("Designer の中で使ってください。");

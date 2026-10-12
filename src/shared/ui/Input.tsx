@@ -1,6 +1,9 @@
 import { Field } from "@src/shared/ui/Field";
 import { type ComponentPropsWithRef, useId } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props extends ComponentPropsWithRef<"input"> {
   label?: string;
   description?: string;
@@ -8,6 +11,10 @@ export interface Props extends ComponentPropsWithRef<"input"> {
   error?: string;
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** 1行の入力欄。見出し・説明・エラーを添えられる。 */
 export function Input(props: Props) {
   const { label, description, error, ...inputProps } = props;
   const generatedId = useId();

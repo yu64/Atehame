@@ -12,10 +12,16 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   open: boolean;
   onClose: () => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** レイアウトを作る：続きから・新しく作る・テンプレートを読み込んで編集する。 */
 export function CreateDialog(props: Props) {
@@ -83,6 +89,10 @@ export function CreateDialog(props: Props) {
   );
 }
 
+// #############################################################################
+// MARK: 内部部品
+
+/** 始め方の選択肢（説明とボタン）。 */
 function Choice(props: {
   title: string;
   description: string;

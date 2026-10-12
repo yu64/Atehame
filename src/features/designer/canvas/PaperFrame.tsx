@@ -11,6 +11,9 @@ import { scriptlessFrameSandbox } from "@src/shared/lib/frame/isolatedFrame";
 import { measureRelative } from "@src/shared/lib/frame/measure";
 import { useEffect, useMemo, useRef } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   layout: LayoutDocument;
   sample: Values;
@@ -22,6 +25,9 @@ export interface Props {
   /** 描画した部品の位置と大きさ（mm）。名前ごと。 */
   onMeasure: (rects: Map<string, ElementRect>) => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * 用紙を印刷と同じ仕組み（外部と切り離した iframe）で描画する。操作は受け付けない。
@@ -41,6 +47,7 @@ export function PaperFrame(props: Props) {
     callbacks.current.onCssWarnings(applyLayoutStyles(doc, props.layout));
     renderPages(doc, props.layout, [props.sample], { placeholder: true });
 
+    /** 部品の表示上の位置と大きさを測り、知らせる。 */
     function measure(target: Document) {
       callbacks.current.onMeasure(measureElements(target, props.pxPerMm));
     }
@@ -74,6 +81,9 @@ export function PaperFrame(props: Props) {
     </div>
   );
 }
+
+// #############################################################################
+// MARK: 内部関数
 
 /** 用紙の中の部品を、用紙の左上からの位置（mm）で測る。同じ名前の部品は最初のものだけ。 */
 function measureElements(doc: Document, pxPerMm: number): Map<string, ElementRect> {

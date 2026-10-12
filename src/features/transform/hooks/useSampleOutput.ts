@@ -5,6 +5,9 @@ import { sampleRowAtom } from "@src/features/transform/store";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
 
+// #############################################################################
+// MARK: フック
+
 /** 編集中のスキーマ・加工コード・サンプル行から、加工結果を試算する。 */
 export function useSampleOutput() {
   const schema = useAtomValue(schemaAtom);

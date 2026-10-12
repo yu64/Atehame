@@ -20,6 +20,20 @@ import type { SidePanelTab } from "@src/features/designer/state/designerStore";
 import { PaneResizer } from "@src/shared/ui/PaneResizer";
 import { useMemo, useRef, useState } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
+export interface Props {
+  /**
+   * 欄を広げても、同じ行のほかの領域（パレットやキャンバス）に残す幅（px）。
+   * 欄の最大幅は、行の幅からこの幅を引いたものになる。
+   */
+  reservedWidth?: number;
+}
+
+// #############################################################################
+// MARK: 定数
+
 const tabs: Array<{ id: SidePanelTab; label: string }> = [
   { id: "properties", label: "設定" },
   { id: "list", label: "一覧" },
@@ -30,13 +44,8 @@ const tabs: Array<{ id: SidePanelTab; label: string }> = [
 /** 欄の幅（px）。reserved は、指定がない場合にほかの領域へ残す幅。 */
 const panelWidth = { default: 320, min: 256, reserved: 240 };
 
-export interface Props {
-  /**
-   * 欄を広げても、同じ行のほかの領域（パレットやキャンバス）に残す幅（px）。
-   * 欄の最大幅は、行の幅からこの幅を引いたものになる。
-   */
-  reservedWidth?: number;
-}
+// #############################################################################
+// MARK: コンポーネント
 
 /** デザイナーの右の欄。タブで中身を切り替え、左端のドラッグで幅を変える。 */
 export function SidePanel(props: Props) {
@@ -44,6 +53,7 @@ export function SidePanel(props: Props) {
   const [width, setWidth] = useState(panelWidth.default);
   const asideRef = useRef<HTMLElement>(null);
 
+  /** 右の欄を広げられる最大の幅。キャンバスとパレットの分を残す。 */
   function maxWidth() {
     const parent = asideRef.current?.parentElement;
     if (!parent) return panelWidth.default;
@@ -95,6 +105,9 @@ export function SidePanel(props: Props) {
   );
 }
 
+// #############################################################################
+// MARK: 内部部品
+
 /** 設定タブ。部品を選択していれば部品の設定、していなければ用紙の設定。 */
 function PropertiesTab() {
   const element = useSelectedElement();
@@ -121,11 +134,13 @@ function PropertiesTab() {
   );
 }
 
+/** 「設定」タブで部品を選んでいないとき：用紙の設定。 */
 function PaperTab() {
   const paper = useDesignerPaper();
   return <PaperProperties paper={paper.size} onChange={paper.setSize} />;
 }
 
+/** 「一覧」タブ：部品の一覧。 */
 function ListTab() {
   const list = useDesignerElements();
   return (
@@ -138,6 +153,7 @@ function ListTab() {
   );
 }
 
+/** 「画像」タブ：画像の登録と管理。 */
 function AssetsTab() {
   const assets = useDesignerAssets();
   // 使っている部品は今の文書から引くため、部品が変わったときも作り直す。
@@ -168,6 +184,7 @@ function AssetsTab() {
   );
 }
 
+/** 「CSS」タブ：レイアウトの CSS を直接編集する。 */
 function CssTab() {
   const css = useDesignerCss();
   const { cssEditor } = useDesignerConfig();

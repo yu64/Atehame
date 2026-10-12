@@ -1,3 +1,6 @@
+// #############################################################################
+// MARK: 定数
+
 /** スクリプトの実行や、外部の読み込み、別の文書の埋め込みにつながる要素。 */
 const blockedElements = new Set([
   "script",
@@ -19,10 +22,11 @@ const blockedElements = new Set([
 
 /** 文書の中（#id）以外を指す url(...)。 */
 const externalUrlPattern = String.raw`url\(\s*(?!['"]?#)[^)]*\)`;
+
 const hasExternalUrl = new RegExp(externalUrlPattern, "i");
-function externalUrls() {
-  return new RegExp(externalUrlPattern, "gi");
-}
+
+// #############################################################################
+// MARK: 関数
 
 /**
  * SVG から、スクリプト・イベント属性・外部への参照を取り除く。
@@ -68,4 +72,12 @@ export function sanitizeSvg(source: string): string | undefined {
     }
   }
   return new XMLSerializer().serializeToString(root);
+}
+
+// #############################################################################
+// MARK: 内部関数
+
+/** 外部の URL を探す正規表現。g フラグを使うため、毎回作り直す。 */
+function externalUrls() {
+  return new RegExp(externalUrlPattern, "gi");
 }

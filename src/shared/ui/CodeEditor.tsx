@@ -4,6 +4,9 @@ import { editorThemes } from "@src/shared/ui/monaco/themes";
 import type * as Monaco from "monaco-editor";
 import { type Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface EditorMarker {
   /** 1始まりの行・列。 */
   line: number;
@@ -35,8 +38,14 @@ export interface Props {
 
 type MonacoModule = typeof Monaco;
 
+// #############################################################################
+// MARK: 定数
+
 /** エディターの外で検出した問題（markers）の持ち主の名前。 */
 const markerOwner = "code-editor";
+
+// #############################################################################
+// MARK: コンポーネント
 
 /**
  * Monaco Editor を使ったコードエディター（JavaScript / CSS）。

@@ -1,6 +1,9 @@
 import type { PageSize } from "@src/features/designer/layoutCss";
 import type { ComponentType } from "react";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface PresetContext {
   /** 新しい部品の名前（重複しないよう決め済み）。 */
   name: string;

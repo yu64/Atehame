@@ -1,6 +1,9 @@
 import { useSyncedText } from "@src/shared/hooks/useSyncedText";
 import { Input } from "@src/shared/ui/Input";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface NumberFieldProps {
   label: string;
   value: number;
@@ -9,6 +12,9 @@ export interface NumberFieldProps {
   unit?: string;
   onChange: (value: number) => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 数値の入力欄。数値として読める値だけを通知する。 */
 export function NumberField(props: NumberFieldProps) {

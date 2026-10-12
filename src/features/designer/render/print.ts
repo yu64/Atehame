@@ -9,6 +9,9 @@ import type { Values } from "@src/features/designer/render/elements";
 import { scriptlessFrameSandbox } from "@src/shared/lib/frame/isolatedFrame";
 import { printInHiddenFrame } from "@src/shared/lib/frame/printFrame";
 
+// #############################################################################
+// MARK: 関数
+
 /** 行ごとに1ページずつ組み立てて印刷する（デザイナーの内部用。外には printLayout を公開する）。 */
 export function printPages(layout: LayoutDocument, rows: Values[]): Promise<void> {
   return printInHiddenFrame({

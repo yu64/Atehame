@@ -22,6 +22,7 @@ const config = {
 await build(config);
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 
+/** ページを開き、ブラウザの中で実行エンジンの確認をすべて行う。 */
 async function check(url, mode) {
   const page = await browser.newPage();
   const pageErrors = [];
@@ -32,10 +33,12 @@ async function check(url, mode) {
     const results = await page.evaluate(async () => {
       const engine = new window.JsExecutionEngine();
       const results = [];
+      /** 確認の結果を記録する。失敗ならその場で止める。 */
       function record(name, passed) {
         if (!passed) throw new Error(`FAIL: ${name}`);
         results.push(name);
       }
+      /** 実行が期待したエラーのコードで失敗することを確かめる。 */
       async function rejects(name, code, input, expected, options, target = engine) {
         try {
           await target.execute(code, input, options);
@@ -225,12 +228,14 @@ async function check(url, mode) {
           // eslint-disable-next-line @typescript-eslint/no-this-alias -- 作られた Worker を外から操作するため。
           latestWorker = this;
         }
+        /** 実行の要求だけを捨てられるようにする（通信の失敗を再現する）。 */
         postMessage(message, ...args) {
           if (dropExecution && message.type === "APPLY" && message.path[0] === "execute") {
             return;
           }
           super.postMessage(message, ...args);
         }
+        /** 終了した Worker の数を数える。 */
         terminate() {
           stopped++;
           super.terminate();

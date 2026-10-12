@@ -3,6 +3,9 @@ import { useSyncedText } from "@src/shared/hooks/useSyncedText";
 import { Button } from "@src/shared/ui/Button";
 import { Textarea } from "@src/shared/ui/Textarea";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   value: string;
   /** 埋め込みのボタンに並べる値の名前。 */
@@ -10,10 +13,14 @@ export interface Props {
   onChange: (text: string) => void;
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
 /** 表示する文字の欄。{名前} で値を埋め込む。 */
 export function TextTemplateField(props: Props) {
   const [text, setText] = useSyncedText(props.value);
 
+  /** 入力を反映し、変わっていれば知らせる。 */
   function update(next: string) {
     setText(next);
     props.onChange(next);

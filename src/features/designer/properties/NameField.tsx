@@ -1,6 +1,9 @@
 import { useSyncedText } from "@src/shared/hooks/useSyncedText";
 import { Input } from "@src/shared/ui/Input";
 
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   name: string;
   /** ほかの部品の名前（重複の確認用）。 */
@@ -8,6 +11,9 @@ export interface Props {
   /** 確定できる名前になったときだけ呼ぶ。 */
   onRename: (name: string) => void;
 }
+
+// #############################################################################
+// MARK: コンポーネント
 
 /** 名前の欄。空や重複する名前は確定せず、理由を表示する。 */
 export function NameField(props: Props) {

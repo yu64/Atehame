@@ -80,6 +80,10 @@ export class DesignerStore extends Store<DesignerState> {
     this.#ids.register(initial);
   }
 
+  // ===========================================================================
+  // MARK: 状態の更新
+
+  /** 状態を更新する。版が変わったら、部品の ID と選択を今の版に合わせる。 */
   #set(update: (state: DesignerState) => DesignerState) {
     const previous = this.getState();
     let next = update(previous);
@@ -122,6 +126,7 @@ export class DesignerStore extends Store<DesignerState> {
     this.#history({ type: "update", apply, mergeKey, now: Date.now() }, patch);
   }
 
+  /** 今のレイアウト（確定前の変更も含む）。 */
   get layout(): LayoutDocument {
     return this.getState().history.present;
   }
@@ -133,24 +138,38 @@ export class DesignerStore extends Store<DesignerState> {
     this.#history({ type: "reset", present: layout });
   }
 
-  // 履歴
+  // ===========================================================================
+  // MARK: 履歴
 
+  /** 元に戻せるか。 */
   canUndo = () => canUndo(this.getState().history);
+  /** やり直せるか。 */
   canRedo = () => canRedo(this.getState().history);
+  /** 元に戻す。 */
   undo = () => this.#history({ type: "undo" });
+  /** やり直す。 */
   redo = () => this.#history({ type: "redo" });
 
-  // 表示
+  // ===========================================================================
+  // MARK: 表示
 
+  /** 表示の拡大率を変える。 */
   setZoom = (zoom: number) => this.#set(state => ({ ...state, zoom }));
+  /** 用紙を画面に合わせる大きさで表示し直すよう頼む。 */
   requestFit = () => this.#set(state => ({ ...state, fitRequest: state.fitRequest + 1 }));
+  /** 1mm 刻みで動かすかを切り替える。 */
   setGridSnap = (gridSnap: boolean) => this.#set(state => ({ ...state, gridSnap }));
+  /** 右の欄のタブを切り替える。 */
   setTab = (tab: SidePanelTab) => this.#set(state => ({ ...state, tab }));
+  /** プレビューで測った、部品の位置と大きさを記録する。 */
   setRects = (rects: Map<string, ElementRect>) => this.#set(state => ({ ...state, rects }));
+  /** CSS の安全化で取り除いた記述を記録する。 */
   setCssWarnings = (cssWarnings: string[]) => this.#set(state => ({ ...state, cssWarnings }));
 
-  // 部品
+  // ===========================================================================
+  // MARK: 部品
 
+  /** 部品を選ぶ。undefined なら選択を外す。 */
   select = (name: string | undefined) => {
     const id = (name === undefined ? undefined : this.#ids.idOf(this.layout, name));
     this.#set(state => (state.selectedId === id ? state : { ...state, selectedId: id }));
@@ -176,8 +195,10 @@ export class DesignerStore extends Store<DesignerState> {
     this.select(result.name);
   };
 
+  /** 部品を消す。 */
   remove = (name: string) => this.#edit(layout => layout.removeElement(name));
 
+  /** 部品の宣言を設定する。value が undefined なら宣言を取り除く。 */
   setDeclaration = (name: string, property: string, value: string | undefined) =>
     this.#edit(
       layout => layout.setDeclaration({ element: name }, property, value),
@@ -195,6 +216,7 @@ export class DesignerStore extends Store<DesignerState> {
     }
   };
 
+  /** 部品を複製し、複製したほうを選ぶ。 */
   duplicate = (name: string) => {
     const result = duplicateElement(this.layout, name, this.getState().rects.get(name));
     if (!result.name) return;
@@ -202,6 +224,7 @@ export class DesignerStore extends Store<DesignerState> {
     this.select(result.name);
   };
 
+  /** 部品を最前面または最背面へ移す。 */
   reorder = (name: string, to: "front" | "back") =>
     this.#edit(layout => layout.moveElement(name, to));
 
@@ -223,7 +246,8 @@ export class DesignerStore extends Store<DesignerState> {
     }));
   };
 
-  // 画像
+  // ===========================================================================
+  // MARK: 画像
 
   /** 画像を登録する。同じ名前があれば差し替える。 */
   setAsset = (name: string, asset: LayoutAsset) =>
@@ -237,19 +261,25 @@ export class DesignerStore extends Store<DesignerState> {
   /** 画像を取り除く。参照している部品は「画像がありません」になる。 */
   removeAsset = (name: string) => this.#edit(layout => layout.removeAsset(name));
 
-  // ドラッグ
+  // ===========================================================================
+  // MARK: ドラッグ
 
   /** ドラッグ中の変更。commitPreview までは履歴に記録せず、外へも知らせない。 */
   preview = (name: string, rect: Partial<ElementRect>) =>
     this.#history({ type: "preview", next: placeElement(this.layout, name, rect) });
 
+  /** ドラッグ中の変更を確定し、1回分として履歴に記録する。 */
   commitPreview = () => this.#history({ type: "commitPreview" });
 
-  // 用紙と CSS
+  // ===========================================================================
+  // MARK: 用紙と CSS
 
+  /** 用紙の大きさ（mm）。 */
   paperSize = (): PageSize => paperSizeOf(this.layout);
 
+  /** 用紙の大きさ（mm）を変える。続けて変えた場合は1回分として履歴に残す。 */
   setPaperSize = (size: PageSize) => this.#edit(layout => setPaperSize(layout, size), "paper");
 
+  /** CSS を丸ごと置き換える。続けて打った場合は1回分として履歴に残す。 */
   setCss = (css: string) => this.#edit(layout => layout.withCss(css), "css");
 }

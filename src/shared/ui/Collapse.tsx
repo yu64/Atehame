@@ -1,8 +1,15 @@
+// #############################################################################
+// MARK: 型定義
+
 export interface Props {
   title: string;
   children: React.ReactNode;
 }
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** 見出しを押して開け閉めできる領域。 */
 export function Collapse(props: Props) {
   return (
     <details

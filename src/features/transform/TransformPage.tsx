@@ -15,6 +15,22 @@ import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useRef } from "react";
 import { navigate } from "vike/client/router";
 
+// #############################################################################
+// MARK: 型定義
+
+interface PreviewStatusProps {
+  preview: TransformPreview;
+}
+
+interface PreviewBodyProps {
+  preview: TransformPreview;
+  /** エラー位置へエディターを移動する。 */
+  onReveal: (line: number, column: number) => void;
+}
+
+// #############################################################################
+// MARK: 定数
+
 const errorLabels: Record<ExecutionErrorCode, string> = {
   SCRIPT_ERROR: "エラー",
   MEMORY_LIMIT: "メモリ上限",
@@ -30,6 +46,10 @@ const errorLabels: Record<ExecutionErrorCode, string> = {
   WORKER_ERROR: "エンジンエラー",
 };
 
+// #############################################################################
+// MARK: コンポーネント
+
+/** 加工の工程。CSV の1行を受け取るコードを書き、サンプルの行で結果を確かめる。 */
 export function TransformPage() {
   const schema = useAtomValue(schemaAtom);
   const [code, setCode] = useAtom(transformCodeAtom);
@@ -138,10 +158,10 @@ export function TransformPage() {
   );
 }
 
-interface PreviewStatusProps {
-  preview: TransformPreview;
-}
+// #############################################################################
+// MARK: 内部部品
 
+/** 実行結果の状態（成功・エラー・実行待ち）と、かかった時間。 */
 function PreviewStatus(props: PreviewStatusProps) {
   const preview = props.preview;
   if (preview.status === "idle") {
@@ -163,12 +183,7 @@ function PreviewStatus(props: PreviewStatusProps) {
   );
 }
 
-interface PreviewBodyProps {
-  preview: TransformPreview;
-  /** エラー位置へエディターを移動する。 */
-  onReveal: (line: number, column: number) => void;
-}
-
+/** 実行結果の中身。成功なら出力の JSON、エラーなら内容とエラーの位置へ移動するボタン。 */
 function PreviewBody(props: PreviewBodyProps) {
   const preview = props.preview;
 
