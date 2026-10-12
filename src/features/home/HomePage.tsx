@@ -43,9 +43,10 @@ export default function HomePage() {
         </section>
       </MainContent>
 
-      <StandardDialog open={dialog === "standard"} onClose={close} />
-      <CreateDialog open={dialog === "create"} onClose={close} />
-      <UseDialog open={dialog === "use"} onClose={close} />
+      {/* 開くたびに作り直し、前に選んだファイルなどを残さない。 */}
+      {dialog === "standard" && <StandardDialog open onClose={close} />}
+      {dialog === "create" && <CreateDialog open onClose={close} />}
+      {dialog === "use" && <UseDialog open onClose={close} />}
     </PageFrame>
   );
 }

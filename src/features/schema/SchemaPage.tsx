@@ -43,8 +43,6 @@ export default function Page() {
             className="pl-2 pr-4"
             onClick={addField}
           />
-          {/* <button className="atehame-btn-secondary">インポート</button> */}
-          {/* <button className="atehame-btn-secondary">エクスポート</button> */}
         </section>
         <section className="mt-4">
           <EditableList

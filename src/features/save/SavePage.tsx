@@ -46,7 +46,7 @@ export default function Page() {
 
   /** 保存する前に問題を確かめる。問題があれば、一覧を見せてから保存するか選んでもらう。 */
   function requestSave() {
-    const warnings = templateWarnings({ ...template, name });
+    const warnings = templateWarnings(template);
     if (preview.status === "error") {
       warnings.push(`加工: サンプル行で実行するとエラーになります（${preview.message}）。`);
     }

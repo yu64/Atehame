@@ -36,10 +36,14 @@ const draftAtom = atomWithStorage<Draft>(
   { getOnInit: true },
 );
 
-/** 編集中のテンプレート。各画面は、下の派生の atom で自分の工程の部分だけを読み書きする。 */
-const templateAtom = atom(get => get(draftAtom).template);
+/**
+ * 編集中のテンプレート全体（保存に使う）。
+ * 各画面は、下の派生の atom で自分の工程の部分だけを読み書きする。
+ */
+export const currentTemplateAtom = atom(get => get(draftAtom).template);
 
-const editingAtom = atom(get => get(draftAtom).editing);
+/** 編集中の内容があるか（「続きから編集」を出すかの判断に使う）。 */
+export const hasDraftAtom = atom(get => get(draftAtom).editing);
 
 /** テンプレートの一部を読み書きする atom。書き換えたら編集中にする。 */
 function partAtom<T>(
@@ -47,9 +51,9 @@ function partAtom<T>(
   write: (template: Template, value: T) => Template,
 ): WritableAtom<T, [SetStateAction<T>], void> {
   return atom(
-    get => read(get(templateAtom)),
+    get => read(get(currentTemplateAtom)),
     (get, set, action: SetStateAction<T>) => {
-      const template = get(templateAtom);
+      const template = get(currentTemplateAtom);
       const value =
         typeof action === "function" ? (action as (previous: T) => T)(read(template)) : action;
       set(draftAtom, { template: write(template, value), editing: true });
@@ -77,18 +81,12 @@ export const layoutAtom = partAtom<Layout>(
   (template, layout) => ({ ...template, layout }),
 );
 
-/** 編集中のテンプレート全体（保存に使う）。 */
-export const currentTemplateAtom = atom(get => get(templateAtom));
-
-/** 編集中の内容があるか（「続きから編集」を出すかの判断に使う）。 */
-export const hasDraftAtom = atom(get => get(editingAtom));
+/** 渡したテンプレートで編集を始める。編集中の内容は破棄する。 */
+export const startTemplateAtom = atom(null, (_get, set, template: Template) => {
+  set(draftAtom, { template, editing: true });
+});
 
 /** 空のテンプレートで編集を始める。編集中の内容は破棄する。 */
 export const startNewTemplateAtom = atom(null, (_get, set) => {
-  set(draftAtom, { template: createTemplate(), editing: true });
-});
-
-/** 読み込んだテンプレートで編集を始める。編集中の内容は破棄する。 */
-export const startTemplateAtom = atom(null, (_get, set, template: Template) => {
-  set(draftAtom, { template, editing: true });
+  set(startTemplateAtom, createTemplate());
 });

@@ -16,15 +16,10 @@ export default function UseDialog(props: Props) {
   const setUsing = useSetAtom(usingTemplateAtom);
   const [loaded, setLoaded] = useState<Template>();
 
-  const close = () => {
-    setLoaded(undefined);
-    props.onClose();
-  };
-
   return (
     <Dialog
       open={props.open}
-      onClose={close}
+      onClose={props.onClose}
       title="レイアウトを使う"
       description="自分または他の人が作ったテンプレートのファイルを読み込みます。"
       actions={
@@ -36,7 +31,7 @@ export default function UseDialog(props: Props) {
           onClick={() => {
             if (!loaded) return;
             setUsing(loaded);
-            close();
+            props.onClose();
             void navigate("/use");
           }}
         />
