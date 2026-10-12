@@ -6,3 +6,5 @@ test-results/
 package-lock.json
 # 旧構想のモックアップ。参照用のため整形しない。
 sample.html
+# 外部のライブラリをビルドしたもの（vendor/README.md）。整形しない。
+vendor/

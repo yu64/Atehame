@@ -38,7 +38,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
-    "@ameinhardt/unocss-preset-daisy": "github:nicky9door/unocss-preset-daisy#add-variant",
+    "@ameinhardt/unocss-preset-daisy": "file:vendor/unocss-preset-daisy",
     "@eslint-community/eslint-utils": "^4.10.1",
     "@eslint/js": "^10.0.1",
     "@iconify-json/lucide": "^1.2.136",

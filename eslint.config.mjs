@@ -19,6 +19,8 @@ export default defineConfig(
     "playwright-report/",
     "sample.html",
     ".claude/",
+    // 外部のライブラリをビルドしたもの（vendor/README.md）。
+    "vendor/",
   ]),
   js.configs.recommended,
   tseslint.configs.recommended,
