@@ -52,13 +52,15 @@ export function SelectionLayer(props: Props) {
     return { vertical: [0, width / 2, width], horizontal: [0, height / 2, height] };
   }, [props.paper, unit]);
 
+  const selected = props.selected;
   const otherBoxes = [...boxRefs.current.entries()]
     .filter(([name]) => name !== props.selected)
     .map(([, box]) => box);
 
-  /** 表示上の px を mm に直す（拡大率を含む）。 */
+  /** 表示上の px を mm に直す（拡大率を含む）。1mm 刻みのときは整数の mm に丸める。 */
   function toMm(px: number) {
-    return px / unit;
+    const mm = px / unit;
+    return (props.gridSnap ? Math.round(mm) : mm);
   }
 
   return (
@@ -106,7 +108,7 @@ export function SelectionLayer(props: Props) {
         );
       })}
 
-      {props.selected && target && (
+      {selected && target && (
         <Moveable
           ref={moveableRef}
           target={target}
@@ -118,29 +120,29 @@ export function SelectionLayer(props: Props) {
           origin={false}
           snappable
           snapThreshold={5}
-          snapGridWidth={props.gridSnap ? unit : 0}
-          snapGridHeight={props.gridSnap ? unit : 0}
           verticalGuidelines={guidelines.vertical}
           horizontalGuidelines={guidelines.horizontal}
           elementGuidelines={otherBoxes}
           onDrag={event => {
-            event.target.style.left = `${event.left}px`;
-            event.target.style.top = `${event.top}px`;
-            props.onPreview(props.selected!, { left: toMm(event.left), top: toMm(event.top) });
+            const left = toMm(event.left);
+            const top = toMm(event.top);
+            event.target.style.left = `${left * unit}px`;
+            event.target.style.top = `${top * unit}px`;
+            props.onPreview(selected, { left, top });
           }}
           onDragEnd={() => props.onCommit()}
           onResize={event => {
+            // 1mm 刻みのときは、幅や高さではなく四辺をそれぞれ 1mm の位置に合わせる。
+            const left = toMm(event.drag.left);
+            const top = toMm(event.drag.top);
+            const width = Math.max(toMm(event.drag.left + event.width) - left, 1);
+            const height = Math.max(toMm(event.drag.top + event.height) - top, 1);
             const style = event.target.style;
-            style.width = `${event.width}px`;
-            style.height = `${event.height}px`;
-            style.left = `${event.drag.left}px`;
-            style.top = `${event.drag.top}px`;
-            props.onPreview(props.selected!, {
-              left: toMm(event.drag.left),
-              top: toMm(event.drag.top),
-              width: Math.max(toMm(event.width), 1),
-              height: Math.max(toMm(event.height), 1),
-            });
+            style.left = `${left * unit}px`;
+            style.top = `${top * unit}px`;
+            style.width = `${width * unit}px`;
+            style.height = `${height * unit}px`;
+            props.onPreview(selected, { left, top, width, height });
           }}
           onResizeEnd={() => props.onCommit()}
         />
