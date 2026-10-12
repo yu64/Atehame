@@ -11,13 +11,44 @@ import { ESLint } from "eslint";
 import { execFileSync } from "node:child_process";
 import { readFile, writeFile } from "node:fs/promises";
 import { extname } from "node:path";
+import { pathToFileURL } from "node:url";
 import * as prettier from "prettier";
 
 // #############################################################################
 // MARK: 定数
 
-const check = process.argv.includes("--check");
 const lintable = new Set([".ts", ".tsx", ".mjs", ".js"]);
+
+// #############################################################################
+// MARK: 関数
+
+/**
+ * 1つのファイルの中身を整形する。filePath は設定を選ぶためだけに使い、ファイルは読まない。
+ * @param {string} source
+ * @param {string} filePath
+ * @param {ESLint} [eslint] 何度も呼ぶ場合は、同じものを渡すと設定の読み込みを省ける
+ */
+export async function formatText(source, filePath, eslint = new ESLint({ fix: true })) {
+  const lint = lintable.has(extname(filePath)) && !(await eslint.isPathIgnored(filePath));
+
+  /** ESLint の --fix をかけた結果。 */
+  async function fix(/** @type {string} */ text) {
+    if (!lint) return text;
+    const [result] = await eslint.lintText(text, { filePath });
+    return result?.output ?? text;
+  }
+
+  // 1. import の並び替えなどを先に直す（ESLint の直し方は空白を詰めることがあるので、後で Prettier が整える）。
+  // 2. Prettier で整形する。
+  // 3. 三項演算子などの形を ESLint のルールで決める（Prettier の形から組み直す）。
+  const options = await prettier.resolveConfig(filePath);
+  const fixed = await fix(source);
+  const formatted = await prettier.format(fixed, {
+    ...options,
+    filepath: filePath,
+  });
+  return fix(formatted);
+}
 
 // #############################################################################
 // MARK: 内部関数
@@ -36,6 +67,7 @@ function listFiles() {
 
 /** 整形が必要なファイルを探し、書き込むか一覧を表示する。 */
 async function main() {
+  const check = process.argv.includes("--check");
   const eslint = new ESLint({ fix: true });
   const changed = [];
 
@@ -49,22 +81,7 @@ async function main() {
     } catch {
       continue; // 削除済み
     }
-    const lint = lintable.has(extname(file)) && !(await eslint.isPathIgnored(file));
-    /** ESLint の --fix をかけた結果。 */
-    async function fix(text) {
-      if (!lint) return text;
-      const [result] = await eslint.lintText(text, { filePath: file });
-      return result?.output ?? text;
-    }
-    const options = await prettier.resolveConfig(file);
-
-    // 1. import の並び替えなどを先に直す（ESLint の直し方は空白を詰めることがあるので、後で Prettier が整える）。
-    // 2. Prettier で整形する。
-    // 3. 三項演算子の形を ESLint のルールで決める（Prettier の形から組み直す）。
-    const fixed = await fix(source);
-    const formatted = await prettier.format(fixed, { ...options, filepath: file });
-    const output = await fix(formatted);
-
+    const output = await formatText(source, file, eslint);
     if (output === source) continue;
     changed.push(file);
     if (!check) await writeFile(file, output);
@@ -84,4 +101,5 @@ async function main() {
 // #############################################################################
 // MARK: 初期化
 
-await main();
+// コマンドとして実行したときだけ動かす（テストから formatText を読み込んだときは動かさない）。
+if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) await main();

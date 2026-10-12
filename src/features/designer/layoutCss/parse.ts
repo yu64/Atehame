@@ -73,7 +73,11 @@ export interface LayoutCss {
  * カスタムプロパティの値は書いたままの文字列（Raw）にする。
  */
 export function parseCss(css: string): CssNode {
-  return parse(css, { positions: true, parseCustomProperty: false, onParseError: () => {} });
+  return parse(css, {
+    positions: true,
+    parseCustomProperty: false,
+    onParseError: () => {},
+  });
 }
 
 /** [data-name=…] なら、その値（部品の名前）を返す。 */
@@ -105,10 +109,16 @@ export function parseLayoutCss(css: string): LayoutCss {
     const info = readRule(css, node, node.block);
     if (!info) return;
     names.add(name);
-    elements.push({ ...info, name });
+    elements.push({
+      ...info,
+      name,
+    });
   });
 
-  return { elements, page };
+  return {
+    elements,
+    page,
+  };
 }
 
 /** セレクタが [data-name="名前"] だけの規則なら、その名前を返す。 */
@@ -146,8 +156,14 @@ function readRule(css: string, node: CssNode, block: CssNode): RuleInfo | undefi
   });
 
   return {
-    range: { start: node.loc.start.offset, end: node.loc.end.offset },
-    bodyRange: { start: block.loc.start.offset + 1, end: block.loc.end.offset - 1 },
+    range: {
+      start: node.loc.start.offset,
+      end: node.loc.end.offset,
+    },
+    bodyRange: {
+      start: block.loc.start.offset + 1,
+      end: block.loc.end.offset - 1,
+    },
     declarations,
     declarationsEnd,
   };
@@ -164,12 +180,20 @@ function readDeclaration(css: string, node: Declaration): DeclarationInfo | unde
     // カスタムプロパティなどの値。前後の空白を除く。
     const raw = css.slice(value.loc.start.offset, value.loc.end.offset);
     const start = value.loc.start.offset + (raw.length - raw.trimStart().length);
-    valueRange = { start, end: start + raw.trim().length };
+    valueRange = {
+      start,
+      end: start + raw.trim().length,
+    };
   } else if (value.type === "Value") {
     // 値の中の最初と最後の要素の位置を使い、後ろのコメントや空白を含めない。
     const first = value.children.first?.loc;
     const last = value.children.last?.loc;
-    if (first && last) valueRange = { start: first.start.offset, end: last.end.offset };
+    if (first && last) {
+      valueRange = {
+        start: first.start.offset,
+        end: last.end.offset,
+      };
+    }
   }
   if (!valueRange) return undefined;
 
@@ -177,7 +201,10 @@ function readDeclaration(css: string, node: Declaration): DeclarationInfo | unde
     property,
     value: css.slice(valueRange.start, valueRange.end),
     important: node.important !== false,
-    range: { start: node.loc.start.offset, end: node.loc.end.offset },
+    range: {
+      start: node.loc.start.offset,
+      end: node.loc.end.offset,
+    },
     valueRange,
   };
 }
@@ -216,7 +243,20 @@ export function readPageSize(layout: LayoutCss): PageSize | undefined {
   }
   if (!width || !height || width <= 0 || height <= 0) return undefined;
 
-  const swap =
-    (orientation === "landscape" ? width < height : orientation === "portrait" && width > height);
-  return (swap ? { width: height, height: width } : { width, height });
+  const swap = (
+    (orientation === "landscape")
+    ? width < height
+    : orientation === "portrait" && width > height
+  );
+  return (
+    swap
+    ? {
+      width: height,
+      height: width,
+    }
+    : {
+      width,
+      height,
+    }
+  );
 }

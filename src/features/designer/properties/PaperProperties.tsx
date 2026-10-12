@@ -30,12 +30,21 @@ export function PaperProperties(props: Props) {
       <CssChoiceField
         label="用紙の種類"
         value={preset ?? "custom"}
-        options={[...options, { value: "custom", label: "任意のサイズ" }]}
+        options={[
+          ...options,
+          {
+            value: "custom",
+            label: "任意のサイズ",
+          },
+        ]}
         onChange={value => {
           const selected = value as PaperPreset | "custom" | undefined;
           if (selected && selected !== "custom") {
             const { width, height } = paperPresets[selected];
-            props.onChange({ width, height });
+            props.onChange({
+              width,
+              height,
+            });
           }
         }}
       />
@@ -45,14 +54,26 @@ export function PaperProperties(props: Props) {
           unit="mm"
           value={props.paper.width}
           min={10}
-          onChange={width => width >= 10 && props.onChange({ width, height: props.paper.height })}
+          onChange={width => (
+            width >= 10
+            && props.onChange({
+              width,
+              height: props.paper.height,
+            })
+          )}
         />
         <NumberField
           label="高さ"
           unit="mm"
           value={props.paper.height}
           min={10}
-          onChange={height => height >= 10 && props.onChange({ width: props.paper.width, height })}
+          onChange={height => (
+            height >= 10
+            && props.onChange({
+              width: props.paper.width,
+              height,
+            })
+          )}
         />
       </div>
       <p className="text-xs text-text-secondary">

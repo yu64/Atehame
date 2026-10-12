@@ -79,5 +79,12 @@ export interface ImageFile {
 export async function readImageFile(file: Blob): Promise<ImageFile | undefined> {
   const bytes = new Uint8Array(await file.arrayBuffer());
   const type = detectImageType(bytes);
-  return (type ? { type, bytes } : undefined);
+  return (
+    type
+    ? {
+      type,
+      bytes,
+    }
+    : undefined
+  );
 }

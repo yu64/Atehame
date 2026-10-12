@@ -148,7 +148,10 @@ function ImageFields(props: { value: ValueOf; set: SetterOf; assetNames: string[
         <CssChoiceField
           label="画像"
           value={value(imageProperty)}
-          options={props.assetNames.map(name => ({ value: encodeCssString(name), label: name }))}
+          options={props.assetNames.map(name => ({
+            value: encodeCssString(name),
+            label: name,
+          }))}
           onChange={next => next !== undefined && set(imageProperty)(next)}
         />
       </div>
@@ -156,9 +159,18 @@ function ImageFields(props: { value: ValueOf; set: SetterOf; assetNames: string[
         label="合わせ方"
         value={value("object-fit")}
         options={[
-          { value: "contain", label: "全体を収める" },
-          { value: "cover", label: "枠を埋める" },
-          { value: "", label: "引き伸ばす" },
+          {
+            value: "contain",
+            label: "全体を収める",
+          },
+          {
+            value: "cover",
+            label: "枠を埋める",
+          },
+          {
+            value: "",
+            label: "引き伸ばす",
+          },
         ]}
         onChange={set("object-fit")}
       />
@@ -166,11 +178,26 @@ function ImageFields(props: { value: ValueOf; set: SetterOf; assetNames: string[
         label="位置"
         value={value("object-position")}
         options={[
-          { value: "", label: "中央" },
-          { value: "top", label: "上" },
-          { value: "bottom", label: "下" },
-          { value: "left", label: "左" },
-          { value: "right", label: "右" },
+          {
+            value: "",
+            label: "中央",
+          },
+          {
+            value: "top",
+            label: "上",
+          },
+          {
+            value: "bottom",
+            label: "下",
+          },
+          {
+            value: "left",
+            label: "左",
+          },
+          {
+            value: "right",
+            label: "右",
+          },
         ]}
         onChange={set("object-position")}
       />
@@ -192,8 +219,14 @@ function TextFields(props: {
           label="向き"
           value={value("writing-mode")}
           options={[
-            { value: "", label: "横書き" },
-            { value: "vertical-rl", label: "縦書き" },
+            {
+              value: "",
+              label: "横書き",
+            },
+            {
+              value: "vertical-rl",
+              label: "縦書き",
+            },
           ]}
           onChange={set("writing-mode")}
         />
@@ -226,10 +259,22 @@ function TextFields(props: {
           label="縦中横"
           value={value("text-combine-upright")}
           options={[
-            { value: "", label: "しない" },
-            { value: "digits 2", label: "2桁までの数字" },
-            { value: "digits 3", label: "3桁までの数字" },
-            { value: "digits 4", label: "4桁までの数字" },
+            {
+              value: "",
+              label: "しない",
+            },
+            {
+              value: "digits 2",
+              label: "2桁までの数字",
+            },
+            {
+              value: "digits 3",
+              label: "3桁までの数字",
+            },
+            {
+              value: "digits 4",
+              label: "4桁までの数字",
+            },
           ]}
           onChange={set("text-combine-upright")}
         />
@@ -237,10 +282,22 @@ function TextFields(props: {
           label="行の中の揃え"
           value={value("text-align")}
           options={[
-            { value: "", label: "先頭" },
-            { value: "center", label: "中央" },
-            { value: "end", label: "末尾" },
-            { value: "justify", label: "両端" },
+            {
+              value: "",
+              label: "先頭",
+            },
+            {
+              value: "center",
+              label: "中央",
+            },
+            {
+              value: "end",
+              label: "末尾",
+            },
+            {
+              value: "justify",
+              label: "両端",
+            },
           ]}
           onChange={set("text-align")}
         />
@@ -248,9 +305,18 @@ function TextFields(props: {
           label="枠の中の揃え"
           value={value("justify-content")}
           options={[
-            { value: "", label: "先頭" },
-            { value: "center", label: "中央" },
-            { value: "flex-end", label: "末尾" },
+            {
+              value: "",
+              label: "先頭",
+            },
+            {
+              value: "center",
+              label: "中央",
+            },
+            {
+              value: "flex-end",
+              label: "末尾",
+            },
           ]}
           onChange={set("justify-content")}
         />

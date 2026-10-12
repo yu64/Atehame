@@ -11,7 +11,10 @@ import {
 import { describe, expect, test } from "vitest";
 
 describe("デザイナーの操作", () => {
-  const paper = { width: 100, height: 148 };
+  const paper = {
+    width: 100,
+    height: 148,
+  };
   const base = LayoutDocument.from(createLayout("hagaki").css);
 
   test("名前の重複を避ける", () => {
@@ -33,7 +36,12 @@ describe("デザイナーの操作", () => {
   });
 
   test("同じ値をもう一度追加すると名前に番号を付ける", () => {
-    const first = addFromPreset(base, textPreset, { key: "氏名", fields: [], assets: [], paper });
+    const first = addFromPreset(base, textPreset, {
+      key: "氏名",
+      fields: [],
+      assets: [],
+      paper,
+    });
     const second = addFromPreset(first.layout, textPreset, {
       key: "氏名",
       fields: [],
@@ -59,8 +67,16 @@ describe("デザイナーの操作", () => {
   });
 
   test("位置を設定し、ずらす", () => {
-    let { layout } = addFromPreset(base, textPreset, { key: "a", fields: [], assets: [], paper });
-    layout = placeElement(layout, "a", { left: 10, top: 20 });
+    let { layout } = addFromPreset(base, textPreset, {
+      key: "a",
+      fields: [],
+      assets: [],
+      paper,
+    });
+    layout = placeElement(layout, "a", {
+      left: 10,
+      top: 20,
+    });
     layout = moveElementBy(layout, "a", 0.5, -1, undefined);
     const rule = layout.elements[0];
     expect(rule.declarations.get("left")?.value).toBe("10.5mm");
@@ -69,7 +85,12 @@ describe("デザイナーの操作", () => {
 
   test("位置が mm で読めない場合は表示上の位置からずらす", () => {
     const layout = LayoutDocument.from('[data-name="a"] { left: 50%; }');
-    const moved = moveElementBy(layout, "a", 1, 1, { left: 30, top: 40, width: 1, height: 1 });
+    const moved = moveElementBy(layout, "a", 1, 1, {
+      left: 30,
+      top: 40,
+      width: 1,
+      height: 1,
+    });
     expect(moved.elements[0].declarations.get("left")?.value).toBe("31mm");
     expect(moved.elements[0].declarations.get("top")?.value).toBe("41mm");
   });

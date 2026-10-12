@@ -42,7 +42,10 @@ function collectRemovals(
 
   children.forEach(node => {
     if (!node.loc) return;
-    const whole = { start: node.loc.start.offset, end: node.loc.end.offset };
+    const whole = {
+      start: node.loc.start.offset,
+      end: node.loc.end.offset,
+    };
 
     if (node.type === "Atrule") {
       if (!node.block || node.name.toLowerCase() === "page") return;
@@ -73,7 +76,10 @@ function collectRemovals(
     ranges.push(...collectRemovals(css, node.block.children, name).ranges);
   });
 
-  return { ranges, all: count > 0 && removed === count };
+  return {
+    ranges,
+    all: count > 0 && removed === count,
+  };
 }
 
 /** 並んだセレクタのうち、指定のものだけを間の , も含めて取り除く範囲。 */
@@ -82,7 +88,10 @@ function selectorRemovals(selectors: CssNode[], matched: boolean[]): TextRange[]
   const lastKept = matched.lastIndexOf(false);
   selectors.forEach((selector, index) => {
     if (!matched[index] || index > lastKept) return;
-    ranges.push({ start: selector.loc!.start.offset, end: selectors[index + 1].loc!.start.offset });
+    ranges.push({
+      start: selector.loc!.start.offset,
+      end: selectors[index + 1].loc!.start.offset,
+    });
   });
   if (lastKept < selectors.length - 1) {
     ranges.push({

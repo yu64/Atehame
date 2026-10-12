@@ -25,7 +25,10 @@ export function SchemaPage() {
   /** 末尾にカラムを追加する。 */
   function addField() {
     const field = createSchemaField();
-    setSchema(current => ({ ...current, fields: [...current.fields, field] }));
+    setSchema(current => ({
+      ...current,
+      fields: [...current.fields, field],
+    }));
   }
 
   return (
@@ -56,7 +59,12 @@ export function SchemaPage() {
             getKey={field => field.id}
             dataFactory={createSchemaField}
             label={(_, index) => `${index + 1}`}
-            onChange={fields => setSchema(current => ({ ...current, fields }))}
+            onChange={fields =>
+              setSchema(current => ({
+                ...current,
+                fields,
+              }))
+            }
           >
             {field => {
               return <SchemaFieldEditor value={field} onChange={updateField} />;

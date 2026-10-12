@@ -18,9 +18,15 @@ export interface CssChoiceFieldProps {
 export function CssChoiceField(props: CssChoiceFieldProps) {
   const current = props.value ?? "";
   const options = (
-    props.options.some(option => option.value === current)
+    (props.options.some(option => option.value === current))
     ? props.options
-    : [...props.options, { value: current, label: `${current}（CSS で指定）` }]
+    : [
+      ...props.options,
+      {
+        value: current,
+        label: `${current}（CSS で指定）`,
+      },
+    ]
   );
 
   return (

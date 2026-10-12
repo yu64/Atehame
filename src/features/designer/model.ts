@@ -27,7 +27,10 @@ export interface Layout {
 /** 用紙だけを指定した、空のレイアウト。 */
 export function createLayout(preset: PaperPreset = "hagaki"): Layout {
   const { width, height } = paperPresets[preset];
-  return { version: 1, css: `@page {\n  size: ${width}mm ${height}mm;\n}\n` };
+  return {
+    version: 1,
+    css: `@page {\n  size: ${width}mm ${height}mm;\n}\n`,
+  };
 }
 
 /** レイアウトの CSS を扱う文書にする。 */
@@ -38,7 +41,18 @@ export function toLayoutDocument(layout: Layout): LayoutDocument {
 /** 文書を保存用のレイアウトにする。 */
 export function fromLayoutDocument(layoutDocument: LayoutDocument): Layout {
   const { css, assets } = layoutDocument;
-  return (Object.keys(assets).length === 0 ? { version: 1, css } : { version: 1, css, assets });
+  return (
+    (Object.keys(assets).length === 0)
+    ? {
+      version: 1,
+      css,
+    }
+    : {
+      version: 1,
+      css,
+      assets,
+    }
+  );
 }
 
 // #############################################################################
@@ -48,11 +62,31 @@ export type PaperPreset = "hagaki" | "nagagata3" | "nagagata4" | "kakugata2" | "
 
 /** 用紙の種類。寸法は mm。 */
 export const paperPresets: Record<PaperPreset, PageSize & { label: string }> = {
-  hagaki: { label: "はがき", width: 100, height: 148 },
-  nagagata3: { label: "長形3号", width: 120, height: 235 },
-  nagagata4: { label: "長形4号", width: 90, height: 205 },
-  kakugata2: { label: "角形2号", width: 240, height: 332 },
-  a4: { label: "A4", width: 210, height: 297 },
+  hagaki: {
+    label: "はがき",
+    width: 100,
+    height: 148,
+  },
+  nagagata3: {
+    label: "長形3号",
+    width: 120,
+    height: 235,
+  },
+  nagagata4: {
+    label: "長形4号",
+    width: 90,
+    height: 205,
+  },
+  kakugata2: {
+    label: "角形2号",
+    width: 240,
+    height: 332,
+  },
+  a4: {
+    label: "A4",
+    width: 210,
+    height: 297,
+  },
 };
 
 /** @page で用紙サイズを指定していない場合の用紙。 */
@@ -60,15 +94,21 @@ export const defaultPaper = paperPresets.hagaki;
 
 /** 用紙の大きさ（mm）。@page で指定していなければ既定の用紙。 */
 export function paperSizeOf(layoutDocument: LayoutDocument): PageSize {
-  return layoutDocument.pageSize ?? { width: defaultPaper.width, height: defaultPaper.height };
+  return (
+    layoutDocument.pageSize ?? {
+      width: defaultPaper.width,
+      height: defaultPaper.height,
+    }
+  );
 }
 
 /** 用紙の大きさに一致する種類。なければ undefined（任意のサイズ）。 */
 export function paperPresetOf(size: PageSize): PaperPreset | undefined {
   return keysOf(paperPresets).find(
-    preset =>
-      Math.abs(paperPresets[preset].width - size.width) < 0.01 &&
-      Math.abs(paperPresets[preset].height - size.height) < 0.01,
+    preset => (
+      Math.abs(paperPresets[preset].width - size.width) < 0.01
+      && Math.abs(paperPresets[preset].height - size.height) < 0.01
+    ),
   );
 }
 
@@ -100,7 +140,10 @@ export function layoutSummary(layout: Layout): LayoutSummary {
 export const maxLayoutCssLength = 100_000;
 
 const assetSchema = z
-  .object({ type: z.enum(imageTypes), data: z.string() })
+  .object({
+    type: z.enum(imageTypes),
+    data: z.string(),
+  })
   .refine(isValidAsset, "画像の形式が正しくありません。")
   .refine(asset => assetBytes(asset) <= assetLimits.bytes, "画像が大きすぎます。");
 

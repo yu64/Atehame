@@ -20,7 +20,14 @@ describe("編集中のテンプレート", () => {
     store.set(templateNameAtom, "年賀状");
     store.set(schemaAtom, current => ({
       ...current,
-      fields: [{ id: "f", name: "氏名", type: "string", memo: "" }],
+      fields: [
+        {
+          id: "f",
+          name: "氏名",
+          type: "string",
+          memo: "",
+        },
+      ],
     }));
     store.set(transformCodeAtom, "return input;");
 
@@ -34,7 +41,10 @@ describe("編集中のテンプレート", () => {
 
   test("読み込むと全体を入れ替え、新しく作ると空に戻す", () => {
     const store = createStore();
-    const loaded = { ...createTemplate(), name: "読み込んだ" };
+    const loaded = {
+      ...createTemplate(),
+      name: "読み込んだ",
+    };
     store.set(startTemplateAtom, loaded);
     expect(store.get(currentTemplateAtom)).toBe(loaded);
     expect(store.get(layoutAtom)).toBe(loaded.layout);

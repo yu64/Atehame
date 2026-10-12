@@ -121,7 +121,10 @@ describe("ページの描画", () => {
 });
 
 describe("画像の部品", () => {
-  const png = { type: "image/png", data: "iVBORw0KGgo=" } as const;
+  const png = {
+    type: "image/png",
+    data: "iVBORw0KGgo=",
+  } as const;
   const css = `[data-name="ロゴ"] { --atehame-image: "logo"; object-fit: contain; }`;
 
   test("登録した画像を img で表示する（src は検証した data: URL だけ）", () => {

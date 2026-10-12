@@ -20,12 +20,30 @@ describe("保存の前の確認", () => {
       schema: {
         version: 1 as const,
         fields: [
-          { id: "a", name: "氏名", type: "string" as const, memo: "" },
-          { id: "b", name: "氏名", type: "string" as const, memo: "" },
-          { id: "c", name: "", type: "string" as const, memo: "" },
+          {
+            id: "a",
+            name: "氏名",
+            type: "string" as const,
+            memo: "",
+          },
+          {
+            id: "b",
+            name: "氏名",
+            type: "string" as const,
+            memo: "",
+          },
+          {
+            id: "c",
+            name: "",
+            type: "string" as const,
+            memo: "",
+          },
         ],
       },
-      layout: { version: 1 as const, css: '[data-name="ロゴ"] { --atehame-image: "logo"; }' },
+      layout: {
+        version: 1 as const,
+        css: '[data-name="ロゴ"] { --atehame-image: "logo"; }',
+      },
     };
     expect(templateWarnings(template)).toEqual([
       "スキーマに名前のないカラムがあります（加工の input に含まれません）。",
@@ -40,9 +58,19 @@ describe("保存の前の確認", () => {
       name: "年賀状",
       schema: {
         version: 1 as const,
-        fields: [{ id: "a", name: "氏名", type: "string" as const, memo: "" }],
+        fields: [
+          {
+            id: "a",
+            name: "氏名",
+            type: "string" as const,
+            memo: "",
+          },
+        ],
       },
-      layout: { version: 1 as const, css: '[data-name="宛名"] { --atehame-text: "{氏名}"; }' },
+      layout: {
+        version: 1 as const,
+        css: '[data-name="宛名"] { --atehame-text: "{氏名}"; }',
+      },
     };
     expect(templateWarnings(template)).toEqual([]);
   });

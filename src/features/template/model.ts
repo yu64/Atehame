@@ -27,7 +27,10 @@ return {
 export function createTemplate(): Template {
   return {
     name: "",
-    schema: { version: 1, fields: [] },
+    schema: {
+      version: 1,
+      fields: [],
+    },
     transform: { code: defaultTransformCode },
     layout: createLayout("hagaki"),
   };
@@ -84,13 +87,25 @@ export function parseTemplate(value: unknown): Template | undefined {
 /** テンプレートを、書き出すファイルの内容にする。 */
 export function toTemplateFile(template: Template): TemplateFile {
   const { name, schema, transform, layout } = template;
-  return { format: templateFileFormat, version: 1, name, schema, transform, layout };
+  return {
+    format: templateFileFormat,
+    version: 1,
+    name,
+    schema,
+    transform,
+    layout,
+  };
 }
 
 /** 読み込んだファイルの内容から、テンプレートを取り出す。 */
 export function fromTemplateFile(file: TemplateFile): Template {
   const { name, schema, transform, layout } = file;
-  return { name, schema, transform, layout };
+  return {
+    name,
+    schema,
+    transform,
+    layout,
+  };
 }
 
 /** ファイルの内容を、読みやすい JSON の文字列にする。 */
@@ -106,16 +121,25 @@ export function parseTemplateFile(json: string): ParseResult {
   try {
     value = JSON.parse(json);
   } catch {
-    return { ok: false, message: "JSON として読み込めませんでした。" };
+    return {
+      ok: false,
+      message: "JSON として読み込めませんでした。",
+    };
   }
 
   const result = templateFileSchema.safeParse(value);
   if (!result.success) {
     const issue = result.error.issues[0];
     const path = issue?.path.join(".") || "(全体)";
-    return { ok: false, message: `テンプレートの形式が正しくありません（${path}）。` };
+    return {
+      ok: false,
+      message: `テンプレートの形式が正しくありません（${path}）。`,
+    };
   }
-  return { ok: true, file: result.data };
+  return {
+    ok: true,
+    file: result.data,
+  };
 }
 
 /** ファイル名に使えない文字を置き換える。 */

@@ -22,7 +22,10 @@ function addressLayout(preset: PaperPreset): Layout {
   const postal = addFromPreset(base, postalCodePreset, {
     fields: ["郵便番号"],
     assets: [],
-    paper: { width, height },
+    paper: {
+      width,
+      height,
+    },
   }).layout.css.replace("left: 44mm;", `left: ${width - 56}mm;`);
 
   const css = `${postal}
@@ -52,7 +55,10 @@ function addressLayout(preset: PaperPreset): Layout {
   font-family: var(--atehame-font-gothic);
 }
 `;
-  return { version: 1, css };
+  return {
+    version: 1,
+    css,
+  };
 }
 
 const rows: Values[] = [
@@ -61,7 +67,11 @@ const rows: Values[] = [
     住所: "東京都渋谷区道玄坂1丁目23番4号（サンプルビル）",
     氏名: "山田 太郎",
   },
-  { 郵便番号: "5300001", 住所: "大阪府大阪市北区梅田3丁目1番1号", 氏名: "鈴木 一郎" },
+  {
+    郵便番号: "5300001",
+    住所: "大阪府大阪市北区梅田3丁目1番1号",
+    氏名: "鈴木 一郎",
+  },
 ];
 
 /**
@@ -86,4 +96,7 @@ async function buildPrintHtml(preset: PaperPreset, extraCss = ""): Promise<strin
   return html;
 }
 
-Object.assign(window, { buildPrintHtml, rowCount: rows.length });
+Object.assign(window, {
+  buildPrintHtml,
+  rowCount: rows.length,
+});

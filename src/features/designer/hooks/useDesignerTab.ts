@@ -16,5 +16,9 @@ export function useDesignerTab(): {
   const store = useDesignerStore();
   const tab = useDesignerSelector(state => state.tab);
   const cssWarning = useDesignerSelector(state => state.cssWarnings.length > 0);
-  return { tab, setTab: store.setTab, cssWarning };
+  return {
+    tab,
+    setTab: store.setTab,
+    cssWarning,
+  };
 }

@@ -53,12 +53,20 @@ export function isValidAsset(asset: LayoutAsset): boolean {
 
 /** 画像のファイルの中身から、アセットを作る。SVG は安全化してから持つ。 */
 export function createAsset(type: ImageType, bytes: Uint8Array): LayoutAsset | undefined {
-  if (type !== "image/svg+xml") return { type, data: bytesToBase64(bytes) };
+  if (type !== "image/svg+xml") {
+    return {
+      type,
+      data: bytesToBase64(bytes),
+    };
+  }
   const svg = sanitizeSvg(new TextDecoder().decode(bytes));
   return (
-    svg === undefined
+    (svg === undefined)
     ? undefined
-    : { type, data: bytesToBase64(new TextEncoder().encode(svg)) }
+    : {
+      type,
+      data: bytesToBase64(new TextEncoder().encode(svg)),
+    }
   );
 }
 
@@ -75,11 +83,12 @@ export function checkAssetLimits(assets: Assets, asset: LayoutAsset): string | u
 
 /** 既存と重ならないアセットの名前。ファイル名から拡張子を除いたものを元にする。 */
 export function uniqueAssetName(assets: Assets, fileName: string): string {
-  const base =
+  const base = (
     fileName
-      .replace(/\.[^.]*$/, "")
-      .trim()
-      .slice(0, assetLimits.nameLength) || "画像";
+    .replace(/\.[^.]*$/, "")
+    .trim()
+    .slice(0, assetLimits.nameLength) || "画像"
+  );
   if (!(base in assets)) return base;
   for (let index = 2; ; index++) {
     const name = `${base} ${index}`;

@@ -104,8 +104,16 @@ function Card(props: CardProps) {
             <DropdownMenu
               label="項目の操作"
               items={[
-                { id: "add-before", label: "この上に追加", onSelect: props.onAddBefore },
-                { id: "add-after", label: "この下に追加", onSelect: props.onAddAfter },
+                {
+                  id: "add-before",
+                  label: "この上に追加",
+                  onSelect: props.onAddBefore,
+                },
+                {
+                  id: "add-after",
+                  label: "この下に追加",
+                  onSelect: props.onAddAfter,
+                },
               ]}
             />
             <Button

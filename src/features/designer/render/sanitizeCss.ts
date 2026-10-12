@@ -50,7 +50,10 @@ export const maxCssLength = 100_000;
  */
 export function sanitizeCss(source: string): SanitizedCss {
   if (source.length > maxCssLength) {
-    return { css: "", warnings: [`CSS が長すぎます（${maxCssLength} 文字まで）。`] };
+    return {
+      css: "",
+      warnings: [`CSS が長すぎます（${maxCssLength} 文字まで）。`],
+    };
   }
 
   const warnings = new Set<string>();
@@ -74,8 +77,9 @@ export function sanitizeCss(source: string): SanitizedCss {
         removals.set(item, list);
       } else if (node.type === "Atrule" && normalizeName(node.name) === "page") {
         node.block?.children.forEach((child, childItem, childList) => {
-          const allowed =
-            child.type === "Declaration" && pageProperties.has(child.property.toLowerCase());
+          const allowed = (
+            child.type === "Declaration" && pageProperties.has(child.property.toLowerCase())
+          );
           if (allowed) return;
           warnings.add("@page では size と margin だけが使えます。");
           removals.set(childItem, childList);
@@ -96,7 +100,10 @@ export function sanitizeCss(source: string): SanitizedCss {
   });
 
   for (const [item, list] of removals) list.remove(item);
-  return { css: generate(ast), warnings: [...warnings] };
+  return {
+    css: generate(ast),
+    warnings: [...warnings],
+  };
 }
 
 /**
@@ -105,8 +112,11 @@ export function sanitizeCss(source: string): SanitizedCss {
  */
 export function normalizeName(name: string): string {
   return name
-    .replace(/\\([0-9a-fA-F]{1,6})[ \t\n\r\f]?|\\(.)/g, (_, hex: string, char: string) =>
-      (hex ? String.fromCodePoint(parseInt(hex, 16)) : char),
+    .replace(/\\([0-9a-fA-F]{1,6})[ \t\n\r\f]?|\\(.)/g, (_, hex: string, char: string) => (
+      hex
+      ? String.fromCodePoint(parseInt(hex, 16))
+      : char
+    ),
     )
     .toLowerCase();
 }

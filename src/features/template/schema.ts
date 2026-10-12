@@ -25,10 +25,22 @@ export interface DataSchema {
 
 /** データ型の表示名。記述順を選択肢の表示順として扱う。 */
 export const fieldTypeLabels: Record<FieldType, { name: string; english: string }> = {
-  string: { name: "文字列", english: "String" },
-  number: { name: "数値", english: "Number" },
-  boolean: { name: "真偽値", english: "Boolean" },
-  datetime: { name: "日時", english: "DateTime" },
+  string: {
+    name: "文字列",
+    english: "String",
+  },
+  number: {
+    name: "数値",
+    english: "Number",
+  },
+  boolean: {
+    name: "真偽値",
+    english: "Boolean",
+  },
+  datetime: {
+    name: "日時",
+    english: "DateTime",
+  },
 };
 
 // #############################################################################

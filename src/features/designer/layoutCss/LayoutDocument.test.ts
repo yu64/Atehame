@@ -23,12 +23,18 @@ describe("LayoutDocument", () => {
     const layout = LayoutDocument.from(base);
     expect(layout.parsed).toBe(layout.parsed);
     expect(layout.elements).toBe(layout.parsed.elements);
-    expect(layout.pageSize).toEqual({ width: 100, height: 148 });
+    expect(layout.pageSize).toEqual({
+      width: 100,
+      height: 148,
+    });
   });
 });
 
 describe("LayoutDocument の画像", () => {
-  const png = { type: "image/png", data: "iVBORw0KGgo=" } as const;
+  const png = {
+    type: "image/png",
+    data: "iVBORw0KGgo=",
+  } as const;
   const css = `[data-name="ロゴ"] {
   --atehame-image: "logo";
 }

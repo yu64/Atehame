@@ -11,5 +11,9 @@ export function useFrameDocument() {
   const ref = useRef<HTMLIFrameElement>(null);
   const [document, setDocument] = useState<Document | null>(null);
   const onLoad = useCallback(() => setDocument(ref.current?.contentDocument ?? null), []);
-  return { ref, onLoad, document };
+  return {
+    ref,
+    onLoad,
+    document,
+  };
 }

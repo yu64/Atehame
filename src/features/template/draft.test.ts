@@ -15,8 +15,17 @@ describe("編集中のテンプレートの自動保存", () => {
   beforeEach(() => localStorage.clear());
 
   test("保存してあった内容から、続きを始める", async () => {
-    const template = { ...createTemplate(), name: "年賀状" };
-    localStorage.setItem(draftStorageKey, JSON.stringify({ template, editing: true }));
+    const template = {
+      ...createTemplate(),
+      name: "年賀状",
+    };
+    localStorage.setItem(
+      draftStorageKey,
+      JSON.stringify({
+        template,
+        editing: true,
+      }),
+    );
     const { templateNameAtom, hasDraftAtom } = await loadStore();
     const store = createStore();
     expect(store.get(templateNameAtom)).toBe("年賀状");
@@ -24,7 +33,13 @@ describe("編集中のテンプレートの自動保存", () => {
   });
 
   test("壊れた内容は使わず、空のテンプレートで始める", async () => {
-    localStorage.setItem(draftStorageKey, JSON.stringify({ template: { name: 1 }, editing: true }));
+    localStorage.setItem(
+      draftStorageKey,
+      JSON.stringify({
+        template: { name: 1 },
+        editing: true,
+      }),
+    );
     const { templateNameAtom, hasDraftAtom } = await loadStore();
     const store = createStore();
     expect(store.get(templateNameAtom)).toBe("");
@@ -37,7 +52,14 @@ describe("編集中のテンプレートの自動保存", () => {
     const store = createStore();
     store.set(schemaAtom, schema => ({
       ...schema,
-      fields: [{ id: "f", name: "氏名", type: "string", memo: "" }],
+      fields: [
+        {
+          id: "f",
+          name: "氏名",
+          type: "string",
+          memo: "",
+        },
+      ],
     }));
     vi.advanceTimersByTime(1000);
     const saved = JSON.parse(localStorage.getItem(draftStorageKey) ?? "null");

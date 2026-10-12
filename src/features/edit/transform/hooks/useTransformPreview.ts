@@ -54,7 +54,10 @@ export function useTransformPreview(code: string, input: JsonValue): TransformPr
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      pendingRef.current = { code, input };
+      pendingRef.current = {
+        code,
+        input,
+      };
       void drain();
     }, debounceMs);
     return () => clearTimeout(timer);
@@ -91,7 +94,11 @@ async function run(engine: JsExecutionEngine, request: Request): Promise<Transfo
   const start = performance.now();
   try {
     const output = await engine.execute(request.code, request.input);
-    return { status: "success", output, elapsedMs: performance.now() - start };
+    return {
+      status: "success",
+      output,
+      elapsedMs: performance.now() - start,
+    };
   } catch (error) {
     const elapsedMs = performance.now() - start;
     if (error instanceof JsExecutionError) {
@@ -103,6 +110,11 @@ async function run(engine: JsExecutionEngine, request: Request): Promise<Transfo
         elapsedMs,
       };
     }
-    return { status: "error", code: "WORKER_ERROR", message: String(error), elapsedMs };
+    return {
+      status: "error",
+      code: "WORKER_ERROR",
+      message: String(error),
+      elapsedMs,
+    };
   }
 }

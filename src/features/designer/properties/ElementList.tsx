@@ -38,7 +38,7 @@ export function ElementList(props: Props) {
         const selected = element.name === props.selected;
         const image = element.declarations.get(imageProperty)?.value;
         const text = (
-          image !== undefined
+          (image !== undefined)
           ? `画像: ${decodeCssString(image) ?? ""}`
           : (decodeCssString(element.declarations.get(textProperty)?.value ?? "") ?? "")
         );

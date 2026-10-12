@@ -1,4 +1,5 @@
 // @ts-check
+import { hasCommentOutside, hasMultilineTemplate, indentOf, reindent } from "./layout.mjs";
 import { isParenthesized } from "@eslint-community/eslint-utils";
 
 /**
@@ -6,9 +7,11 @@ import { isParenthesized } from "@eslint-community/eslint-utils";
  *
  * - かっこで囲む。1行に収まるなら `(a ? b : c)`。
  * - 複数行なら、かっこの中で条件・`? `・`: ` をそれぞれ行頭にそろえる。
+ *   枝がオブジェクトなら、1行に収まっても複数行にする。
+ * - 複数行のとき、条件が単純（`isHoge`・`props.isHoge`・`!isHoge`）でなければ、条件もかっこで囲む。
  *   ```
  *   const value = (
- *     condition
+ *     (count === 0)
  *     ? whenTrue
  *     : whenFalse
  *   );
@@ -17,67 +20,270 @@ import { isParenthesized } from "@eslint-community/eslint-utils";
  *   外側の括弧をそのまま使う。テンプレートの `${}` の中は1行のまま、かっこも付けない。
  */
 
-/** @typedef {import("eslint").Rule.RuleContext} RuleContext */
 /** @typedef {import("eslint").SourceCode} SourceCode */
 /** @typedef {import("estree").Node} Node */
 /** @typedef {import("estree").ConditionalExpression} ConditionalExpression */
 /** @typedef {import("eslint").AST.Token} Token */
 
-// =============================================================================
-// MARK: 場所の判定
-
 /**
+ * @typedef {{ kind: "own" } | { kind: "bracket", open: Token, close: Token } | { kind: "inline" }} Placement
  * かっこの付け方。
  * - own: 自分のかっこで囲む
  * - bracket: 外側の括弧（関数の引数の `()`・JSX 属性の `{}`）を使い、自分のかっこは付けない
  * - inline: 1行のまま（テンプレートの `${}`）
- * @param {ConditionalExpression & { parent: Node }} node
- * @returns {{ kind: "own" } | { kind: "bracket", open: Token, close: Token } | { kind: "inline" }}
  */
-function placementOf(node, /** @type {SourceCode} */ sourceCode) {
+
+// #############################################################################
+// MARK: 定数
+
+/** 前の行から `(` を引き上げてよい直前の記号（`=` の後で改行しない）。 */
+const pullUpAfter = new Set(["=", "=>", "return", ":", "??", "||", "&&"]);
+
+/** @type {import("eslint").Rule.RuleModule} */
+export const ternaryRule = {
+  meta: {
+    type: "layout",
+    fixable: "code",
+    docs: { description: "三項演算子をかっこで囲み、複数行なら ? と : を行頭にそろえる" },
+    messages: {
+      wrap: "三項演算子はかっこで囲みます。",
+      unwrap: "ここでは三項演算子にかっこを付けません（外側の括弧を使います）。",
+      layout: "複数行の三項演算子は、条件・? ・: をそれぞれ行頭にそろえます。",
+    },
+    schema: [],
+  },
+  create(context) {
+    const sourceCode = context.sourceCode;
+
+    return {
+      ConditionalExpression(node) {
+        const placement = placementOf(node, sourceCode);
+        if (placement.kind === "inline") return;
+
+        const parenthesized = isParenthesized(node, sourceCode);
+        const singleLine = node.loc?.start.line === node.loc?.end.line;
+        const hasObjectBranch = [node.consequent, node.alternate].some(
+          branch => branch.type === "ObjectExpression",
+        );
+
+        // Prettier が `=` の後で改行した（1行に収まらなかった）場合も、複数行の形にする。
+        const first = (
+          parenthesized
+          ? sourceCode.getTokenBefore(node)
+          : sourceCode.getFirstToken(node)
+        );
+        const previous = first && sourceCode.getTokenBefore(first);
+        const startsOnNextLine = (
+          placement.kind === "own"
+          && previous !== null
+          && first !== null
+          && pullUpAfter.has(previous.value)
+          && previous.loc.end.line < first.loc.start.line
+        );
+
+        if (singleLine && !hasObjectBranch && !startsOnNextLine) {
+          reportSingleLine(node, placement, parenthesized);
+          return;
+        }
+        reportLayout(node, placement, parenthesized);
+      },
+    };
+
+    /**
+     * 1行の三項演算子のかっこを確かめる。
+     * @param {ConditionalExpression} node
+     * @param {Placement} placement
+     * @param {boolean} parenthesized
+     */
+    function reportSingleLine(node, placement, parenthesized) {
+      if (placement.kind === "own" && !parenthesized) {
+        context.report({
+          node,
+          messageId: "wrap",
+          fix: fixer => [fixer.insertTextBefore(node, "("), fixer.insertTextAfter(node, ")")],
+        });
+      }
+      if (placement.kind === "bracket" && parenthesized) {
+        const open = sourceCode.getTokenBefore(node);
+        const close = sourceCode.getTokenAfter(node);
+        context.report({
+          node,
+          messageId: "unwrap",
+          fix: (open && close ? fixer => [fixer.remove(open), fixer.remove(close)] : null),
+        });
+      }
+    }
+
+    /**
+     * 複数行の三項演算子を組み直す。
+     * @param {ConditionalExpression} node
+     * @param {Placement} placement
+     * @param {boolean} parenthesized
+     */
+    function reportLayout(node, placement, parenthesized) {
+      const parts = partsOf(node, sourceCode);
+      if (!parts) return;
+      const { start, end, open, close, openLine } = replacementOf(node, placement, parenthesized);
+
+      // 置き換える範囲のコメントが、どれかの部分の中にない場合は消えてしまうので直さない。
+      const canFix = (
+        !hasCommentOutside(
+          sourceCode,
+          start,
+          end,
+          parts.map(part => part.range),
+        ) && !hasMultilineTemplate(sourceCode, node)
+      );
+
+      const base = indentOf(sourceCode, openLine);
+      const inner = base + "  ";
+      const [test, consequent, alternate] = parts.map((part, index) =>
+        reindent(
+          part.text,
+          (index === 0 ? part.indent : closingIndentOf(part.text, part.indent)),
+          inner.length,
+        ),
+      );
+      const wrapTest = !isSimpleCondition(node.test) && !isParenthesized(node.test, sourceCode);
+      const text = [
+        open,
+        `\n${inner}${wrapTest ? `(${test})` : test}`,
+        `\n${inner}? ${consequent}`,
+        `\n${inner}: ${alternate}`,
+        `\n${base}${close}`,
+      ].join("");
+
+      if (sourceCode.text.slice(start, end) === text) return;
+      context.report({
+        node,
+        messageId: "layout",
+        fix: (canFix ? fixer => fixer.replaceTextRange([start, end], text) : null),
+      });
+    }
+
+    /**
+     * 置き換える範囲と、開きかっこ・閉じかっこ、開きかっこを置く行。
+     * `x =` の後で改行している場合は、`(` を前の行へ引き上げる。
+     * @param {ConditionalExpression} node
+     * @param {Placement} placement
+     * @param {boolean} parenthesized
+     */
+    function replacementOf(node, placement, parenthesized) {
+      if (placement.kind === "bracket") {
+        return {
+          start: placement.open.range[0],
+          end: placement.close.range[1],
+          open: placement.open.value,
+          close: placement.close.value,
+          openLine: placement.open.loc.start.line,
+        };
+      }
+
+      const [nodeStart, nodeEnd] = /** @type {[number, number]} */ (node.range);
+      const before = (parenthesized ? sourceCode.getTokenBefore(node) : undefined);
+      const after = (parenthesized ? sourceCode.getTokenAfter(node) : undefined);
+      const start = (before ? before.range[0] : nodeStart);
+      const end = (after ? after.range[1] : nodeEnd);
+      const openLine = sourceCode.getLocFromIndex(start).line;
+
+      const previous = sourceCode.getTokenBefore(
+        { range: [start, start] },
+        { includeComments: true },
+      );
+      const canPullUp = (
+        previous
+        && previous.loc.end.line < openLine
+        && previous.type !== "Line"
+        && previous.type !== "Block"
+        && pullUpAfter.has(previous.value)
+      );
+      if (previous && canPullUp) {
+        return {
+          start: previous.range[1],
+          end,
+          open: " (",
+          close: ")",
+          openLine: previous.loc.end.line,
+        };
+      }
+      return {
+        start,
+        end,
+        open: "(",
+        close: ")",
+        openLine,
+      };
+    }
+  },
+};
+
+// #############################################################################
+// MARK: 内部関数
+
+/**
+ * かっこの付け方を、置かれている場所から決める。
+ * @param {ConditionalExpression & { parent: Node }} node
+ * @param {SourceCode} sourceCode
+ * @returns {Placement}
+ */
+function placementOf(node, sourceCode) {
   const parent = node.parent;
   if (parent.type === "TemplateLiteral") return { kind: "inline" };
-  if (
-    (parent.type === "CallExpression" || parent.type === "NewExpression") &&
-    parent.arguments.length === 1 &&
-    parent.arguments[0] === node
-  ) {
+  const isOnlyArgument = (
+    (parent.type === "CallExpression" || parent.type === "NewExpression")
+    && parent.arguments.length === 1
+    && parent.arguments[0] === node
+  );
+  if (isOnlyArgument) {
     const close = sourceCode.getLastToken(parent);
     const open = close && sourceCode.getTokenAfter(parent.callee, token => token.value === "(");
-    if (open && close?.value === ")") return { kind: "bracket", open, close };
+    if (open && close?.value === ")") {
+      return {
+        kind: "bracket",
+        open,
+        close,
+      };
+    }
   }
   // JSX の属性（attr={...}）。
   // @ts-expect-error estree の型には JSX がない
   if (parent.type === "JSXExpressionContainer" && parent.parent?.type === "JSXAttribute") {
     const open = sourceCode.getFirstToken(parent);
     const close = sourceCode.getLastToken(parent);
-    if (open && close) return { kind: "bracket", open, close };
+    if (open && close) {
+      return {
+        kind: "bracket",
+        open,
+        close,
+      };
+    }
   }
   return { kind: "own" };
 }
 
-// =============================================================================
-// MARK: 組み立て
-
-/** 行頭の空白。 */
-function indentOf(/** @type {SourceCode} */ sourceCode, /** @type {number} */ line) {
-  return /^[ \t]*/.exec(sourceCode.lines[line - 1])?.[0] ?? "";
+/**
+ * 枝の字下げの基準。複数行で閉じかっこ（`}`・`)`・`]`）の行で終わる枝は、その行の字下げを基準にする
+ * （Prettier は枝の中身を `? ` の後ろにそろえるため、閉じかっこを `?` の行にそろえ直す）。
+ * @param {string} text
+ * @param {number} fallback
+ */
+function closingIndentOf(text, fallback) {
+  const lines = text.split("\n");
+  const last = lines[lines.length - 1];
+  if (lines.length === 1 || !/^\s*[}\])]/.test(last)) return fallback;
+  return /^ */.exec(last)?.[0].length ?? fallback;
 }
 
-/**
- * 複数行の部分の字下げを付け替える。1行目は呼び出し側が置く場所に続くので、2行目以降だけずらす。
- * @param {string} text
- * @param {number} from 元の部分が始まる行の字下げ
- * @param {number} to 新しく置く行の字下げ
- */
-function reindent(text, from, to) {
-  const [first, ...rest] = text.split("\n");
-  const shifted = rest.map(line => {
-    if (line.trim() === "") return "";
-    const current = /^ */.exec(line)?.[0].length ?? 0;
-    return " ".repeat(Math.max(0, current - from + to)) + line.trimStart();
-  });
-  return [first, ...shifted].join("\n");
+/** かっこで囲まなくても読める単純な条件か（`isHoge`・`props.isHoge`・`!isHoge`）。 */
+function isSimpleCondition(/** @type {Node} */ node) {
+  if (node.type === "Identifier" || node.type === "ThisExpression") return true;
+  if (node.type === "MemberExpression") {
+    return !node.computed && isSimpleCondition(/** @type {Node} */ (node.object));
+  }
+  if (node.type === "UnaryExpression" && node.operator === "!") {
+    return isSimpleCondition(node.argument);
+  }
+  return false;
 }
 
 /**
@@ -133,145 +339,3 @@ function unwrapSingleLineJsx(sourceCode, node, range) {
   if (/^\(\s*$/.test(before ?? "") && /^\s*\)$/.test(after ?? "")) return nodeText;
   return text;
 }
-
-/** 複数行のテンプレート文字列を含むか（字下げを変えると中身が変わるため、直さない）。 */
-function hasMultilineTemplate(/** @type {SourceCode} */ sourceCode, /** @type {Node} */ node) {
-  return sourceCode
-    .getTokens(node)
-    .some(token => token.type === "Template" && token.loc.start.line !== token.loc.end.line);
-}
-
-// =============================================================================
-// MARK: ルール
-
-/** 前の行から `(` を引き上げてよい直前の記号（`=` の後で改行しない）。 */
-const pullUpAfter = new Set(["=", "=>", "return", ":", "??", "||", "&&"]);
-
-/** @type {import("eslint").Rule.RuleModule} */
-export const ternaryRule = {
-  meta: {
-    type: "layout",
-    fixable: "code",
-    docs: { description: "三項演算子をかっこで囲み、複数行なら ? と : を行頭にそろえる" },
-    messages: {
-      wrap: "三項演算子はかっこで囲みます。",
-      unwrap: "ここでは三項演算子にかっこを付けません（外側の括弧を使います）。",
-      layout: "複数行の三項演算子は、条件・? ・: をそれぞれ行頭にそろえます。",
-    },
-    schema: [],
-  },
-  create(context) {
-    const sourceCode = context.sourceCode;
-
-    return {
-      ConditionalExpression(node) {
-        const placement = placementOf(node, sourceCode);
-        if (placement.kind === "inline") return;
-
-        const parenthesized = isParenthesized(node, sourceCode);
-        const singleLine = node.loc?.start.line === node.loc?.end.line;
-
-        if (singleLine) {
-          if (placement.kind === "own" && !parenthesized) {
-            context.report({
-              node,
-              messageId: "wrap",
-              fix: fixer => [fixer.insertTextBefore(node, "("), fixer.insertTextAfter(node, ")")],
-            });
-          }
-          if (placement.kind === "bracket" && parenthesized) {
-            const open = sourceCode.getTokenBefore(node);
-            const close = sourceCode.getTokenAfter(node);
-            context.report({
-              node,
-              messageId: "unwrap",
-              fix: (open && close ? fixer => [fixer.remove(open), fixer.remove(close)] : null),
-            });
-          }
-          return;
-        }
-
-        report(node, placement, parenthesized);
-      },
-    };
-
-    /**
-     * 複数行の三項演算子を組み直す。
-     * @param {ConditionalExpression} node
-     * @param {ReturnType<typeof placementOf>} placement
-     * @param {boolean} parenthesized
-     */
-    function report(node, placement, parenthesized) {
-      const parts = partsOf(node, sourceCode);
-      if (!parts) return;
-      const [nodeStart, nodeEnd] = /** @type {[number, number]} */ (node.range);
-
-      // 置き換える範囲と、開きかっこを置く行。
-      /** @type {number} */ let start;
-      /** @type {number} */ let end;
-      /** @type {string} */ let open;
-      /** @type {string} */ let close;
-      /** @type {number} */ let openLine;
-      if (placement.kind === "bracket") {
-        start = placement.open.range[0];
-        end = placement.close.range[1];
-        open = placement.open.value;
-        close = placement.close.value;
-        openLine = placement.open.loc.start.line;
-      } else {
-        const before = (parenthesized ? sourceCode.getTokenBefore(node) : undefined);
-        const after = (parenthesized ? sourceCode.getTokenAfter(node) : undefined);
-        start = (before ? before.range[0] : nodeStart);
-        end = (after ? after.range[1] : nodeEnd);
-        open = "(";
-        close = ")";
-        openLine = sourceCode.getLocFromIndex(start).line;
-
-        // `x =` の後で改行している場合は、`(` を前の行へ引き上げる。
-        const previous = sourceCode.getTokenBefore(
-          { range: [start, start] },
-          { includeComments: true },
-        );
-        if (
-          previous &&
-          previous.loc.end.line < openLine &&
-          previous.type !== "Line" &&
-          previous.type !== "Block" &&
-          pullUpAfter.has(previous.value)
-        ) {
-          start = previous.range[1];
-          open = " (";
-          openLine = previous.loc.end.line;
-        }
-      }
-
-      // 置き換える範囲のコメントが、どれかの部分の中にない場合は消えてしまうので直さない。
-      const lostComment = sourceCode.getAllComments().some(comment => {
-        const [from, to] = /** @type {[number, number]} */ (comment.range);
-        if (from < start || to > end) return false;
-        return !parts.some(({ range }) => from >= range[0] && to <= range[1]);
-      });
-      const canFix = !lostComment && !hasMultilineTemplate(sourceCode, node);
-
-      const base = indentOf(sourceCode, openLine);
-      const inner = base + "  ";
-      const [test, consequent, alternate] = parts.map(part =>
-        reindent(part.text, part.indent, inner.length),
-      );
-      const text = [
-        open,
-        `\n${inner}${test}`,
-        `\n${inner}? ${consequent}`,
-        `\n${inner}: ${alternate}`,
-        `\n${base}${close}`,
-      ].join("");
-
-      if (sourceCode.text.slice(start, end) === text) return;
-      context.report({
-        node,
-        messageId: "layout",
-        fix: (canFix ? fixer => fixer.replaceTextRange([start, end], text) : null),
-      });
-    }
-  },
-};

@@ -70,8 +70,14 @@ export function CodeEditor(props: Props) {
       revealPosition(line, column) {
         const editor = editorRef.current;
         if (!editor) return;
-        editor.setPosition({ lineNumber: line, column });
-        editor.revealPositionInCenterIfOutsideViewport({ lineNumber: line, column });
+        editor.setPosition({
+          lineNumber: line,
+          column,
+        });
+        editor.revealPositionInCenterIfOutsideViewport({
+          lineNumber: line,
+          column,
+        });
         editor.focus();
       },
     }),
@@ -137,13 +143,25 @@ export function CodeEditor(props: Props) {
       model.getPositionAt(start),
       model.getPositionAt(oldEnd),
     );
-    model.pushEditOperations([], [{ range, text: props.value.slice(start, newEnd) }], () => null);
+    model.pushEditOperations(
+      [],
+      [
+        {
+          range,
+          text: props.value.slice(start, newEnd),
+        },
+      ],
+      () => null,
+    );
   }, [monaco, props.value]);
 
   useEffect(() => {
     const editor = editorRef.current;
     if (!monaco || !editor || !props.reveal) return;
-    const position = { lineNumber: props.reveal.line, column: 1 };
+    const position = {
+      lineNumber: props.reveal.line,
+      column: 1,
+    };
     editor.setPosition(position);
     editor.revealLineInCenter(props.reveal.line);
     editor.focus();

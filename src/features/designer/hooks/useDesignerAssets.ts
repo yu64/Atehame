@@ -57,5 +57,9 @@ async function readAsset(file: File, assets: Assets) {
   const asset = createAsset(image.type, image.bytes);
   if (!asset) return { error: `「${file.name}」は SVG として読み込めませんでした。` };
   const error = checkAssetLimits(assets, asset);
-  return (error ? { error } : { asset });
+  return (
+    error
+    ? { error }
+    : { asset }
+  );
 }

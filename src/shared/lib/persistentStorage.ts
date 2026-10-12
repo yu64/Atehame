@@ -25,8 +25,9 @@ export interface PersistentStorageOptions<T> {
  */
 export function createPersistentStorage<T>(options: PersistentStorageOptions<T>) {
   const delayMs = options.delayMs ?? 500;
-  const getStorage =
-    options.storage ?? (() => (typeof localStorage === "undefined" ? undefined : localStorage));
+  const getStorage = (
+    options.storage ?? (() => (typeof localStorage === "undefined" ? undefined : localStorage))
+  );
   const pending = new Map<string, T>();
   let timer: ReturnType<typeof setTimeout> | undefined;
 

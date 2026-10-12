@@ -6,6 +6,8 @@
   "jsxSingleQuote": false,
   "trailingComma": "all",
   "arrowParens": "avoid",
+  "experimentalOperatorPosition": "start",
+  "objectWrap": "preserve",
   "endOfLine": "lf",
   "overrides": [
     {

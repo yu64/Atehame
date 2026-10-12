@@ -60,7 +60,12 @@ export const saveFilePickerStrategy: ExportStrategy = {
     try {
       handle = await picker.showSaveFilePicker({
         suggestedName: toFileName(file.name),
-        types: [{ description: "Atehame テンプレート", accept: { "application/json": [".json"] } }],
+        types: [
+          {
+            description: "Atehame テンプレート",
+            accept: { "application/json": [".json"] },
+          },
+        ],
       });
     } catch (error) {
       if (error instanceof DOMException && error.name === "AbortError") return false;

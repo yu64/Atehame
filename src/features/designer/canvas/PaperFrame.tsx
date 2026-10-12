@@ -66,7 +66,10 @@ export function PaperFrame(props: Props) {
   return (
     <div
       className="absolute left-0 top-0 shadow-lg"
-      style={{ width: width * props.scale, height: height * props.scale }}
+      style={{
+        width: width * props.scale,
+        height: height * props.scale,
+      }}
     >
       <iframe
         ref={frame.ref}
@@ -76,7 +79,11 @@ export function PaperFrame(props: Props) {
         onLoad={frame.onLoad}
         tabIndex={-1}
         className="block border-0 bg-white pointer-events-none origin-top-left"
-        style={{ width, height, transform: `scale(${props.scale})` }}
+        style={{
+          width,
+          height,
+          transform: `scale(${props.scale})`,
+        }}
       />
     </div>
   );

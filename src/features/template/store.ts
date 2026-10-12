@@ -22,7 +22,14 @@ const draftStorage = createPersistentStorage<Draft>({
     if (typeof value !== "object" || value === null) return undefined;
     const { template, editing } = value as Partial<Draft>;
     const parsed = parseTemplate(template);
-    return (parsed && typeof editing === "boolean" ? { template: parsed, editing } : undefined);
+    return (
+      (parsed && typeof editing === "boolean")
+      ? {
+        template: parsed,
+        editing,
+      }
+      : undefined
+    );
   },
   // 画像が大きく、端末の保存領域に入りきらない場合など。画面の操作はそのまま続けられる。
   onError: error => console.warn("編集中のテンプレートを自動保存できませんでした。", error),
@@ -34,7 +41,10 @@ const draftStorage = createPersistentStorage<Draft>({
  */
 const draftAtom = atomWithStorage<Draft>(
   draftStorageKey,
-  { template: createTemplate(), editing: false },
+  {
+    template: createTemplate(),
+    editing: false,
+  },
   draftStorage,
   { getOnInit: true },
 );
@@ -63,31 +73,49 @@ function partAtom<T>(
     get => read(get(currentTemplateAtom)),
     (get, set, action: SetStateAction<T>) => {
       const template = get(currentTemplateAtom);
-      const value =
-        (typeof action === "function" ? (action as (previous: T) => T)(read(template)) : action);
-      set(draftAtom, { template: write(template, value), editing: true });
+      const value = (
+        (typeof action === "function")
+        ? (action as (previous: T) => T)(read(template))
+        : action
+      );
+      set(draftAtom, {
+        template: write(template, value),
+        editing: true,
+      });
     },
   );
 }
 
 export const templateNameAtom = partAtom<string>(
   template => template.name,
-  (template, name) => ({ ...template, name }),
+  (template, name) => ({
+    ...template,
+    name,
+  }),
 );
 
 export const schemaAtom = partAtom<DataSchema>(
   template => template.schema,
-  (template, schema) => ({ ...template, schema }),
+  (template, schema) => ({
+    ...template,
+    schema,
+  }),
 );
 
 export const transformCodeAtom = partAtom<string>(
   template => template.transform.code,
-  (template, code) => ({ ...template, transform: { code } }),
+  (template, code) => ({
+    ...template,
+    transform: { code },
+  }),
 );
 
 export const layoutAtom = partAtom<Layout>(
   template => template.layout,
-  (template, layout) => ({ ...template, layout }),
+  (template, layout) => ({
+    ...template,
+    layout,
+  }),
 );
 
 // #############################################################################
@@ -95,7 +123,10 @@ export const layoutAtom = partAtom<Layout>(
 
 /** 渡したテンプレートで編集を始める。編集中の内容は破棄する。 */
 export const startTemplateAtom = atom(null, (_get, set, template: Template) => {
-  set(draftAtom, { template, editing: true });
+  set(draftAtom, {
+    template,
+    editing: true,
+  });
 });
 
 /** 空のテンプレートで編集を始める。編集中の内容は破棄する。 */

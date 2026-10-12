@@ -11,7 +11,14 @@ import { describe, expect, test } from "vitest";
 describe("テンプレートファイル", () => {
   const schema = {
     version: 1 as const,
-    fields: [{ id: "f", name: "氏名", type: "string" as const, memo: "" }],
+    fields: [
+      {
+        id: "f",
+        name: "氏名",
+        type: "string" as const,
+        memo: "",
+      },
+    ],
   };
 
   test("書き出したファイルを読み込める", () => {
@@ -19,9 +26,17 @@ describe("テンプレートファイル", () => {
       version: 1 as const,
       css: '[data-name="氏名"] { --atehame-text: "{氏名} 様"; }',
     };
-    const template = { name: "年賀状", schema, transform: { code: "return input;" }, layout };
+    const template = {
+      name: "年賀状",
+      schema,
+      transform: { code: "return input;" },
+      layout,
+    };
     const file = toTemplateFile(template);
-    expect(parseTemplateFile(serializeTemplateFile(file))).toEqual({ ok: true, file });
+    expect(parseTemplateFile(serializeTemplateFile(file))).toEqual({
+      ok: true,
+      file,
+    });
     expect(fromTemplateFile(file)).toEqual(template);
   });
 
@@ -35,7 +50,13 @@ describe("テンプレートファイル", () => {
   test.each([
     ["JSON でない", "{"],
     ["形式が違う", JSON.stringify({ format: "other" })],
-    ["バージョンが違う", JSON.stringify({ format: "atehame-template", version: 2 })],
+    [
+      "バージョンが違う",
+      JSON.stringify({
+        format: "atehame-template",
+        version: 2,
+      }),
+    ],
   ])("%s場合は理由を返す", (_, json) => {
     expect(parseTemplateFile(json).ok).toBe(false);
   });

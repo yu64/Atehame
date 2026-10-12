@@ -34,7 +34,7 @@ export function selectorFor(name: string): string {
 /** 対象の規則（部品または @page）を探す。 */
 function findRule(layout: LayoutCss, target: RuleTarget): RuleInfo | undefined {
   return (
-    "page" in target
+    ("page" in target)
     ? layout.page
     : layout.elements.find(element => element.name === target.element)
   );
@@ -70,7 +70,7 @@ export function setDeclaration(
   const existing = rule.declarations.get(property);
   if (existing) {
     return (
-      value === undefined
+      (value === undefined)
       ? removeDeclarationText(css, existing.range, rule.bodyRange)
       : replaceRange(css, existing.valueRange, value)
     );
@@ -93,9 +93,9 @@ export function setDeclaration(
   const previous = css[contentEnd - 1];
   const separator = (previous === ";" || contentEnd === rule.bodyRange.start ? "" : ";");
   return (
-    css.slice(0, contentEnd) +
-    `${separator}\n${indent}${property}: ${value};` +
-    css.slice(contentEnd)
+    css.slice(0, contentEnd)
+    + `${separator}\n${indent}${property}: ${value};`
+    + css.slice(contentEnd)
   );
 }
 
@@ -125,7 +125,14 @@ function removeDeclarationText(css: string, range: TextRange, body: TextRange): 
     while (end < body.end && /[ \t]/.test(css[end])) end++;
     if (css[end] === "\n") end++;
   }
-  return replaceRange(css, { start, end }, "");
+  return replaceRange(
+    css,
+    {
+      start,
+      end,
+    },
+    "",
+  );
 }
 
 // #############################################################################
@@ -162,7 +169,10 @@ export function renameElement(css: string, from: string, to: string): string {
     visit: "AttributeSelector",
     enter(node) {
       if (dataNameOf(node) !== from || !node.value?.loc) return;
-      ranges.push({ start: node.value.loc.start.offset, end: node.value.loc.end.offset });
+      ranges.push({
+        start: node.value.loc.start.offset,
+        end: node.value.loc.end.offset,
+      });
     },
   });
   return replaceRanges(css, ranges, encodeCssString(to));
@@ -187,7 +197,10 @@ export function replaceStringValues(
       const raw = css.slice(node.value.loc.start.offset, node.value.loc.end.offset);
       if (decodeCssString(raw.trim()) !== from) return;
       const start = node.value.loc.start.offset + (raw.length - raw.trimStart().length);
-      ranges.push({ start, end: start + raw.trim().length });
+      ranges.push({
+        start,
+        end: start + raw.trim().length,
+      });
     },
   });
   return replaceRanges(css, ranges, encodeCssString(to));
@@ -235,7 +248,7 @@ export function moveElementRule(
   if (!anchorRule) return css;
 
   return (
-    to === "front"
+    (to === "front")
     ? `${removed.slice(0, anchorRule.range.end)}\n\n${text}${removed.slice(anchorRule.range.end)}`
     : `${removed.slice(0, anchorRule.range.start)}${text}\n\n${removed.slice(anchorRule.range.start)}`
   );

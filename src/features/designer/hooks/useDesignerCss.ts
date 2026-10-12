@@ -13,5 +13,10 @@ export function useDesignerCss() {
   const css = useDesignerSelector(state => selectLayout(state).css);
   const warnings = useDesignerSelector(state => state.cssWarnings);
   const reveal = useDesignerSelector(state => state.cssReveal);
-  return { css, warnings, reveal, setCss: store.setCss };
+  return {
+    css,
+    warnings,
+    reveal,
+    setCss: store.setCss,
+  };
 }

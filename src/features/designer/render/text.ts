@@ -21,17 +21,41 @@ export function formatValue(value: JsonValue | undefined): string {
 
 /** maxDigits 桁以下の半角数字の並びを縦中横にするよう分割する。 */
 export function splitTateChuYoko(text: string, maxDigits: number): TextRun[] {
-  if (maxDigits <= 0) return (text === "" ? [] : [{ text, combine: false }]);
+  if (maxDigits <= 0) {
+    return (
+      (text === "")
+      ? []
+      : [
+        {
+          text,
+          combine: false,
+        },
+      ]
+    );
+  }
 
   const runs: TextRun[] = [];
   let last = 0;
   for (const match of text.matchAll(/[0-9]+/g)) {
     if (match[0].length > maxDigits) continue;
-    if (match.index > last) runs.push({ text: text.slice(last, match.index), combine: false });
-    runs.push({ text: match[0], combine: true });
+    if (match.index > last) {
+      runs.push({
+        text: text.slice(last, match.index),
+        combine: false,
+      });
+    }
+    runs.push({
+      text: match[0],
+      combine: true,
+    });
     last = match.index + match[0].length;
   }
-  if (last < text.length) runs.push({ text: text.slice(last), combine: false });
+  if (last < text.length) {
+    runs.push({
+      text: text.slice(last),
+      combine: false,
+    });
+  }
   return runs;
 }
 

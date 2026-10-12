@@ -15,5 +15,8 @@ export function useDesignerPaper(): { size: PageSize; setSize: (size: PageSize) 
   const store = useDesignerStore();
   const layout = useDesignerSelector(selectLayout);
   const size = useMemo(() => paperSizeOf(layout), [layout]);
-  return { size, setSize: store.setPaperSize };
+  return {
+    size,
+    setSize: store.setPaperSize,
+  };
 }

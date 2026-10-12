@@ -20,7 +20,10 @@ export interface Props extends Omit<ComponentPropsWithoutRef<"button">, "childre
 // #############################################################################
 // MARK: 定数
 
-const iconSizes = { sm: "size-4", md: "size-5" };
+const iconSizes = {
+  sm: "size-4",
+  md: "size-5",
+};
 
 // #############################################################################
 // MARK: コンポーネント

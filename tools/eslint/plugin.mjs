@@ -1,4 +1,6 @@
 // @ts-check
+import { objectNewlineRule } from "./objectNewline.mjs";
+import { parenBlockRule } from "./parenBlock.mjs";
 import { ternaryRule } from "./ternary.mjs";
 
 // #############################################################################
@@ -9,5 +11,7 @@ export const atehamePlugin = {
   meta: { name: "atehame" },
   rules: {
     ternary: ternaryRule,
+    "paren-block": parenBlockRule,
+    "object-newline": objectNewlineRule,
   },
 };

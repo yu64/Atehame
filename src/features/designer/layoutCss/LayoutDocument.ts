@@ -80,7 +80,10 @@ export class LayoutDocument {
 
   /** 画像を登録する。同じ名前があれば置き換える（差し替え）。 */
   setAsset(name: string, asset: LayoutAsset): LayoutDocument {
-    return this.withAssets({ ...this.assets, [name]: asset });
+    return this.withAssets({
+      ...this.assets,
+      [name]: asset,
+    });
   }
 
   /** 画像を取り除く。参照している部品はそのまま残る（画像が見つからない状態になる）。 */

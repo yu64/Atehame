@@ -39,7 +39,12 @@ const api: WorkerApi = {
   async execute(request) {
     if (broken) {
       const message = "実行エンジンを再起動する必要があります。";
-      return { type: "error", code: "WORKER_ERROR", message, fatal: true };
+      return {
+        type: "error",
+        code: "WORKER_ERROR",
+        message,
+        fatal: true,
+      };
     }
 
     const quickjs = await getModule();

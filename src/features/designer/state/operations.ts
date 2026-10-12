@@ -41,8 +41,15 @@ export function addFromPreset(
     layout.elements.map(element => element.name),
     context.key ?? preset.defaultName,
   );
-  const result = preset.create({ ...context, name, count: layout.elements.length });
-  return { layout: layout.addElement(name, result.declarations, result.nestedCss), name };
+  const result = preset.create({
+    ...context,
+    name,
+    count: layout.elements.length,
+  });
+  return {
+    layout: layout.addElement(name, result.declarations, result.nestedCss),
+    name,
+  };
 }
 
 /** 位置と大きさを設定する（mm）。指定しない項目は変えない。 */
@@ -79,7 +86,10 @@ export function moveElementBy(
   const rule = layout.element(name);
   if (!rule) return layout;
   const { left, top } = positionOf(rule, shown);
-  return placeElement(layout, name, { left: left + dx, top: top + dy });
+  return placeElement(layout, name, {
+    left: left + dx,
+    top: top + dy,
+  });
 }
 
 /** 部品を直後に複製し、少しずらす。 */
@@ -96,7 +106,10 @@ export function duplicateElement(
   );
   const { left, top } = positionOf(rule, shown);
   return {
-    layout: layout.duplicateElement(name, newName, { left: left + 3, top: top + 3 }),
+    layout: layout.duplicateElement(name, newName, {
+      left: left + 3,
+      top: top + 3,
+    }),
     name: newName,
   };
 }
@@ -111,5 +124,8 @@ function positionOf(rule: ElementRule, shown: ElementRect | undefined) {
     const value = rule.declarations.get(property)?.value;
     return (value !== undefined ? lengthToMm(value) : undefined) ?? shown?.[property] ?? 0;
   }
-  return { left: read("left"), top: read("top") };
+  return {
+    left: read("left"),
+    top: read("top"),
+  };
 }

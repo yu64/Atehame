@@ -9,7 +9,10 @@ const base = '@page { size: 100mm 148mm; }\n\n[data-name="a"] {\n  left: 10mm;\n
 function createStore(css = base) {
   const onCommit = vi.fn<(layout: LayoutDocument) => void>();
   const store = new DesignerStore(LayoutDocument.from(css), onCommit);
-  return { store, onCommit };
+  return {
+    store,
+    onCommit,
+  };
 }
 
 describe("デザイナーの状態", () => {
@@ -66,19 +69,31 @@ describe("デザイナーの状態", () => {
     const id = store.getState().selectedId;
     store.rename("a", "ab");
     store.rename("ab", "abc");
-    expect(store.getState()).toMatchObject({ selectedId: id, selected: "abc" });
+    expect(store.getState()).toMatchObject({
+      selectedId: id,
+      selected: "abc",
+    });
 
     store.undo();
-    expect(store.getState()).toMatchObject({ selectedId: id, selected: "a" });
+    expect(store.getState()).toMatchObject({
+      selectedId: id,
+      selected: "a",
+    });
     store.redo();
-    expect(store.getState()).toMatchObject({ selectedId: id, selected: "abc" });
+    expect(store.getState()).toMatchObject({
+      selectedId: id,
+      selected: "abc",
+    });
   });
 
   test("部品を消したら選択を外し、元に戻しても選び直さない", () => {
     const { store } = createStore();
     store.select("a");
     store.remove("a");
-    expect(store.getState()).toMatchObject({ selectedId: undefined, selected: undefined });
+    expect(store.getState()).toMatchObject({
+      selectedId: undefined,
+      selected: undefined,
+    });
     store.undo();
     expect(store.getState().selected).toBeUndefined();
     store.select("a");
@@ -101,7 +116,10 @@ describe("デザイナーの状態", () => {
     expect(store.canUndo()).toBe(true);
 
     store.receive(LayoutDocument.from("@page { size: 120mm 235mm; }"));
-    expect(store.paperSize()).toEqual({ width: 120, height: 235 });
+    expect(store.paperSize()).toEqual({
+      width: 120,
+      height: 235,
+    });
     expect(store.canUndo()).toBe(false);
   });
 
@@ -120,7 +138,10 @@ describe("デザイナーの状態", () => {
 
   test("画像の登録・名前の変更・削除は、元に戻せる", () => {
     const { store } = createStore();
-    const png = { type: "image/png", data: "iVBORw0KGgo=" } as const;
+    const png = {
+      type: "image/png",
+      data: "iVBORw0KGgo=",
+    } as const;
     store.setAsset("logo", png);
     store.renameAsset("logo", "印影");
     expect(Object.keys(store.layout.assets)).toEqual(["印影"]);
@@ -138,7 +159,10 @@ describe("デザイナーの状態", () => {
     expect(store.getState().tab).toBe("assets");
     expect(onCommit).not.toHaveBeenCalled();
 
-    store.setAsset("logo", { type: "image/png", data: "iVBORw0KGgo=" });
+    store.setAsset("logo", {
+      type: "image/png",
+      data: "iVBORw0KGgo=",
+    });
     store.add(imagePreset, []);
     expect(store.getState().selected).toBe("画像");
     expect(store.layout.assetUsage("logo")).toEqual(["画像"]);

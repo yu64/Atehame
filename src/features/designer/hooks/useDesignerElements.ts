@@ -12,5 +12,10 @@ export function useDesignerElements() {
   const store = useDesignerStore();
   const elements = useDesignerSelector(state => selectLayout(state).elements);
   const selected = useDesignerSelector(state => state.selected);
-  return { elements, selected, remove: store.remove, select: store.select };
+  return {
+    elements,
+    selected,
+    remove: store.remove,
+    select: store.select,
+  };
 }

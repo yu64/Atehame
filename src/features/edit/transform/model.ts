@@ -48,7 +48,11 @@ export function convertCell(
   switch (type) {
     case "number": {
       const value = Number(trimmed);
-      return (Number.isFinite(value) ? { value } : { error: "数値ではありません。" });
+      return (
+        (Number.isFinite(value))
+        ? { value }
+        : { error: "数値ではありません。" }
+      );
     }
     case "boolean": {
       const normalized = trimmed.toLowerCase();
@@ -70,25 +74,37 @@ export function createTransformInput(schema: DataSchema, cells: RowCells): Input
 
   for (const field of schema.fields) {
     if (field.name === "") {
-      problems.push({ fieldId: field.id, message: "カラム名が空のため、input に含まれません。" });
+      problems.push({
+        fieldId: field.id,
+        message: "カラム名が空のため、input に含まれません。",
+      });
       continue;
     }
     if (names.has(field.name)) {
-      problems.push({ fieldId: field.id, message: `カラム名「${field.name}」が重複しています。` });
+      problems.push({
+        fieldId: field.id,
+        message: `カラム名「${field.name}」が重複しています。`,
+      });
       continue;
     }
     names.add(field.name);
 
     const converted = convertCell(field.type, cells[field.id] ?? "");
     if ("error" in converted) {
-      problems.push({ fieldId: field.id, message: converted.error });
+      problems.push({
+        fieldId: field.id,
+        message: converted.error,
+      });
       input[field.name] = null;
     } else {
       input[field.name] = converted.value;
     }
   }
 
-  return { input, problems };
+  return {
+    input,
+    problems,
+  };
 }
 
 /** エディターの補完用に、`input` の型宣言を生成する。 */

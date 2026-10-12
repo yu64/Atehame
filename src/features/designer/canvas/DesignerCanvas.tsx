@@ -41,15 +41,20 @@ export function DesignerCanvas() {
       onPointerDownCapture={event => event.currentTarget.focus({ preventScroll: true })}
       onPointerDown={event => {
         const area = event.currentTarget;
-        const onScrollbar =
-          event.nativeEvent.offsetX >= area.clientWidth ||
-          event.nativeEvent.offsetY >= area.clientHeight;
+        const onScrollbar = (
+          event.nativeEvent.offsetX >= area.clientWidth
+          || event.nativeEvent.offsetY >= area.clientHeight
+        );
         if (event.target === area && !onScrollbar) select(undefined);
       }}
     >
       <div
         className="relative"
-        style={{ width: paper.width * unit, height: paper.height * unit, margin: canvasPadding }}
+        style={{
+          width: paper.width * unit,
+          height: paper.height * unit,
+          margin: canvasPadding,
+        }}
       >
         <PaperFrame
           layout={canvas.layout}

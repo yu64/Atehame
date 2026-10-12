@@ -21,6 +21,8 @@ export default defineConfig(
     ".claude/",
     // 外部のライブラリをビルドしたもの（vendor/README.md）。
     "vendor/",
+    // 整形の見本（tools/format.test.ts）。
+    "tools/fixtures/",
   ]),
   js.configs.recommended,
   tseslint.configs.recommended,
@@ -38,6 +40,8 @@ export default defineConfig(
     },
     rules: {
       "atehame/ternary": "error",
+      "atehame/paren-block": "error",
+      "atehame/object-newline": "error",
 
       // 関数・クラス・メソッドには、公開していないものも JSDoc を付ける。
       "jsdoc/require-jsdoc": [
@@ -77,7 +81,10 @@ export default defineConfig(
       "@typescript-eslint/consistent-type-imports": ["error", { fixStyle: "inline-type-imports" }],
       "@typescript-eslint/no-unused-vars": [
         "error",
-        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
       ],
       "@typescript-eslint/consistent-type-definitions": ["error", "interface"],
 
@@ -98,7 +105,12 @@ export default defineConfig(
   {
     // Node.js で動かすスクリプト（Playwright でブラウザも操作する）。
     files: ["test/**/*.mjs", "tools/**/*.mjs"],
-    languageOptions: { globals: { ...globals.node, ...globals.browser } },
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
+    },
     rules: { "no-console": "off" },
   },
   {

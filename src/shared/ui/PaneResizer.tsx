@@ -55,7 +55,10 @@ export function PaneResizer(props: Props) {
         event.preventDefault();
         // キャンバスの iframe の上に出ても操作が途切れないよう、ポインターを捕まえる。
         event.currentTarget.setPointerCapture(event.pointerId);
-        dragRef.current = { startX: event.clientX, startWidth: props.width };
+        dragRef.current = {
+          startX: event.clientX,
+          startWidth: props.width,
+        };
       }}
       onPointerMove={event => {
         const drag = dragRef.current;
@@ -66,8 +69,11 @@ export function PaneResizer(props: Props) {
       onPointerCancel={() => (dragRef.current = null)}
       onDoubleClick={() => props.onResize(clamp(props.defaultWidth))}
       onKeyDown={event => {
-        const delta =
-          (event.key === "ArrowLeft" ? keyStep : (event.key === "ArrowRight" ? -keyStep : 0));
+        const delta = (
+          (event.key === "ArrowLeft")
+          ? keyStep
+          : (event.key === "ArrowRight" ? -keyStep : 0)
+        );
         if (delta === 0) return;
         event.preventDefault();
         event.stopPropagation();

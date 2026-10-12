@@ -31,8 +31,18 @@ const hagakiAddress: StandardTemplate = {
           type: "string",
           memo: "ハイフンはあってもなくてもよい",
         },
-        { id: "address", name: "住所", type: "string", memo: "" },
-        { id: "name", name: "氏名", type: "string", memo: "" },
+        {
+          id: "address",
+          name: "住所",
+          type: "string",
+          memo: "",
+        },
+        {
+          id: "name",
+          name: "氏名",
+          type: "string",
+          memo: "",
+        },
       ],
     },
     transform: {

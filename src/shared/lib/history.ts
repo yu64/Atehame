@@ -35,7 +35,11 @@ export const mergeWindowMs = 1000;
 
 /** present だけを持つ、空の履歴。 */
 export function createHistory<T>(present: T): History<T> {
-  return { past: [], present, future: [] };
+  return {
+    past: [],
+    present,
+    future: [],
+  };
 }
 
 /** 履歴に操作を適用した、新しい履歴を返す。 */
@@ -44,11 +48,12 @@ export function historyReducer<T>(history: History<T>, action: HistoryAction<T>)
     case "set": {
       if (action.next === history.present) return history;
       const settled = settle(history);
-      const merge =
-        action.mergeKey !== undefined &&
-        action.mergeKey === settled.lastMergeKey &&
-        settled.lastTime !== undefined &&
-        action.now - settled.lastTime < mergeWindowMs;
+      const merge = (
+        action.mergeKey !== undefined
+        && action.mergeKey === settled.lastMergeKey
+        && settled.lastTime !== undefined
+        && action.now - settled.lastTime < mergeWindowMs
+      );
 
       return {
         past: (merge ? settled.past : pushLimited(settled.past, settled.present)),

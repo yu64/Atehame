@@ -67,7 +67,7 @@ export function AssetsPanel(props: Props) {
       {errors.length > 0 && <Alert kind="error" messages={errors} />}
 
       {(
-        props.items.length === 0
+        (props.items.length === 0)
         ? <p className="text-sm text-text-secondary">画像がありません。</p>
         : (
           <ul aria-label="画像の一覧" className="flex flex-col gap-2">
@@ -110,10 +110,10 @@ function AssetRow(props: {
 
   const trimmed = text.trim();
   const error = (
-    trimmed === ""
+    (trimmed === "")
     ? "名前を入力してください。"
     : (
-      props.otherNames.includes(trimmed)
+      (props.otherNames.includes(trimmed))
       ? "同じ名前の画像があります。"
       : undefined
     )

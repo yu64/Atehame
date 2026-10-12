@@ -134,9 +134,32 @@ function renderImage(
 /** {名前} に値を埋め込む。値がない場合、デザイナーでは名前を表示する。 */
 function fillTemplate(template: string, values: Values, options: RenderOptions): Piece[] {
   return parseTextTemplate(template).flatMap((segment): Piece[] => {
-    if (segment.kind === "text") return [{ text: segment.text, placeholder: false }];
+    if (segment.kind === "text") {
+      return [
+        {
+          text: segment.text,
+          placeholder: false,
+        },
+      ];
+    }
     const text = formatValue(values[segment.key]);
-    if (text !== "") return [{ text, placeholder: false }];
-    return (options.placeholder ? [{ text: `{${segment.key}}`, placeholder: true }] : []);
+    if (text !== "") {
+      return [
+        {
+          text,
+          placeholder: false,
+        },
+      ];
+    }
+    return (
+      options.placeholder
+      ? [
+        {
+          text: `{${segment.key}}`,
+          placeholder: true,
+        },
+      ]
+      : []
+    );
   });
 }

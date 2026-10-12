@@ -38,9 +38,9 @@ export function sanitizeSvg(source: string): string | undefined {
   const doc = new DOMParser().parseFromString(source, "image/svg+xml");
   const root = doc.documentElement;
   if (
-    !root ||
-    root.localName.toLowerCase() !== "svg" ||
-    doc.getElementsByTagName("parsererror").length > 0
+    !root
+    || root.localName.toLowerCase() !== "svg"
+    || doc.getElementsByTagName("parsererror").length > 0
   ) {
     return undefined;
   }
@@ -55,9 +55,9 @@ export function sanitizeSvg(source: string): string | undefined {
       const value = attribute.value.trim();
       const isLink = name === "href" || name.endsWith(":href") || name === "src";
       if (
-        name.startsWith("on") ||
-        (isLink && !value.startsWith("#")) ||
-        (name !== "style" && hasExternalUrl.test(value))
+        name.startsWith("on")
+        || (isLink && !value.startsWith("#"))
+        || (name !== "style" && hasExternalUrl.test(value))
       ) {
         element.removeAttribute(attribute.name);
       } else if (name === "style") {

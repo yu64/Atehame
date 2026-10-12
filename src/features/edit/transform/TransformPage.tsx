@@ -61,7 +61,12 @@ export function TransformPage() {
 
   const markers = useMemo<EditorMarker[]>(() => {
     if (preview.status !== "error" || !preview.location) return [];
-    return [{ ...preview.location, message: preview.message }];
+    return [
+      {
+        ...preview.location,
+        message: preview.message,
+      },
+    ];
   }, [preview]);
 
   return (
@@ -110,7 +115,7 @@ export function TransformPage() {
             <section className="flex flex-col gap-3">
               <h2 className="font-bold text-text-primary">サンプル入力</h2>
               {(
-                schema.fields.length === 0
+                (schema.fields.length === 0)
                 ? (
                   <div className="flex flex-col items-start gap-2 text-sm text-text-secondary">
                     <p>カラムが定義されていません。先にスキーマでカラムを追加してください。</p>
@@ -131,7 +136,10 @@ export function TransformPage() {
                           value={sampleRow[field.id] ?? ""}
                           onChange={event => {
                             const text = event.currentTarget.value;
-                            setSampleRow(current => ({ ...current, [field.id]: text }));
+                            setSampleRow(current => ({
+                              ...current,
+                              [field.id]: text,
+                            }));
                           }}
                         />
                       );

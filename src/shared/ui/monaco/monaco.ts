@@ -50,13 +50,23 @@ function defineThemes() {
   monaco.editor.defineTheme(editorThemes.light, {
     base: "vs",
     inherit: true,
-    rules: [{ token: "invalid", foreground: "000000" }],
+    rules: [
+      {
+        token: "invalid",
+        foreground: "000000",
+      },
+    ],
     colors: {},
   });
   monaco.editor.defineTheme(editorThemes.dark, {
     base: "vs-dark",
     inherit: true,
-    rules: [{ token: "invalid", foreground: "D4D4D4" }],
+    rules: [
+      {
+        token: "invalid",
+        foreground: "D4D4D4",
+      },
+    ],
     colors: {},
   });
 }

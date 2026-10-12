@@ -49,8 +49,9 @@ export const postalCodePreset: ElementPreset = {
   icon: "i-lucide-mail",
   defaultName: "郵便番号",
   create({ key, fields }) {
-    const postalKey =
-      key ?? fields.find(field => /郵便|〒|zip|postal/i.test(field)) ?? fields[0] ?? "郵便番号";
+    const postalKey = (
+      key ?? fields.find(field => /郵便|〒|zip|postal/i.test(field)) ?? fields[0] ?? "郵便番号"
+    );
     return {
       declarations: [
         [textProperty, encodeCssString(fieldPlaceholder(postalKey))],

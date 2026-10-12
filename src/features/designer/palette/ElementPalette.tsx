@@ -34,15 +34,17 @@ export function ElementPalette() {
               加工の出力に項目がありません。加工画面でオブジェクトを return してください。
             </p>
           )}
-          {fieldPreset &&
-            fields.map(key => (
+          {(
+            fieldPreset
+            && fields.map(key => (
               <PaletteButton
                 key={key}
                 icon={fieldPreset.icon}
                 label={key}
                 onClick={() => add(fieldPreset, key)}
               />
-            ))}
+            ))
+          )}
         </section>
         <section className="flex flex-col gap-1">
           <h2 className="text-xs font-bold text-text-secondary">部品</h2>

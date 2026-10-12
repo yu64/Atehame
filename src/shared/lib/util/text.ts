@@ -11,5 +11,9 @@ export function changedRange(before: string, after: string) {
   while (end < max - start && before[before.length - 1 - end] === after[after.length - 1 - end]) {
     end++;
   }
-  return { start, oldEnd: before.length - end, newEnd: after.length - end };
+  return {
+    start,
+    oldEnd: before.length - end,
+    newEnd: after.length - end,
+  };
 }

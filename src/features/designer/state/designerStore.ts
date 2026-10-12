@@ -93,12 +93,23 @@ export class DesignerStore extends Store<DesignerState> {
     // 元に戻すや CSS の編集で選択中の部品がなくなったら、選択を外す。
     const layout = next.history.present;
     this.#ids.register(layout, previous.history.present, this.#renaming);
-    const selected =
-      (next.selectedId === undefined ? undefined : this.#ids.nameOf(layout, next.selectedId));
+    const selected = (
+      (next.selectedId === undefined)
+      ? undefined
+      : this.#ids.nameOf(layout, next.selectedId)
+    );
     if (selected === undefined && next.selectedId !== undefined) {
-      next = { ...next, selectedId: undefined };
+      next = {
+        ...next,
+        selectedId: undefined,
+      };
     }
-    if (selected !== next.selected) next = { ...next, selected };
+    if (selected !== next.selected) {
+      next = {
+        ...next,
+        selected,
+      };
+    }
 
     this.replaceState(next);
 
@@ -113,7 +124,11 @@ export class DesignerStore extends Store<DesignerState> {
     this.#set(state => {
       const history = historyReducer(state.history, action);
       if (history === state.history && !patch) return state;
-      return { ...state, ...patch, history };
+      return {
+        ...state,
+        ...patch,
+        history,
+      };
     });
   }
 
@@ -123,7 +138,15 @@ export class DesignerStore extends Store<DesignerState> {
     mergeKey?: string,
     patch?: Partial<DesignerState>,
   ) {
-    this.#history({ type: "update", apply, mergeKey, now: Date.now() }, patch);
+    this.#history(
+      {
+        type: "update",
+        apply,
+        mergeKey,
+        now: Date.now(),
+      },
+      patch,
+    );
   }
 
   /** 今のレイアウト（確定前の変更も含む）。 */
@@ -135,7 +158,10 @@ export class DesignerStore extends Store<DesignerState> {
   receive(layout: LayoutDocument) {
     if (layout.css === this.#committed.css && layout.assets === this.#committed.assets) return;
     this.#committed = layout;
-    this.#history({ type: "reset", present: layout });
+    this.#history({
+      type: "reset",
+      present: layout,
+    });
   }
 
   // ===========================================================================
@@ -154,17 +180,41 @@ export class DesignerStore extends Store<DesignerState> {
   // MARK: 表示
 
   /** 表示の拡大率を変える。 */
-  setZoom = (zoom: number) => this.#set(state => ({ ...state, zoom }));
+  setZoom = (zoom: number) =>
+    this.#set(state => ({
+      ...state,
+      zoom,
+    }));
   /** 用紙を画面に合わせる大きさで表示し直すよう頼む。 */
-  requestFit = () => this.#set(state => ({ ...state, fitRequest: state.fitRequest + 1 }));
+  requestFit = () =>
+    this.#set(state => ({
+      ...state,
+      fitRequest: state.fitRequest + 1,
+    }));
   /** 1mm 刻みで動かすかを切り替える。 */
-  setGridSnap = (gridSnap: boolean) => this.#set(state => ({ ...state, gridSnap }));
+  setGridSnap = (gridSnap: boolean) =>
+    this.#set(state => ({
+      ...state,
+      gridSnap,
+    }));
   /** 右の欄のタブを切り替える。 */
-  setTab = (tab: SidePanelTab) => this.#set(state => ({ ...state, tab }));
+  setTab = (tab: SidePanelTab) =>
+    this.#set(state => ({
+      ...state,
+      tab,
+    }));
   /** プレビューで測った、部品の位置と大きさを記録する。 */
-  setRects = (rects: Map<string, ElementRect>) => this.#set(state => ({ ...state, rects }));
+  setRects = (rects: Map<string, ElementRect>) =>
+    this.#set(state => ({
+      ...state,
+      rects,
+    }));
   /** CSS の安全化で取り除いた記述を記録する。 */
-  setCssWarnings = (cssWarnings: string[]) => this.#set(state => ({ ...state, cssWarnings }));
+  setCssWarnings = (cssWarnings: string[]) =>
+    this.#set(state => ({
+      ...state,
+      cssWarnings,
+    }));
 
   // ===========================================================================
   // MARK: 部品
@@ -172,7 +222,15 @@ export class DesignerStore extends Store<DesignerState> {
   /** 部品を選ぶ。undefined なら選択を外す。 */
   select = (name: string | undefined) => {
     const id = (name === undefined ? undefined : this.#ids.idOf(this.layout, name));
-    this.#set(state => (state.selectedId === id ? state : { ...state, selectedId: id }));
+    this.#set(state => (
+      (state.selectedId === id)
+      ? state
+      : {
+        ...state,
+        selectedId: id,
+      }
+    ),
+    );
   };
 
   /**
@@ -207,7 +265,10 @@ export class DesignerStore extends Store<DesignerState> {
 
   /** 名前を変える。ID は引き継ぐので、選択はそのまま保たれる。 */
   rename = (from: string, to: string) => {
-    this.#renaming = { from, to };
+    this.#renaming = {
+      from,
+      to,
+    };
     try {
       // 名前は1文字打つたびに変わるため、名前ではなく「名前の変更」でまとめる。
       this.#edit(layout => layout.renameElement(from, to), "rename");
@@ -242,7 +303,14 @@ export class DesignerStore extends Store<DesignerState> {
     this.#set(state => ({
       ...state,
       tab: "css",
-      cssReveal: (line !== undefined ? { line, key: Date.now() } : state.cssReveal),
+      cssReveal: (
+        (line !== undefined)
+        ? {
+          line,
+          key: Date.now(),
+        }
+        : state.cssReveal
+      ),
     }));
   };
 
@@ -266,7 +334,10 @@ export class DesignerStore extends Store<DesignerState> {
 
   /** ドラッグ中の変更。commitPreview までは履歴に記録せず、外へも知らせない。 */
   preview = (name: string, rect: Partial<ElementRect>) =>
-    this.#history({ type: "preview", next: placeElement(this.layout, name, rect) });
+    this.#history({
+      type: "preview",
+      next: placeElement(this.layout, name, rect),
+    });
 
   /** ドラッグ中の変更を確定し、1回分として履歴に記録する。 */
   commitPreview = () => this.#history({ type: "commitPreview" });

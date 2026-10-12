@@ -30,7 +30,12 @@ export function SchemaFieldEditor(props: Props) {
           type="text"
           label="カラム名"
           value={props.value.name}
-          onChange={event => props.onChange({ ...props.value, name: event.currentTarget.value })}
+          onChange={event =>
+            props.onChange({
+              ...props.value,
+              name: event.currentTarget.value,
+            })
+          }
         />
       </div>
       <div className="md:col-start-2">
@@ -38,7 +43,10 @@ export function SchemaFieldEditor(props: Props) {
           label="データ型"
           value={props.value.type}
           onChange={event =>
-            props.onChange({ ...props.value, type: event.currentTarget.value as FieldType })
+            props.onChange({
+              ...props.value,
+              type: event.currentTarget.value as FieldType,
+            })
           }
         >
           {Object.entries(fieldTypeLabels).map(([type, label]) => (
@@ -53,7 +61,12 @@ export function SchemaFieldEditor(props: Props) {
           type="text"
           label="メモ"
           value={props.value.memo}
-          onChange={event => props.onChange({ ...props.value, memo: event.currentTarget.value })}
+          onChange={event =>
+            props.onChange({
+              ...props.value,
+              memo: event.currentTarget.value,
+            })
+          }
         />
       </div>
     </div>

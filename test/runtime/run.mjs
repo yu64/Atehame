@@ -17,10 +17,16 @@ const config = {
   optimizeDeps: {
     include: ["comlink", "@jitl/quickjs-singlefile-cjs-release-sync", "quickjs-emscripten-core"],
   },
-  build: { outDir, emptyOutDir: true },
+  build: {
+    outDir,
+    emptyOutDir: true,
+  },
 };
 await build(config);
-const browser = await chromium.launch({ channel: "chrome", headless: true });
+const browser = await chromium.launch({
+  channel: "chrome",
+  headless: true,
+});
 
 /** ページを開き、ブラウザの中で実行エンジンの確認をすべて行う。 */
 async function check(url, mode) {
@@ -49,7 +55,11 @@ async function check(url, mode) {
         }
       }
       try {
-        const input = { name: "山田", suffix: "様", count: 2 };
+        const input = {
+          name: "山田",
+          suffix: "様",
+          count: 2,
+        };
         const value = await engine.execute(
           "return { address: input.name + input.suffix, count: input.count * 2 };",
           input,
@@ -62,8 +72,8 @@ async function check(url, mode) {
         record("input copy", input.count === 2);
         record(
           "fresh context",
-          (await engine.execute("return typeof globalThis.leaked + typeof ({}).leaked;", null)) ===
-            "undefinedundefined",
+          (await engine.execute("return typeof globalThis.leaked + typeof ({}).leaked;", null))
+            === "undefinedundefined",
         );
         const globals = await engine.execute(
           "return [typeof window, typeof document, typeof fetch, typeof XMLHttpRequest, typeof localStorage, typeof indexedDB, typeof postMessage, typeof Worker, typeof process];",
@@ -323,14 +333,26 @@ async function check(url, mode) {
 }
 
 try {
-  const dev = await createServer({ ...config, server: { host: "127.0.0.1", port: 0 } });
+  const dev = await createServer({
+    ...config,
+    server: {
+      host: "127.0.0.1",
+      port: 0,
+    },
+  });
   try {
     await dev.listen();
     await check(`http://127.0.0.1:${dev.httpServer.address().port}/runtime-test/`, "dev");
   } finally {
     await dev.close();
   }
-  const production = await preview({ ...config, preview: { host: "127.0.0.1", port: 0 } });
+  const production = await preview({
+    ...config,
+    preview: {
+      host: "127.0.0.1",
+      port: 0,
+    },
+  });
   try {
     await check(
       `http://127.0.0.1:${production.httpServer.address().port}/runtime-test/`,

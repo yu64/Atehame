@@ -45,17 +45,42 @@ describe("CSS の文字列", () => {
 describe("埋め込み", () => {
   test("{名前} を値の名前として読む", () => {
     expect(parseTextTemplate("〒{郵便番号} {氏名} 様")).toEqual([
-      { kind: "text", text: "〒" },
-      { kind: "field", key: "郵便番号" },
-      { kind: "text", text: " " },
-      { kind: "field", key: "氏名" },
-      { kind: "text", text: " 様" },
+      {
+        kind: "text",
+        text: "〒",
+      },
+      {
+        kind: "field",
+        key: "郵便番号",
+      },
+      {
+        kind: "text",
+        text: " ",
+      },
+      {
+        kind: "field",
+        key: "氏名",
+      },
+      {
+        kind: "text",
+        text: " 様",
+      },
     ]);
   });
 
   test("{{ と }} は波括弧そのもの、閉じていない { は文字", () => {
-    expect(parseTextTemplate("{{a}} {b")).toEqual([{ kind: "text", text: "{a} {b" }]);
-    expect(parseTextTemplate("{}")).toEqual([{ kind: "text", text: "{}" }]);
+    expect(parseTextTemplate("{{a}} {b")).toEqual([
+      {
+        kind: "text",
+        text: "{a} {b",
+      },
+    ]);
+    expect(parseTextTemplate("{}")).toEqual([
+      {
+        kind: "text",
+        text: "{}",
+      },
+    ]);
   });
 
   test("値の名前の一覧", () => {
@@ -77,7 +102,10 @@ describe("解析", () => {
   test("宣言の値と !important を読む", () => {
     const element = parseLayoutCss(sample).elements[0];
     expect(element.declarations.get("--atehame-text")?.value).toBe('"{氏名} 様"');
-    expect(element.declarations.get("font-size")).toMatchObject({ value: "26pt", important: true });
+    expect(element.declarations.get("font-size")).toMatchObject({
+      value: "26pt",
+      important: true,
+    });
   });
 
   test("書きかけの CSS でも読める範囲は読む", () => {
@@ -86,11 +114,41 @@ describe("解析", () => {
   });
 
   test.each([
-    ["100mm 148mm", { width: 100, height: 148 }],
-    ["10cm", { width: 100, height: 100 }],
-    ["A4", { width: 210, height: 297 }],
-    ["A4 landscape", { width: 297, height: 210 }],
-    ["148mm 100mm portrait", { width: 100, height: 148 }],
+    [
+      "100mm 148mm",
+      {
+        width: 100,
+        height: 148,
+      },
+    ],
+    [
+      "10cm",
+      {
+        width: 100,
+        height: 100,
+      },
+    ],
+    [
+      "A4",
+      {
+        width: 210,
+        height: 297,
+      },
+    ],
+    [
+      "A4 landscape",
+      {
+        width: 297,
+        height: 210,
+      },
+    ],
+    [
+      "148mm 100mm portrait",
+      {
+        width: 100,
+        height: 148,
+      },
+    ],
   ])("@page { size: %s }", (size, expected) => {
     expect(readPageSize(parseLayoutCss(`@page { size: ${size} }`))).toEqual(expected);
   });
@@ -129,7 +187,10 @@ describe("書き換え", () => {
 
   test("@page がなければ先頭に作る", () => {
     const css = setDeclaration('[data-name="a"] {}', { page: true }, "size", "120mm 235mm");
-    expect(readPageSize(parseLayoutCss(css))).toEqual({ width: 120, height: 235 });
+    expect(readPageSize(parseLayoutCss(css))).toEqual({
+      width: 120,
+      height: 235,
+    });
   });
 
   test("部品の規則を追加・削除する（入れ子も規則の中に書く）", () => {
@@ -201,7 +262,10 @@ describe("書き換え", () => {
   });
 
   test("複製は直後に作り、位置を変える", () => {
-    const css = duplicateElementRule(sample, "氏名", "氏名 2", { left: 43, top: 33 });
+    const css = duplicateElementRule(sample, "氏名", "氏名 2", {
+      left: 43,
+      top: 33,
+    });
     const elements = parseLayoutCss(css).elements;
     expect(elements.map(element => element.name)).toEqual(["氏名", "氏名 2", "住所"]);
     expect(elements[1].declarations.get("left")?.value).toBe("43mm");

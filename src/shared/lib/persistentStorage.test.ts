@@ -15,7 +15,10 @@ describe("localStorage に保存する入れ物", () => {
   afterEach(() => vi.useRealTimers());
 
   test("書き込みは少し待ってまとめて行い、最後の値だけを書く", () => {
-    const storage = createPersistentStorage({ parse, delayMs: 500 });
+    const storage = createPersistentStorage({
+      parse,
+      delayMs: 500,
+    });
     storage.setItem("n", 1);
     storage.setItem("n", 2);
     expect(localStorage.getItem("n")).toBeNull();
@@ -48,7 +51,11 @@ describe("localStorage に保存する入れ物", () => {
         throw new DOMException("full", "QuotaExceededError");
       },
     } as unknown as Storage;
-    const storage = createPersistentStorage({ parse, onError, storage: () => full });
+    const storage = createPersistentStorage({
+      parse,
+      onError,
+      storage: () => full,
+    });
     storage.setItem("n", 1);
     expect(() => storage.flush()).not.toThrow();
     expect(onError).toHaveBeenCalledTimes(1);

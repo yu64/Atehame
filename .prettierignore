@@ -8,3 +8,5 @@ package-lock.json
 sample.html
 # 外部のライブラリをビルドしたもの（vendor/README.md）。整形しない。
 vendor/
+# 整形の見本（わざと崩した入力と、期待する出力）。tools/format.test.ts で使う。
+tools/fixtures/

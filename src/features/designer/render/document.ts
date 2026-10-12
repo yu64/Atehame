@@ -55,7 +55,10 @@ html, body { margin: 0; padding: 0; background: #fff; color: #000; }
 export function createDocumentHtml(): string {
   return createIsolatedFrameHtml({
     styles: [
-      { id: "atehame-base", css: baseCss },
+      {
+        id: "atehame-base",
+        css: baseCss,
+      },
       { id: "atehame-paper" },
       { id: "atehame-author" },
     ],
@@ -69,8 +72,8 @@ export function applyLayoutStyles(doc: Document, layout: LayoutDocument): string
   setStyleText(
     doc,
     "atehame-paper",
-    `@page { size: ${width}mm ${height}mm; margin: 0; }\n` +
-      `.atehame-page { width: ${width}mm; height: ${height}mm; }`,
+    `@page { size: ${width}mm ${height}mm; margin: 0; }\n`
+      + `.atehame-page { width: ${width}mm; height: ${height}mm; }`,
   );
 
   const sanitized = sanitizeCss(layout.css);

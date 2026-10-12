@@ -42,5 +42,8 @@ export function expandRuleRange(css: string, range: TextRange): TextRange {
   if (end >= css.length && start > 0) {
     start = Math.min(start, css.slice(0, start).trimEnd().length + 1);
   }
-  return { start, end };
+  return {
+    start,
+    end,
+  };
 }

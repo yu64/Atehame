@@ -63,7 +63,14 @@ class GuestExecution {
   run(): ExecutionResult {
     try {
       const outputJson = this.#execute();
-      return (this.#isPastDeadline() ? timeoutResult() : { type: "result", outputJson });
+      return (
+        (this.#isPastDeadline())
+        ? timeoutResult()
+        : {
+          type: "result",
+          outputJson,
+        }
+      );
     } catch (error) {
       return this.#errorResult(error);
     } finally {
@@ -124,7 +131,12 @@ class GuestExecution {
     // 割り込み後はゲストの処理を呼ばず、固定のメッセージを返す。
     if (this.#interrupted) return timeoutResult();
     if (error instanceof GuestFailure) {
-      return { type: "error", code: error.code, message: error.message, fatal: false };
+      return {
+        type: "error",
+        code: error.code,
+        message: error.message,
+        fatal: false,
+      };
     }
 
     const result = this.#guestErrorResult(error.handle);
@@ -162,7 +174,13 @@ class GuestExecution {
 
     const { code, message } = classifyGuestError(formatted, this.#guestErrorCode);
     const location = userCodeLocation(formatted, this.#request.code);
-    return { type: "error", code, message, location, fatal: false };
+    return {
+      type: "error",
+      code,
+      message,
+      location,
+      fatal: false,
+    };
   }
 
   /** 捕捉済みの整形関数で例外を文字列化する。整形に失敗した場合は undefined。 */
@@ -240,18 +258,18 @@ interface FormattedError {
 /** ゲスト内で整形したエラーの形をしているか（値はゲスト由来のため信用しない）。 */
 function isFormattedError(value: unknown): value is FormattedError {
   return (
-    typeof value === "object" &&
-    value !== null &&
-    "text" in value &&
-    typeof value.text === "string" &&
-    "name" in value &&
-    typeof value.name === "string" &&
-    "message" in value &&
-    typeof value.message === "string" &&
-    "line" in value &&
-    Number.isInteger(value.line) &&
-    "column" in value &&
-    Number.isInteger(value.column)
+    typeof value === "object"
+    && value !== null
+    && "text" in value
+    && typeof value.text === "string"
+    && "name" in value
+    && typeof value.name === "string"
+    && "message" in value
+    && typeof value.message === "string"
+    && "line" in value
+    && Number.isInteger(value.line)
+    && "column" in value
+    && Number.isInteger(value.column)
   );
 }
 
@@ -262,13 +280,22 @@ function classifyGuestError(
 ): { code: ExecutionErrorCode; message: string } {
   if (formatted.name === "InternalError") {
     if (formatted.message === "out of memory") {
-      return { code: "MEMORY_LIMIT", message: "メモリ上限を超えました。" };
+      return {
+        code: "MEMORY_LIMIT",
+        message: "メモリ上限を超えました。",
+      };
     }
     if (formatted.message === "stack overflow") {
-      return { code: "STACK_OVERFLOW", message: "再帰が深すぎます。" };
+      return {
+        code: "STACK_OVERFLOW",
+        message: "再帰が深すぎます。",
+      };
     }
   }
-  return { code: fallback, message: formatted.text };
+  return {
+    code: fallback,
+    message: formatted.text,
+  };
 }
 
 /**
@@ -281,15 +308,26 @@ function userCodeLocation(formatted: FormattedError, code: string): SourceLocati
 
   const lines = code.split("\n");
   return (
-    line > lines.length
-    ? { line: lines.length, column: lines[lines.length - 1].length + 1 }
-    : { line, column: formatted.column }
+    (line > lines.length)
+    ? {
+      line: lines.length,
+      column: lines[lines.length - 1].length + 1,
+    }
+    : {
+      line,
+      column: formatted.column,
+    }
   );
 }
 
 /** 実行時間の上限を超えたときの結果。 */
 function timeoutResult(): ExecutionResult {
-  return { type: "error", code: "TIMEOUT", message: "実行時間の上限を超えました。", fatal: false };
+  return {
+    type: "error",
+    code: "TIMEOUT",
+    message: "実行時間の上限を超えました。",
+    fatal: false,
+  };
 }
 
 // #############################################################################

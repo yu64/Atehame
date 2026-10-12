@@ -35,14 +35,30 @@ export interface Props {
 // MARK: 定数
 
 const tabs: Array<{ id: SidePanelTab; label: string }> = [
-  { id: "properties", label: "設定" },
-  { id: "list", label: "一覧" },
-  { id: "assets", label: "画像" },
-  { id: "css", label: "CSS" },
+  {
+    id: "properties",
+    label: "設定",
+  },
+  {
+    id: "list",
+    label: "一覧",
+  },
+  {
+    id: "assets",
+    label: "画像",
+  },
+  {
+    id: "css",
+    label: "CSS",
+  },
 ];
 
 /** 欄の幅（px）。reserved は、指定がない場合にほかの領域へ残す幅。 */
-const panelWidth = { default: 320, min: 256, reserved: 240 };
+const panelWidth = {
+  default: 320,
+  min: 256,
+  reserved: 240,
+};
 
 // #############################################################################
 // MARK: コンポーネント

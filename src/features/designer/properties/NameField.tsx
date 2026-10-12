@@ -22,10 +22,10 @@ export function NameField(props: Props) {
 
   const trimmed = text.trim();
   const error = (
-    trimmed === ""
+    (trimmed === "")
     ? "名前を入力してください。"
     : (
-      props.otherNames.includes(trimmed)
+      (props.otherNames.includes(trimmed))
       ? "同じ名前の部品があります。"
       : undefined
     )

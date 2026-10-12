@@ -206,7 +206,7 @@ export class JsExecutionEngine {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise<never>((_, reject) => {
       const message = (
-        code === "TIMEOUT"
+        (code === "TIMEOUT")
         ? "実行時間の上限を超えました。"
         : "QuickJSの初期化がタイムアウトしました。"
       );
@@ -248,19 +248,26 @@ function createRequest(
   const timeoutMs = options.timeoutMs ?? limits.timeoutMs;
   const memoryLimitBytes = options.memoryLimitBytes ?? limits.memoryLimitBytes;
   const invalidCode = typeof code !== "string" || code.length > limits.codeLength;
-  const invalidTimeout =
-    !Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > limits.maxTimeoutMs;
-  const invalidMemoryLimit =
-    !Number.isInteger(memoryLimitBytes) ||
-    memoryLimitBytes < limits.minMemoryLimitBytes ||
-    memoryLimitBytes > limits.maxMemoryLimitBytes;
+  const invalidTimeout = (
+    !Number.isInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > limits.maxTimeoutMs
+  );
+  const invalidMemoryLimit = (
+    !Number.isInteger(memoryLimitBytes)
+    || memoryLimitBytes < limits.minMemoryLimitBytes
+    || memoryLimitBytes > limits.maxMemoryLimitBytes
+  );
 
   if (invalidCode || invalidTimeout || invalidMemoryLimit) {
     const message = "コードの長さ、実行時間、メモリ上限が範囲外です。";
     throw new JsExecutionError("INVALID_INPUT", message);
   }
 
-  return { code, inputJson: serializeInput(input), timeoutMs, memoryLimitBytes };
+  return {
+    code,
+    inputJson: serializeInput(input),
+    timeoutMs,
+    memoryLimitBytes,
+  };
 }
 
 /** 入力の型とサイズを検証し、転送用のJSON文字列を返す。 */

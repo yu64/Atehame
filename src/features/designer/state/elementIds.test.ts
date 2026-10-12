@@ -21,7 +21,10 @@ describe("部品の ID", () => {
     const ids = new ElementIds();
     ids.register(layout);
     const renamed = layout.renameElement("a", "x");
-    ids.register(renamed, layout, { from: "a", to: "x" });
+    ids.register(renamed, layout, {
+      from: "a",
+      to: "x",
+    });
 
     const id = ids.idOf(layout, "a")!;
     expect(ids.idOf(renamed, "x")).toBe(id);

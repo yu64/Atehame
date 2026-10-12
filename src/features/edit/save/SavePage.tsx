@@ -45,11 +45,16 @@ export function SavePage() {
   const { preview } = useSampleOutput();
 
   const available = useMemo(
-    () => exportStrategies.map(strategy => ({ strategy, available: strategy.isAvailable() })),
+    () =>
+      exportStrategies.map(strategy => ({
+        strategy,
+        available: strategy.isAvailable(),
+      })),
     [],
   );
-  const selected =
-    exportStrategies.find(strategy => strategy.id === strategyId) ?? exportStrategies[0];
+  const selected = (
+    exportStrategies.find(strategy => strategy.id === strategyId) ?? exportStrategies[0]
+  );
 
   /** 保存する前に問題を確かめる。問題があれば、一覧を見せてから保存するか選んでもらう。 */
   function requestSave() {
@@ -66,11 +71,24 @@ export function SavePage() {
     setConfirming(undefined);
     setStatus({ type: "saving" });
     try {
-      const file = toTemplateFile({ ...template, name: name.trim() });
+      const file = toTemplateFile({
+        ...template,
+        name: name.trim(),
+      });
       const done = await selected.export(file);
-      setStatus(done ? { type: "saved", label: selected.label } : { type: "idle" });
+      setStatus(
+        done
+        ? {
+          type: "saved",
+          label: selected.label,
+        }
+        : { type: "idle" }
+      );
     } catch (error) {
-      setStatus({ type: "error", message: (error instanceof Error ? error.message : String(error)) });
+      setStatus({
+        type: "error",
+        message: (error instanceof Error ? error.message : String(error)),
+      });
     }
   }
 
@@ -116,7 +134,7 @@ export function SavePage() {
             <p>
               画像:{" "}
               {(
-                summary.imageCount === 0
+                (summary.imageCount === 0)
                 ? "なし"
                 : `${summary.imageCount} 枚（${formatBytes(summary.imageBytes)}）`
               )}

@@ -49,7 +49,10 @@ export function SelectionLayer(props: Props) {
   const guidelines = useMemo(() => {
     const width = props.paper.width * unit;
     const height = props.paper.height * unit;
-    return { vertical: [0, width / 2, width], horizontal: [0, height / 2, height] };
+    return {
+      vertical: [0, width / 2, width],
+      horizontal: [0, height / 2, height],
+    };
   }, [props.paper, unit]);
 
   const selected = props.selected;
@@ -66,7 +69,10 @@ export function SelectionLayer(props: Props) {
   return (
     <div
       className="absolute left-0 top-0"
-      style={{ width: props.paper.width * unit, height: props.paper.height * unit }}
+      style={{
+        width: props.paper.width * unit,
+        height: props.paper.height * unit,
+      }}
       onPointerDown={event => {
         if (event.target === event.currentTarget) props.onSelect(undefined);
       }}
@@ -128,7 +134,10 @@ export function SelectionLayer(props: Props) {
             const top = toMm(event.top);
             event.target.style.left = `${left * unit}px`;
             event.target.style.top = `${top * unit}px`;
-            props.onPreview(selected, { left, top });
+            props.onPreview(selected, {
+              left,
+              top,
+            });
           }}
           onDragEnd={() => props.onCommit()}
           onResize={event => {
@@ -142,7 +151,12 @@ export function SelectionLayer(props: Props) {
             style.top = `${top * unit}px`;
             style.width = `${width * unit}px`;
             style.height = `${height * unit}px`;
-            props.onPreview(selected, { left, top, width, height });
+            props.onPreview(selected, {
+              left,
+              top,
+              width,
+              height,
+            });
           }}
           onResizeEnd={() => props.onCommit()}
         />

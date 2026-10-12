@@ -17,5 +17,8 @@ export function useSampleOutput() {
   const conversion = useMemo(() => createTransformInput(schema, sampleRow), [schema, sampleRow]);
   const preview = useTransformPreview(code, conversion.input);
 
-  return { conversion, preview };
+  return {
+    conversion,
+    preview,
+  };
 }

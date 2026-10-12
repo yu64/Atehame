@@ -146,5 +146,38 @@ ruleTester.run("ternary", ternaryRule, {
       output: lines("const a = (", "  x /* 説明 */", "  ? 1", "  : 2", ");"),
       errors: [{ messageId: "layout" }],
     },
+    {
+      // 枝がオブジェクトなら、1行に収まっても複数行にする。条件が単純でなければ、かっこで囲む。
+      code: "const a = Object.keys(assets).length === 0 ? { css } : { css, assets };",
+      output: lines(
+        "const a = (",
+        "  (Object.keys(assets).length === 0)",
+        "  ? { css }",
+        "  : { css, assets }",
+        ");",
+      ),
+      errors: [{ messageId: "layout" }],
+    },
+    {
+      // 単純な条件（isHoge・props.isHoge・!isHoge）は囲まない。
+      code: "const a = !props.isImage ? { css } : { css, assets };",
+      output: lines("const a = (", "  !props.isImage", "  ? { css }", "  : { css, assets }", ");"),
+      errors: [{ messageId: "layout" }],
+    },
+    {
+      // Prettier が枝の中身を `? ` の後ろにそろえた形は、閉じかっこを `?` の行にそろえ直す。
+      code: lines("const a = x", "  ? {", "      version: 1,", "      css,", "    }", "  : y;"),
+      output: lines(
+        "const a = (",
+        "  x",
+        "  ? {",
+        "    version: 1,",
+        "    css,",
+        "  }",
+        "  : y",
+        ");",
+      ),
+      errors: [{ messageId: "layout" }],
+    },
   ],
 });

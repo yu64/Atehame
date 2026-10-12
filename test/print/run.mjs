@@ -10,7 +10,10 @@ import { createServer } from "vite";
 const root = fileURLToPath(new URL("./", import.meta.url));
 const outDir = fileURLToPath(new URL("../../temp/print-check/", import.meta.url));
 const mmToPt = 72 / 25.4;
-const papers = { hagaki: [100, 148], nagagata3: [120, 235] };
+const papers = {
+  hagaki: [100, 148],
+  nagagata3: [120, 235],
+};
 
 /** PDF の圧縮された描画命令をつなげて返す。 */
 function pdfContent(pdf) {
@@ -32,10 +35,16 @@ const server = await createServer({
   root,
   logLevel: "error",
   resolve: { alias: { "@src": fileURLToPath(new URL("../../src", import.meta.url)) } },
-  server: { host: "127.0.0.1", port: 0 },
+  server: {
+    host: "127.0.0.1",
+    port: 0,
+  },
 });
 await server.listen();
-const browser = await chromium.launch({ channel: "chrome", headless: true });
+const browser = await chromium.launch({
+  channel: "chrome",
+  headless: true,
+});
 
 try {
   const harness = await browser.newPage();
@@ -50,7 +59,10 @@ try {
     await page.evaluate(() => document.fonts.ready);
 
     // 印刷（@page の用紙サイズ）で PDF にする。背景のグラフィックはブラウザの既定と同じく切る。
-    const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: false });
+    const pdf = await page.pdf({
+      preferCSSPageSize: true,
+      printBackground: false,
+    });
     await writeFile(`${outDir}${preset}.pdf`, pdf);
     const text = pdf.toString("latin1");
     const pages = text.match(/\/Type\s*\/Page\b/g) ?? [];
@@ -63,7 +75,10 @@ try {
     // 画面表示でも外部への通信がないことと、使われたフォントを確認する。
     const requests = [];
     page.on("request", request => requests.push(request.url()));
-    await page.setViewportSize({ width: 1200, height: 1400 });
+    await page.setViewportSize({
+      width: 1200,
+      height: 1400,
+    });
     const shots = await page.locator(".atehame-page").all();
     for (const [index, shot] of shots.entries()) {
       await shot.screenshot({ path: `${outDir}${preset}-${index + 1}.png` });
@@ -89,7 +104,10 @@ try {
   );
   const page = await browser.newPage();
   await page.setContent(html);
-  const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: false });
+  const pdf = await page.pdf({
+    preferCSSPageSize: true,
+    printBackground: false,
+  });
   assert.match(pdfContent(pdf), /1 0 0 rg/, "背景色が印刷される");
   console.log("background: printed");
 } finally {
