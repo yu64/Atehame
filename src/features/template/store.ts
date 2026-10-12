@@ -1,16 +1,45 @@
 import type { Layout } from "@src/features/designer";
-import { createTemplate, type Template } from "@src/features/template/model";
+import { createTemplate, parseTemplate, type Template } from "@src/features/template/model";
 import type { DataSchema } from "@src/features/template/schema";
+import { createPersistentStorage } from "@src/shared/lib/persistentStorage";
 import { atom, type SetStateAction, type WritableAtom } from "jotai";
+import { atomWithStorage } from "jotai/utils";
+
+/** 編集中の内容。テンプレートと、編集を始めたか（新しく作った・読み込んだ・どこかを書き換えた）。 */
+interface Draft {
+  template: Template;
+  editing: boolean;
+}
+
+/** 自動保存の localStorage のキー。 */
+export const draftStorageKey = "atehame:draft";
+
+const draftStorage = createPersistentStorage<Draft>({
+  parse: value => {
+    if (typeof value !== "object" || value === null) return undefined;
+    const { template, editing } = value as Partial<Draft>;
+    const parsed = parseTemplate(template);
+    return parsed && typeof editing === "boolean" ? { template: parsed, editing } : undefined;
+  },
+  // 画像が大きく、端末の保存領域に入りきらない場合など。画面の操作はそのまま続けられる。
+  onError: error => console.warn("編集中のテンプレートを自動保存できませんでした。", error),
+});
 
 /**
- * 編集中のテンプレート。アプリでこれ1つがテンプレート全体を持つ。
- * 各画面は、下の派生の atom で自分の工程の部分だけを読み書きする。リロード時には初期化される。
+ * 編集中の内容。アプリでこれ1つがテンプレート全体を持ち、localStorage に自動で保存する。
+ * 再読み込みやブラウザを閉じても、次に開いたときに続きから編集できる。
  */
-const templateAtom = atom<Template>(createTemplate());
+const draftAtom = atomWithStorage<Draft>(
+  draftStorageKey,
+  { template: createTemplate(), editing: false },
+  draftStorage,
+  { getOnInit: true },
+);
 
-/** 編集を始めたか（新しく作った・読み込んだ・どこかを書き換えた）。 */
-const editingAtom = atom(false);
+/** 編集中のテンプレート。各画面は、下の派生の atom で自分の工程の部分だけを読み書きする。 */
+const templateAtom = atom(get => get(draftAtom).template);
+
+const editingAtom = atom(get => get(draftAtom).editing);
 
 /** テンプレートの一部を読み書きする atom。書き換えたら編集中にする。 */
 function partAtom<T>(
@@ -23,8 +52,7 @@ function partAtom<T>(
       const template = get(templateAtom);
       const value =
         typeof action === "function" ? (action as (previous: T) => T)(read(template)) : action;
-      set(templateAtom, write(template, value));
-      set(editingAtom, true);
+      set(draftAtom, { template: write(template, value), editing: true });
     },
   );
 }
@@ -57,12 +85,10 @@ export const hasDraftAtom = atom(get => get(editingAtom));
 
 /** 空のテンプレートで編集を始める。編集中の内容は破棄する。 */
 export const startNewTemplateAtom = atom(null, (_get, set) => {
-  set(templateAtom, createTemplate());
-  set(editingAtom, true);
+  set(draftAtom, { template: createTemplate(), editing: true });
 });
 
 /** 読み込んだテンプレートで編集を始める。編集中の内容は破棄する。 */
 export const startTemplateAtom = atom(null, (_get, set, template: Template) => {
-  set(templateAtom, template);
-  set(editingAtom, true);
+  set(draftAtom, { template, editing: true });
 });

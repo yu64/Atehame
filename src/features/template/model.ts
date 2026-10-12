@@ -38,9 +38,8 @@ export interface TemplateFile extends Template {
   version: 1;
 }
 
-const templateFileSchema = z.object({
-  format: z.literal(templateFileFormat),
-  version: z.literal(1),
+/** テンプレートの検証。ファイルの読み込みと、自動保存した内容の読み込みで使う。 */
+const templateSchema = z.object({
   name: z.string().max(200),
   schema: z.object({
     version: z.literal(1),
@@ -58,6 +57,17 @@ const templateFileSchema = z.object({
   transform: z.object({ code: z.string().max(64 * 1024) }),
   layout: layoutSchema,
 });
+
+const templateFileSchema = templateSchema.extend({
+  format: z.literal(templateFileFormat),
+  version: z.literal(1),
+});
+
+/** テンプレートとして正しければ返す。正しくなければ undefined。 */
+export function parseTemplate(value: unknown): Template | undefined {
+  const result = templateSchema.safeParse(value);
+  return result.success ? result.data : undefined;
+}
 
 export function toTemplateFile(template: Template): TemplateFile {
   const { name, schema, transform, layout } = template;
