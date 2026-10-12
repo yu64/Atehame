@@ -75,6 +75,14 @@ export function applyLayoutStyles(doc: Document, layout: LayoutDocument): string
   return [...sanitized.warnings, ...missingAssetWarnings(layout)];
 }
 
+/**
+ * レイアウトの警告。安全化で取り除く記述と、登録されていない画像。
+ * 描画と同じ確認を、描画せずに行う（保存の前の確認などで使う）。
+ */
+export function layoutDocumentWarnings(layout: LayoutDocument): string[] {
+  return [...sanitizeCss(layout.css).warnings, ...missingAssetWarnings(layout)];
+}
+
 /** 部品が参照している画像のうち、登録されていないものの警告。 */
 function missingAssetWarnings(layout: LayoutDocument): string[] {
   const names = new Set(

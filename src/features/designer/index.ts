@@ -1,3 +1,4 @@
+export { layoutWarnings } from "@src/features/designer/check";
 export { default as Designer, type DesignerProps } from "@src/features/designer/Designer";
 export {
   defaultPresets,

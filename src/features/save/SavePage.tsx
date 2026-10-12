@@ -5,12 +5,15 @@ import { exportStrategies } from "@src/features/save/export/strategies";
 import {
   currentTemplateAtom,
   templateNameAtom,
+  templateWarnings,
   toFileName,
   toTemplateFile,
 } from "@src/features/template";
+import { useSampleOutput } from "@src/features/transform";
 import { formatBytes } from "@src/shared/lib/units";
 import Alert from "@src/shared/ui/Alert";
 import Button from "@src/shared/ui/Button";
+import ConfirmDialog from "@src/shared/ui/ConfirmDialog";
 import { Input } from "@src/shared/ui/Input";
 import RadioCardGroup from "@src/shared/ui/RadioCardGroup";
 import { useAtom, useAtomValue } from "jotai";
@@ -31,6 +34,8 @@ export default function Page() {
   const [strategyId, setStrategyId] = useState(exportStrategies[0].id);
   const [status, setStatus] = useState<SaveStatus>({ type: "idle" });
   const summary = useMemo(() => layoutSummary(layout), [layout]);
+  const [confirming, setConfirming] = useState<string[]>();
+  const { preview } = useSampleOutput();
 
   const available = useMemo(
     () => exportStrategies.map(strategy => ({ strategy, available: strategy.isAvailable() })),
@@ -39,7 +44,18 @@ export default function Page() {
   const selected =
     exportStrategies.find(strategy => strategy.id === strategyId) ?? exportStrategies[0];
 
+  /** 保存する前に問題を確かめる。問題があれば、一覧を見せてから保存するか選んでもらう。 */
+  function requestSave() {
+    const warnings = templateWarnings({ ...template, name });
+    if (preview.status === "error") {
+      warnings.push(`加工: サンプル行で実行するとエラーになります（${preview.message}）。`);
+    }
+    if (warnings.length === 0) void save();
+    else setConfirming(warnings);
+  }
+
   async function save() {
+    setConfirming(undefined);
     setStatus({ type: "saving" });
     try {
       const file = toTemplateFile({ ...template, name: name.trim() });
@@ -104,7 +120,7 @@ export default function Page() {
               variant="primary"
               size="md"
               disabled={status.type === "saving"}
-              onClick={save}
+              onClick={requestSave}
             />
             {/* 作業中の内容は残るので、トップの「続きから編集」で戻れる。 */}
             <Button
@@ -122,6 +138,24 @@ export default function Page() {
           )}
         </div>
       </MainContent>
+      <ConfirmDialog
+        open={confirming !== undefined}
+        title="このまま保存しますか？"
+        message={
+          <>
+            <p>次の点が気になります。保存はできますが、使うときに困るかもしれません。</p>
+            <ul className="mt-2 list-disc pl-5">
+              {confirming?.map(warning => (
+                <li key={warning}>{warning}</li>
+              ))}
+            </ul>
+          </>
+        }
+        confirmLabel="このまま保存"
+        cancelLabel="戻って直す"
+        onConfirm={() => void save()}
+        onCancel={() => setConfirming(undefined)}
+      />
     </>
   );
 }

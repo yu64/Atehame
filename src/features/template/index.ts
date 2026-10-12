@@ -1,3 +1,4 @@
+export { templateWarnings } from "@src/features/template/check";
 export {
   createTemplate,
   defaultTransformCode,
