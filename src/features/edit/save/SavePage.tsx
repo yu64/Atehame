@@ -1,15 +1,10 @@
 import { MainContent } from "@src/app/MainContent";
 import { StepHeader } from "@src/app/StepHeader";
+import { templateWarnings, toFileName, toTemplateFile } from "@src/features/data";
 import { layoutSummary } from "@src/features/designer";
+import { currentTemplateAtom, templateNameAtom } from "@src/features/edit/data";
 import { exportStrategies } from "@src/features/edit/save/export/strategies";
 import { useSampleOutput } from "@src/features/edit/transform";
-import {
-  currentTemplateAtom,
-  templateNameAtom,
-  templateWarnings,
-  toFileName,
-  toTemplateFile,
-} from "@src/features/template";
 import { formatBytes } from "@src/shared/lib/units";
 import { Alert } from "@src/shared/ui/Alert";
 import { Button } from "@src/shared/ui/Button";

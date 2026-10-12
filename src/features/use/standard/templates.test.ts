@@ -1,5 +1,5 @@
+import { parseTemplateFile, serializeTemplateFile, toTemplateFile } from "@src/features/data";
 import { layoutSchema } from "@src/features/designer";
-import { parseTemplateFile, serializeTemplateFile, toTemplateFile } from "@src/features/template";
 import { standardTemplates } from "@src/features/use/standard/templates";
 import { describe, expect, test } from "vitest";
 

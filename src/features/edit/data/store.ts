@@ -1,6 +1,6 @@
+import type { DataSchema } from "@src/features/data";
+import { createTemplate, parseTemplate, type Template } from "@src/features/data";
 import type { Layout } from "@src/features/designer";
-import { createTemplate, parseTemplate, type Template } from "@src/features/template/model";
-import type { DataSchema } from "@src/features/template/schema";
 import { createPersistentStorage } from "@src/shared/lib/persistentStorage";
 import { atom, type SetStateAction, type WritableAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";

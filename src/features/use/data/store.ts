@@ -1,4 +1,4 @@
-import type { Template } from "@src/features/template";
+import type { Template } from "@src/features/data";
 import { atom } from "jotai";
 
 // #############################################################################

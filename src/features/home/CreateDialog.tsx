@@ -1,10 +1,6 @@
-import {
-  hasDraftAtom,
-  startNewTemplateAtom,
-  startTemplateAtom,
-  type Template,
-  TemplateFilePicker,
-} from "@src/features/template";
+import { type Template } from "@src/features/data";
+import { hasDraftAtom, startNewTemplateAtom, startTemplateAtom } from "@src/features/edit/data";
+import { TemplateFilePicker } from "@src/features/home/TemplateFilePicker";
 import { Button } from "@src/shared/ui/Button";
 import { ConfirmDialog } from "@src/shared/ui/ConfirmDialog";
 import { Dialog } from "@src/shared/ui/Dialog";

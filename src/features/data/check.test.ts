@@ -1,5 +1,5 @@
-import { templateWarnings } from "@src/features/template/check";
-import { createTemplate } from "@src/features/template/model";
+import { templateWarnings } from "@src/features/data/check";
+import { createTemplate } from "@src/features/data/model";
 import { describe, expect, test } from "vitest";
 
 describe("保存の前の確認", () => {

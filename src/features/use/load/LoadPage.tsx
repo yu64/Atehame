@@ -2,8 +2,8 @@ import { MainContent } from "@src/app/MainContent";
 import { NormalHeader } from "@src/app/NormalHeader";
 import { PageFrame } from "@src/app/PageFrame";
 import { StepHeader } from "@src/app/StepHeader";
-import { TemplateSummary } from "@src/features/template";
-import { usingTemplateAtom } from "@src/features/use/apply/store";
+import { usingTemplateAtom } from "@src/features/use/data";
+import { TemplateSummary } from "@src/features/use/load/TemplateSummary";
 import { useAtomValue } from "jotai";
 import { navigate } from "vike/client/router";
 
@@ -11,7 +11,7 @@ import { navigate } from "vike/client/router";
 // MARK: コンポーネント
 
 /** テンプレートを使う画面。CSV を入れてプレビュー・出力する（準備中）。 */
-export function UsePage() {
+export function LoadPage() {
   const template = useAtomValue(usingTemplateAtom);
 
   return (

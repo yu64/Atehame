@@ -1,5 +1,5 @@
+import type { DataSchema } from "@src/features/data/schema";
 import { createLayout, type Layout, layoutSchema } from "@src/features/designer";
-import type { DataSchema } from "@src/features/template/schema";
 import { z } from "zod";
 
 // #############################################################################

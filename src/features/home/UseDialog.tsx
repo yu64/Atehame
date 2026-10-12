@@ -1,5 +1,6 @@
-import { type Template, TemplateFilePicker } from "@src/features/template";
-import { usingTemplateAtom } from "@src/features/use/apply";
+import { type Template } from "@src/features/data";
+import { TemplateFilePicker } from "@src/features/home/TemplateFilePicker";
+import { usingTemplateAtom } from "@src/features/use/data";
 import { Button } from "@src/shared/ui/Button";
 import { Dialog } from "@src/shared/ui/Dialog";
 import { useSetAtom } from "jotai";
@@ -38,7 +39,7 @@ export function UseDialog(props: Props) {
             if (!loaded) return;
             setUsing(loaded);
             props.onClose();
-            void navigate("/use");
+            void navigate("/use/load");
           }}
         />
       }

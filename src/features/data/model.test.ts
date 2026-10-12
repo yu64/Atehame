@@ -5,7 +5,7 @@ import {
   serializeTemplateFile,
   toFileName,
   toTemplateFile,
-} from "@src/features/template/model";
+} from "@src/features/data/model";
 import { describe, expect, test } from "vitest";
 
 describe("テンプレートファイル", () => {

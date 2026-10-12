@@ -1,4 +1,4 @@
-import { usingTemplateAtom } from "@src/features/use/apply";
+import { usingTemplateAtom } from "@src/features/use/data";
 import { standardTemplates } from "@src/features/use/standard";
 import { Button } from "@src/shared/ui/Button";
 import { Dialog } from "@src/shared/ui/Dialog";
@@ -40,7 +40,7 @@ export function StandardDialog(props: Props) {
             if (!selected) return;
             setUsing(selected.create());
             props.onClose();
-            void navigate("/use");
+            void navigate("/use/load");
           }}
         />
       }

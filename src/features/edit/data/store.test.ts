@@ -1,4 +1,4 @@
-import { createTemplate } from "@src/features/template/model";
+import { createTemplate } from "@src/features/data";
 import {
   currentTemplateAtom,
   hasDraftAtom,
@@ -8,7 +8,7 @@ import {
   startTemplateAtom,
   templateNameAtom,
   transformCodeAtom,
-} from "@src/features/template/store";
+} from "@src/features/edit/data/store";
 import { createStore } from "jotai";
 import { describe, expect, test } from "vitest";
 

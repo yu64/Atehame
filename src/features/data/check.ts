@@ -1,5 +1,5 @@
+import { type Template, toFileName } from "@src/features/data/model";
 import { layoutWarnings } from "@src/features/designer";
-import { type Template, toFileName } from "@src/features/template/model";
 
 // #############################################################################
 // MARK: 関数

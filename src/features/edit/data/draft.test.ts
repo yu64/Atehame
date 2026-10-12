@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { createTemplate } from "@src/features/template/model";
+import { createTemplate } from "@src/features/data";
 import { createStore } from "jotai";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -8,7 +8,7 @@ const draftStorageKey = "atehame:draft";
 /** 自動保存した内容は、ページを開いたとき（モジュールを読み込んだとき）に読む。テストでは毎回読み込み直す。 */
 async function loadStore() {
   vi.resetModules();
-  return import("@src/features/template/store");
+  return import("@src/features/edit/data/store");
 }
 
 describe("編集中のテンプレートの自動保存", () => {

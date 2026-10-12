@@ -1,5 +1,5 @@
+import type { Template } from "@src/features/data";
 import { createLayout } from "@src/features/designer";
-import type { Template } from "@src/features/template";
 
 // #############################################################################
 // MARK: 型定義

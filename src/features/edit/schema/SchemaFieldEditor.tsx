@@ -1,4 +1,4 @@
-import { type FieldType, fieldTypeLabels, type SchemaField } from "@src/features/template";
+import { type FieldType, fieldTypeLabels, type SchemaField } from "@src/features/data";
 import { Input } from "@src/shared/ui/Input";
 import { Select } from "@src/shared/ui/Select";
 

@@ -1,4 +1,4 @@
-import type { RowCells } from "@src/features/edit/transform/model";
+import type { RowCells } from "@src/features/data";
 import { atom } from "jotai";
 
 // #############################################################################
