@@ -3,7 +3,7 @@ export interface Props {
   onClick?: () => void;
 }
 
-export default function Divider(props: Props) {
+export function Divider(props: Props) {
   return (
     <div
       className={`

@@ -1,7 +1,7 @@
 import { fieldPlaceholder } from "@src/features/designer/layoutCss";
-import useSyncedText from "@src/shared/hooks/useSyncedText";
-import Button from "@src/shared/ui/Button";
-import Textarea from "@src/shared/ui/Textarea";
+import { useSyncedText } from "@src/shared/hooks/useSyncedText";
+import { Button } from "@src/shared/ui/Button";
+import { Textarea } from "@src/shared/ui/Textarea";
 
 export interface Props {
   value: string;
@@ -11,13 +11,13 @@ export interface Props {
 }
 
 /** 表示する文字の欄。{名前} で値を埋め込む。 */
-export default function TextTemplateField(props: Props) {
+export function TextTemplateField(props: Props) {
   const [text, setText] = useSyncedText(props.value);
 
-  const update = (next: string) => {
+  function update(next: string) {
     setText(next);
     props.onChange(next);
-  };
+  }
 
   return (
     <div className="flex flex-col gap-1">

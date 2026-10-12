@@ -7,7 +7,7 @@ export interface Props {
   onClick?: () => void;
 }
 
-export default function SelectCard(props: Props) {
+export function SelectCard(props: Props) {
   return (
     <div
       className={`

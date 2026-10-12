@@ -1,19 +1,18 @@
-import Field from "@src/shared/ui/Field";
-import { forwardRef, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import { Field } from "@src/shared/ui/Field";
+import { type ComponentPropsWithRef, type ReactNode } from "react";
 
-export interface Props extends ComponentPropsWithoutRef<"textarea"> {
+export interface Props extends ComponentPropsWithRef<"textarea"> {
   label?: string;
   description?: ReactNode;
   error?: string;
 }
 
 /** 複数行の入力欄。 */
-export const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea(props, ref) {
+export function Textarea(props: Props) {
   const { label, description, error, className, ...textareaProps } = props;
   return (
     <Field label={label} description={description} error={error}>
       <textarea
-        ref={ref}
         className={`
           textarea w-full focus-within:atehame-focus
           ${error ? "border-status-error" : ""}
@@ -24,6 +23,4 @@ export const Textarea = forwardRef<HTMLTextAreaElement, Props>(function Textarea
       />
     </Field>
   );
-});
-
-export default Textarea;
+}

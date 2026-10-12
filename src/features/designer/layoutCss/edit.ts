@@ -1,10 +1,10 @@
 import { decodeCssString, encodeCssString } from "@src/features/designer/layoutCss/cssString";
 import {
   dataNameOf,
-  parseCss,
-  parseLayoutCss,
   type ElementRule,
   type LayoutCss,
+  parseCss,
+  parseLayoutCss,
   type RuleInfo,
   type TextRange,
 } from "@src/features/designer/layoutCss/parse";
@@ -29,9 +29,11 @@ export function selectorFor(name: string): string {
 }
 
 function findRule(layout: LayoutCss, target: RuleTarget): RuleInfo | undefined {
-  return "page" in target
+  return (
+    "page" in target
     ? layout.page
-    : layout.elements.find(element => element.name === target.element);
+    : layout.elements.find(element => element.name === target.element)
+  );
 }
 
 /** 規則の中の最初の宣言の字下げ。なければ2文字。 */
@@ -60,9 +62,11 @@ export function setDeclaration(
 
   const existing = rule.declarations.get(property);
   if (existing) {
-    return value === undefined
+    return (
+      value === undefined
       ? removeDeclarationText(css, existing.range, rule.bodyRange)
-      : replaceRange(css, existing.valueRange, value);
+      : replaceRange(css, existing.valueRange, value)
+    );
   }
   if (value === undefined) return css;
 
@@ -80,7 +84,7 @@ export function setDeclaration(
     if (css[contentEnd] === ";") contentEnd++;
   }
   const previous = css[contentEnd - 1];
-  const separator = previous === ";" || contentEnd === rule.bodyRange.start ? "" : ";";
+  const separator = (previous === ";" || contentEnd === rule.bodyRange.start ? "" : ";");
   return (
     css.slice(0, contentEnd) +
     `${separator}\n${indent}${property}: ${value};` +
@@ -136,7 +140,7 @@ export function addElementRule(
     lines.push(...(lines.length > 0 ? [""] : []), ...nested);
   }
   const rule = `${selectorFor(name)} {\n${lines.join("\n")}\n}\n`;
-  const prefix = css.trim() === "" ? "" : `${css.trimEnd()}\n\n`;
+  const prefix = (css.trim() === "" ? "" : `${css.trimEnd()}\n\n`);
   return `${prefix}${rule}`;
 }
 
@@ -211,7 +215,7 @@ export function moveElementRule(
   const rule = elements.find(element => element.name === name);
   if (!rule) return css;
 
-  const anchor: ElementRule | undefined = to === "front" ? elements.at(-1) : elements[0];
+  const anchor: ElementRule | undefined = (to === "front" ? elements.at(-1) : elements[0]);
   if (!anchor || anchor === rule) return css;
 
   const text = css.slice(rule.range.start, rule.range.end);
@@ -220,7 +224,9 @@ export function moveElementRule(
   const anchorRule = parseLayoutCss(removed).elements.find(element => element.name === anchor.name);
   if (!anchorRule) return css;
 
-  return to === "front"
+  return (
+    to === "front"
     ? `${removed.slice(0, anchorRule.range.end)}\n\n${text}${removed.slice(anchorRule.range.end)}`
-    : `${removed.slice(0, anchorRule.range.start)}${text}\n\n${removed.slice(anchorRule.range.start)}`;
+    : `${removed.slice(0, anchorRule.range.start)}${text}\n\n${removed.slice(anchorRule.range.start)}`
+  );
 }

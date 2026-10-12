@@ -1,8 +1,8 @@
-import { changedRange } from "@src/shared/lib/TextUtil";
-import Button from "@src/shared/ui/Button";
+import { changedRange } from "@src/shared/lib/util/text";
+import { Button } from "@src/shared/ui/Button";
 import { editorThemes } from "@src/shared/ui/monaco/themes";
 import type * as Monaco from "monaco-editor";
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { type Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 export interface EditorMarker {
   /** 1始まりの行・列。 */
@@ -30,6 +30,7 @@ export interface Props {
   reveal?: { line: number; key: number };
   /** 暗い配色で表示する。 */
   dark?: boolean;
+  ref?: Ref<CodeEditorHandle>;
 }
 
 type MonacoModule = typeof Monaco;
@@ -41,13 +42,10 @@ const markerOwner = "code-editor";
  * Monaco Editor を使ったコードエディター（JavaScript / CSS）。
  * Monaco本体は大きいため、表示時に読み込む。
  */
-export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEditor(
-  props: Props,
-  ref: React.ForwardedRef<CodeEditorHandle>,
-) {
+export function CodeEditor(props: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null);
-  const [monaco, setMonaco] = useState<MonacoModule | null>(null);
+  const [monaco, setMonaco] = useState<MonacoModule>();
   const [failed, setFailed] = useState(false);
   // 読み込みに失敗した場合に、やり直すたびに増やす。
   const [attempt, setAttempt] = useState(0);
@@ -58,7 +56,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
   onChangeRef.current = props.onChange;
 
   useImperativeHandle(
-    ref,
+    props.ref,
     () => ({
       revealPosition(line, column) {
         const editor = editorRef.current;
@@ -77,13 +75,13 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
     let editor: Monaco.editor.IStandaloneCodeEditor | undefined;
 
     import("@src/shared/ui/monaco/monaco")
-      .then(({ default: loaded }) => {
+      .then(({ monaco: loaded }) => {
         if (disposed || !containerRef.current) return;
 
         editor = loaded.editor.create(containerRef.current, {
           value: props.value,
           language: props.language ?? "javascript",
-          theme: dark ? editorThemes.dark : editorThemes.light,
+          theme: (dark ? editorThemes.dark : editorThemes.light),
           automaticLayout: true,
           minimap: { enabled: false },
           fontFamily: "'Fira Code', monospace",
@@ -114,6 +112,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
       model?.dispose();
     };
     // 初期値と初期テーマは生成時だけ使い、以降の変更は個別のeffectで反映する。
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- エディターは読み込み直すときだけ作り直す。
   }, [attempt]);
 
   // 外部から値が変わった場合だけ、変わった部分をエディターへ反映する。
@@ -139,6 +138,7 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
     editor.setPosition(position);
     editor.revealLineInCenter(props.reveal.line);
     editor.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- key が変わったときだけ移動する（同じ行へもう一度移動できるように）。
   }, [monaco, props.reveal?.key]);
 
   useEffect(() => {
@@ -181,24 +181,26 @@ export const CodeEditor = forwardRef<CodeEditorHandle, Props>(function CodeEdito
             text-sm text-text-secondary
           `}
         >
-          {failed ? (
-            <span className="flex flex-col items-center gap-2">
-              エディターを読み込めませんでした。
-              <Button
-                label="再読み込み"
-                onClick={() => {
-                  setFailed(false);
-                  setAttempt(value => value + 1);
-                }}
-              />
-            </span>
-          ) : (
-            "エディターを読み込み中…"
+          {(
+            failed
+            ? (
+              <span className="flex flex-col items-center gap-2">
+                エディターを読み込めませんでした。
+                <Button
+                  label="再読み込み"
+                  onClick={() => {
+                    setFailed(false);
+                    setAttempt(value => value + 1);
+                  }}
+                />
+              </span>
+            )
+            : (
+              "エディターを読み込み中…"
+            )
           )}
         </div>
       )}
     </div>
   );
-});
-
-export default CodeEditor;
+}

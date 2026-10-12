@@ -20,7 +20,9 @@ const blockedElements = new Set([
 /** 文書の中（#id）以外を指す url(...)。 */
 const externalUrlPattern = String.raw`url\(\s*(?!['"]?#)[^)]*\)`;
 const hasExternalUrl = new RegExp(externalUrlPattern, "i");
-const externalUrls = () => new RegExp(externalUrlPattern, "gi");
+function externalUrls() {
+  return new RegExp(externalUrlPattern, "gi");
+}
 
 /**
  * SVG から、スクリプト・イベント属性・外部への参照を取り除く。

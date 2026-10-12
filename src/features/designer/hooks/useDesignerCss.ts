@@ -12,5 +12,3 @@ export function useDesignerCss() {
   const reveal = useDesignerSelector(state => state.cssReveal);
   return { css, warnings, reveal, setCss: store.setCss };
 }
-
-export default useDesignerCss;

@@ -1,11 +1,11 @@
 import { assetDataUrl, type Assets } from "@src/features/designer/assets/assets";
 import {
   decodeCssString,
+  type ElementRule,
   imageProperty,
   parseTextTemplate,
   splitProperty,
   textProperty,
-  type ElementRule,
 } from "@src/features/designer/layoutCss";
 import {
   formatValue,
@@ -103,8 +103,8 @@ function renderImage(
   options: RenderOptions,
   assets: Assets,
 ) {
-  const asset = Object.hasOwn(assets, name) ? assets[name] : undefined;
-  const url = asset ? assetDataUrl(asset) : undefined;
+  const asset = (Object.hasOwn(assets, name) ? assets[name] : undefined);
+  const url = (asset ? assetDataUrl(asset) : undefined);
   if (url === undefined) {
     if (!options.placeholder) return;
     const span = doc.createElement("span");
@@ -128,6 +128,6 @@ function fillTemplate(template: string, values: Values, options: RenderOptions):
     if (segment.kind === "text") return [{ text: segment.text, placeholder: false }];
     const text = formatValue(values[segment.key]);
     if (text !== "") return [{ text, placeholder: false }];
-    return options.placeholder ? [{ text: `{${segment.key}}`, placeholder: true }] : [];
+    return (options.placeholder ? [{ text: `{${segment.key}}`, placeholder: true }] : []);
   });
 }

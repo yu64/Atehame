@@ -1,5 +1,5 @@
 import type { LayoutDocument } from "@src/features/designer/layoutCss";
-import { toLayoutDocument, type Layout } from "@src/features/designer/model";
+import { type Layout, toLayoutDocument } from "@src/features/designer/model";
 import {
   applyLayoutStyles,
   createDocumentHtml,

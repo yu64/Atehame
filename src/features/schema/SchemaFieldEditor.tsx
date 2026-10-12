@@ -1,4 +1,4 @@
-import { fieldTypeLabels, type FieldType, type SchemaField } from "@src/features/template";
+import { type FieldType, fieldTypeLabels, type SchemaField } from "@src/features/template";
 import { Input } from "@src/shared/ui/Input";
 import { Select } from "@src/shared/ui/Select";
 
@@ -7,7 +7,7 @@ export interface Props {
   onChange: (value: SchemaField) => void;
 }
 
-export default function SchemaFieldEditor(props: Props) {
+export function SchemaFieldEditor(props: Props) {
   return (
     <div
       className={`

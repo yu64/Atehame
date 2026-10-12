@@ -32,5 +32,3 @@ export function useDesignerCanvas() {
     setCssWarnings: store.setCssWarnings,
   };
 }
-
-export default useDesignerCanvas;

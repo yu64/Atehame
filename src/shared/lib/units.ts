@@ -15,7 +15,7 @@ const mmPerUnit: Record<string, number> = {
 /** CSS の長さ（"10mm" や "12pt" など）を mm にする。読めない場合は undefined。 */
 export function lengthToMm(value: string): number | undefined {
   const match = value.trim().match(/^(-?\d*\.?\d+)(mm|cm|in|pt|pc|px|q)$/i);
-  if (!match) return value.trim() === "0" ? 0 : undefined;
+  if (!match) return (value.trim() === "0" ? 0 : undefined);
   return Number(match[1]) * mmPerUnit[match[2].toLowerCase()];
 }
 

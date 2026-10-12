@@ -7,5 +7,3 @@ export function useDesignerPrint(): () => Promise<void> {
   const { sample } = useDesignerConfig();
   return () => printPages(store.layout, [sample]);
 }
-
-export default useDesignerPrint;

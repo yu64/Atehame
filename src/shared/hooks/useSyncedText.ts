@@ -19,5 +19,3 @@ export function useSyncedText(
   }
   return [text, setText] as const;
 }
-
-export default useSyncedText;

@@ -2,12 +2,12 @@ import {
   hasDraftAtom,
   startNewTemplateAtom,
   startTemplateAtom,
-  TemplateFilePicker,
   type Template,
+  TemplateFilePicker,
 } from "@src/features/template";
-import Button from "@src/shared/ui/Button";
-import ConfirmDialog from "@src/shared/ui/ConfirmDialog";
-import Dialog from "@src/shared/ui/Dialog";
+import { Button } from "@src/shared/ui/Button";
+import { ConfirmDialog } from "@src/shared/ui/ConfirmDialog";
+import { Dialog } from "@src/shared/ui/Dialog";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
@@ -18,7 +18,7 @@ export interface Props {
 }
 
 /** レイアウトを作る：続きから・新しく作る・テンプレートを読み込んで編集する。 */
-export default function CreateDialog(props: Props) {
+export function CreateDialog(props: Props) {
   const hasDraft = useAtomValue(hasDraftAtom);
   const startNew = useSetAtom(startNewTemplateAtom);
   const startTemplate = useSetAtom(startTemplateAtom);
@@ -27,18 +27,18 @@ export default function CreateDialog(props: Props) {
   const [pending, setPending] = useState<"new" | "load">();
 
   /** 編集の画面へ進む。kind がなければ、作業中の内容の続きから。 */
-  const begin = (kind?: "new" | "load") => {
+  function begin(kind?: "new" | "load") {
     if (kind === "new") startNew();
     if (kind === "load" && loaded) startTemplate(loaded);
     props.onClose();
     void navigate("/edit/schema");
-  };
+  }
 
   /** 作業中の内容があれば、破棄してよいか確かめてから始める。 */
-  const confirmThenBegin = (kind: "new" | "load") => {
+  function confirmThenBegin(kind: "new" | "load") {
     if (hasDraft) setPending(kind);
     else begin(kind);
-  };
+  }
 
   return (
     <Dialog open={props.open} onClose={props.onClose} title="レイアウトを作る">

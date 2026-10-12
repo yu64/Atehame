@@ -1,9 +1,9 @@
 import { LayoutDocument } from "@src/features/designer/layoutCss";
 import {
   createLayout,
-  paperPresets,
   type Layout,
   type PaperPreset,
+  paperPresets,
 } from "@src/features/designer/model";
 import { postalCodePreset } from "@src/features/designer/presets";
 import {

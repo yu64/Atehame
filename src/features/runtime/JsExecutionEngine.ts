@@ -1,4 +1,3 @@
-import { limits } from "@src/features/runtime/protocol";
 import type {
   ExecutionErrorCode,
   ExecutionOptions,
@@ -8,8 +7,9 @@ import type {
   SourceLocation,
   WorkerApi,
 } from "@src/features/runtime/protocol";
-import { wrap, releaseProxy } from "comlink";
+import { limits } from "@src/features/runtime/protocol";
 import type { Remote } from "comlink";
+import { releaseProxy, wrap } from "comlink";
 
 export type {
   ExecutionErrorCode,
@@ -210,10 +210,10 @@ export class JsExecutionEngine {
       this.closeSession();
     };
 
-    const onError = (event: ErrorEvent) => {
+    function onError(event: ErrorEvent) {
       event.preventDefault();
       fail();
-    };
+    }
     worker.addEventListener("error", onError);
     worker.addEventListener("messageerror", fail);
 
@@ -239,10 +239,11 @@ export class JsExecutionEngine {
   ): Promise<T> {
     let timer: ReturnType<typeof setTimeout> | undefined;
     const timeout = new Promise<never>((_, reject) => {
-      const message =
+      const message = (
         code === "TIMEOUT"
-          ? "実行時間の上限を超えました。"
-          : "QuickJSの初期化がタイムアウトしました。";
+        ? "実行時間の上限を超えました。"
+        : "QuickJSの初期化がタイムアウトしました。"
+      );
       timer = setTimeout(() => {
         const error = new JsExecutionError(code, message);
         reject(error);

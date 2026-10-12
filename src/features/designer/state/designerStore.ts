@@ -5,19 +5,19 @@ import { ElementIds } from "@src/features/designer/state/elementIds";
 import {
   addFromPreset,
   duplicateElement,
+  type ElementRect,
   moveElementBy,
   placeElement,
   setPaperSize,
-  type ElementRect,
 } from "@src/features/designer/state/operations";
 import type { ElementPreset, RevealRequest } from "@src/features/designer/types";
 import {
   canRedo,
   canUndo,
   createHistory,
-  historyReducer,
   type History,
   type HistoryAction,
+  historyReducer,
 } from "@src/shared/lib/history";
 import { Store } from "@src/shared/lib/store";
 
@@ -29,9 +29,9 @@ export interface DesignerState {
    * 選択中の部品の ID。null なら用紙を選択している。
    * 名前を変えても、元に戻しても同じ部品を指す（state/elementIds.ts）。
    */
-  selectedId: string | null;
+  selectedId: string | undefined;
   /** 選択中の部品の今の名前。selectedId から引いたもの。 */
-  selected: string | null;
+  selected: string | undefined;
   /** 右の欄で開いているタブ。部品の追加や「CSS で編集」からも切り替える。 */
   tab: SidePanelTab;
   /** CSS タブで表示する行。 */
@@ -47,7 +47,9 @@ export interface DesignerState {
 }
 
 /** 状態から、今の文書を選ぶ。 */
-export const selectLayout = (state: DesignerState): LayoutDocument => state.history.present;
+export function selectLayout(state: DesignerState): LayoutDocument {
+  return state.history.present;
+}
 
 /**
  * デザイナーの状態と操作。React に依存せず、useStoreSelector で購読する。
@@ -64,8 +66,8 @@ export class DesignerStore extends Store<DesignerState> {
   constructor(initial: LayoutDocument, onCommit: (layout: LayoutDocument) => void) {
     super({
       history: createHistory(initial),
-      selectedId: null,
-      selected: null,
+      selectedId: undefined,
+      selected: undefined,
       tab: "properties",
       zoom: 1,
       fitRequest: 0,
@@ -88,8 +90,10 @@ export class DesignerStore extends Store<DesignerState> {
     const layout = next.history.present;
     this.#ids.register(layout, previous.history.present, this.#renaming);
     const selected =
-      next.selectedId === null ? null : (this.#ids.nameOf(layout, next.selectedId) ?? null);
-    if (selected === null && next.selectedId !== null) next = { ...next, selectedId: null };
+      (next.selectedId === undefined ? undefined : this.#ids.nameOf(layout, next.selectedId));
+    if (selected === undefined && next.selectedId !== undefined) {
+      next = { ...next, selectedId: undefined };
+    }
     if (selected !== next.selected) next = { ...next, selected };
 
     this.replaceState(next);
@@ -147,8 +151,8 @@ export class DesignerStore extends Store<DesignerState> {
 
   // 部品
 
-  select = (name: string | null) => {
-    const id = name === null ? null : (this.#ids.idOf(this.layout, name) ?? null);
+  select = (name: string | undefined) => {
+    const id = (name === undefined ? undefined : this.#ids.idOf(this.layout, name));
     this.#set(state => (state.selectedId === id ? state : { ...state, selectedId: id }));
   };
 
@@ -211,11 +215,11 @@ export class DesignerStore extends Store<DesignerState> {
   /** CSS タブを開き、部品の規則の行を表示する。 */
   showCss = (name: string) => {
     const rule = this.layout.element(name);
-    const line = rule ? this.layout.css.slice(0, rule.range.start).split("\n").length : undefined;
+    const line = (rule ? this.layout.css.slice(0, rule.range.start).split("\n").length : undefined);
     this.#set(state => ({
       ...state,
       tab: "css",
-      cssReveal: line !== undefined ? { line, key: Date.now() } : state.cssReveal,
+      cssReveal: (line !== undefined ? { line, key: Date.now() } : state.cssReveal),
     }));
   };
 

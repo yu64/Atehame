@@ -1,4 +1,4 @@
-import { generate, parse, walk, type CssNode, type List, type ListItem } from "css-tree";
+import { type CssNode, generate, type List, type ListItem, parse, walk } from "css-tree";
 
 export interface SanitizedCss {
   css: string;
@@ -106,7 +106,7 @@ function loadsResource(declaration: CssNode): boolean {
 export function normalizeName(name: string): string {
   return name
     .replace(/\\([0-9a-fA-F]{1,6})[ \t\n\r\f]?|\\(.)/g, (_, hex: string, char: string) =>
-      hex ? String.fromCodePoint(parseInt(hex, 16)) : char,
+      (hex ? String.fromCodePoint(parseInt(hex, 16)) : char),
     )
     .toLowerCase();
 }

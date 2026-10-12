@@ -11,7 +11,7 @@ export interface Props {
 }
 
 /** 見出し付きのチェックボックス。見出しを押しても切り替わる。 */
-export default function Checkbox(props: Props) {
+export function Checkbox(props: Props) {
   return (
     <label
       className={`

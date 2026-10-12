@@ -18,5 +18,3 @@ export function useDesignerView() {
     requestFit: store.requestFit,
   };
 }
-
-export default useDesignerView;

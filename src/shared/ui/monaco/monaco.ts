@@ -46,4 +46,4 @@ monaco.editor.defineTheme(editorThemes.dark, {
   colors: {},
 });
 
-export default monaco;
+export { monaco };

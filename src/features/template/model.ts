@@ -1,4 +1,4 @@
-import { createLayout, layoutSchema, type Layout } from "@src/features/designer";
+import { createLayout, type Layout, layoutSchema } from "@src/features/designer";
 import type { DataSchema } from "@src/features/template/schema";
 import { z } from "zod";
 
@@ -66,7 +66,7 @@ const templateFileSchema = templateSchema.extend({
 /** テンプレートとして正しければ返す。正しくなければ undefined。 */
 export function parseTemplate(value: unknown): Template | undefined {
   const result = templateSchema.safeParse(value);
-  return result.success ? result.data : undefined;
+  return (result.success ? result.data : undefined);
 }
 
 export function toTemplateFile(template: Template): TemplateFile {
@@ -105,6 +105,7 @@ export function parseTemplateFile(json: string): ParseResult {
 
 /** ファイル名に使えない文字を置き換える。 */
 export function toFileName(name: string): string {
+  // eslint-disable-next-line no-control-regex -- ファイル名に使えない制御文字を置き換えるため。
   const base = name.trim().replace(/[\\/:*?"<>|\u0000-\u001f]/g, "_") || "template";
   return `${base}.atehame.json`;
 }

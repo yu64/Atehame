@@ -24,7 +24,7 @@ export function createPersistentStorage<T>(options: PersistentStorageOptions<T>)
   const pending = new Map<string, T>();
   let timer: ReturnType<typeof setTimeout> | undefined;
 
-  const flush = () => {
+  function flush() {
     if (timer !== undefined) clearTimeout(timer);
     timer = undefined;
     const storage = getStorage();
@@ -37,7 +37,7 @@ export function createPersistentStorage<T>(options: PersistentStorageOptions<T>)
       }
     }
     pending.clear();
-  };
+  }
 
   if (typeof window !== "undefined") {
     window.addEventListener("pagehide", flush);

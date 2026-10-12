@@ -1,26 +1,22 @@
-import useFixedLongestSelect from "@src/shared/hooks/useFixedLongestSelect";
-import Field from "@src/shared/ui/Field";
+import { useFixedLongestSelect } from "@src/shared/hooks/useFixedLongestSelect";
+import { Field } from "@src/shared/ui/Field";
 import {
-  Children,
-  forwardRef,
-  isValidElement,
-  JSX,
+  type ComponentPropsWithRef,
+  type JSX,
+  type ReactElement,
   useId,
   useImperativeHandle,
   useRef,
 } from "react";
 
-export interface Props extends React.ComponentPropsWithoutRef<"select"> {
+export interface Props extends ComponentPropsWithRef<"select"> {
   label?: string;
   description?: string;
-  children?: React.ReactElement<JSX.IntrinsicElements["option"]>[];
+  children?: ReactElement<JSX.IntrinsicElements["option"]>[];
 }
 
-export const Select = forwardRef<HTMLSelectElement, Props>(function Select(
-  props: Props,
-  ref: React.ForwardedRef<HTMLSelectElement>,
-) {
-  const { label, description, children, ...selectProps } = props;
+export function Select(props: Props) {
+  const { label, description, children, ref, ...selectProps } = props;
   const generatedId = useId();
   const id = props.id ?? generatedId;
   const selectRef = useRef<HTMLSelectElement>(null);
@@ -46,6 +42,4 @@ export const Select = forwardRef<HTMLSelectElement, Props>(function Select(
       </select>
     </Field>
   );
-});
-
-export default Select;
+}

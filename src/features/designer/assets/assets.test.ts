@@ -4,14 +4,16 @@ import {
   assetLimits,
   checkAssetLimits,
   createAsset,
-  uniqueAssetName,
   type LayoutAsset,
+  uniqueAssetName,
 } from "@src/features/designer/assets/assets";
 import { base64ToBytes } from "@src/shared/lib/imageFile";
 import { describe, expect, test } from "vitest";
 
 const png: LayoutAsset = { type: "image/png", data: "iVBORw0KGgo=" };
-const svgText = (asset: LayoutAsset) => new TextDecoder().decode(base64ToBytes(asset.data));
+function svgText(asset: LayoutAsset) {
+  return new TextDecoder().decode(base64ToBytes(asset.data));
+}
 
 describe("画像（アセット）", () => {
   test("SVG は登録するときに安全化する", () => {

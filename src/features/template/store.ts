@@ -19,7 +19,7 @@ const draftStorage = createPersistentStorage<Draft>({
     if (typeof value !== "object" || value === null) return undefined;
     const { template, editing } = value as Partial<Draft>;
     const parsed = parseTemplate(template);
-    return parsed && typeof editing === "boolean" ? { template: parsed, editing } : undefined;
+    return (parsed && typeof editing === "boolean" ? { template: parsed, editing } : undefined);
   },
   // 画像が大きく、端末の保存領域に入りきらない場合など。画面の操作はそのまま続けられる。
   onError: error => console.warn("編集中のテンプレートを自動保存できませんでした。", error),
@@ -55,7 +55,7 @@ function partAtom<T>(
     (get, set, action: SetStateAction<T>) => {
       const template = get(currentTemplateAtom);
       const value =
-        typeof action === "function" ? (action as (previous: T) => T)(read(template)) : action;
+        (typeof action === "function" ? (action as (previous: T) => T)(read(template)) : action);
       set(draftAtom, { template: write(template, value), editing: true });
     },
   );

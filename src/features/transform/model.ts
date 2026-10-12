@@ -5,7 +5,9 @@ import type { JsonValue } from "@src/shared/lib/json";
 export type RowCells = Record<string, string>;
 
 /** 加工処理の `input` に渡す値。カラム名から型変換済みの値を引く。 */
-export type TransformInput = { [name: string]: JsonValue };
+export interface TransformInput {
+  [name: string]: JsonValue;
+}
 
 export interface InputProblem {
   /** 対象のフィールド。スキーマ全体の問題では undefined。 */
@@ -30,7 +32,7 @@ export function convertCell(
   switch (type) {
     case "number": {
       const value = Number(trimmed);
-      return Number.isFinite(value) ? { value } : { error: "数値ではありません。" };
+      return (Number.isFinite(value) ? { value } : { error: "数値ではありません。" });
     }
     case "boolean": {
       const normalized = trimmed.toLowerCase();

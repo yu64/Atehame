@@ -1,5 +1,5 @@
-import Button from "@src/shared/ui/Button";
-import Dialog from "@src/shared/ui/Dialog";
+import { Button } from "@src/shared/ui/Button";
+import { Dialog } from "@src/shared/ui/Dialog";
 import type { ReactNode } from "react";
 
 export interface Props {
@@ -20,7 +20,7 @@ export interface Props {
  * 実行してよいかを確かめるダイアログ。ほかのダイアログの上にも重ねて開ける
  * （後から開いたダイアログが前面になり、閉じると下のダイアログに戻る）。
  */
-export default function ConfirmDialog(props: Props) {
+export function ConfirmDialog(props: Props) {
   return (
     <Dialog
       open={props.open}

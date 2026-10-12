@@ -1,6 +1,7 @@
 import type { PageSize } from "@src/features/designer/layoutCss";
-import { paperPresetOf, paperPresets, type PaperPreset } from "@src/features/designer/model";
-import { CssChoiceField, NumberField } from "@src/features/designer/properties/fields";
+import { type PaperPreset, paperPresetOf, paperPresets } from "@src/features/designer/model";
+import { CssChoiceField } from "@src/features/designer/properties/CssChoiceField";
+import { NumberField } from "@src/features/designer/properties/NumberField";
 
 export interface Props {
   paper: PageSize;
@@ -9,7 +10,7 @@ export interface Props {
 }
 
 /** 用紙の設定。部品を選択していないときに表示する。 */
-export default function PaperProperties(props: Props) {
+export function PaperProperties(props: Props) {
   const preset = paperPresetOf(props.paper);
   const options = (Object.keys(paperPresets) as PaperPreset[]).map(key => ({
     value: key,

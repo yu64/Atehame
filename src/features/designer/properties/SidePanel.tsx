@@ -10,14 +10,14 @@ import { useDesignerElements } from "@src/features/designer/hooks/useDesignerEle
 import { useDesignerPaper } from "@src/features/designer/hooks/useDesignerPaper";
 import { useDesignerTab } from "@src/features/designer/hooks/useDesignerTab";
 import { useSelectedElement } from "@src/features/designer/hooks/useSelectedElement";
-import AssetsPanel from "@src/features/designer/properties/AssetsPanel";
-import CssPanel from "@src/features/designer/properties/CssPanel";
-import ElementList from "@src/features/designer/properties/ElementList";
-import ElementProperties from "@src/features/designer/properties/ElementProperties";
-import PaperProperties from "@src/features/designer/properties/PaperProperties";
+import { AssetsPanel } from "@src/features/designer/properties/AssetsPanel";
+import { CssPanel } from "@src/features/designer/properties/CssPanel";
+import { ElementList } from "@src/features/designer/properties/ElementList";
+import { ElementProperties } from "@src/features/designer/properties/ElementProperties";
+import { PaperProperties } from "@src/features/designer/properties/PaperProperties";
 import { useDesignerConfig } from "@src/features/designer/state/DesignerContext";
 import type { SidePanelTab } from "@src/features/designer/state/designerStore";
-import PaneResizer from "@src/shared/ui/PaneResizer";
+import { PaneResizer } from "@src/shared/ui/PaneResizer";
 import { useMemo, useRef, useState } from "react";
 
 const tabs: Array<{ id: SidePanelTab; label: string }> = [
@@ -39,16 +39,16 @@ export interface Props {
 }
 
 /** デザイナーの右の欄。タブで中身を切り替え、左端のドラッグで幅を変える。 */
-export default function SidePanel(props: Props) {
+export function SidePanel(props: Props) {
   const { tab, setTab, cssWarning } = useDesignerTab();
   const [width, setWidth] = useState(panelWidth.default);
   const asideRef = useRef<HTMLElement>(null);
 
-  const maxWidth = () => {
+  function maxWidth() {
     const parent = asideRef.current?.parentElement;
     if (!parent) return panelWidth.default;
     return parent.clientWidth - (props.reservedWidth ?? panelWidth.reserved);
-  };
+  }
 
   return (
     <aside
@@ -152,6 +152,7 @@ function AssetsTab() {
         usage: assets.usage(name),
       })),
     // usage は assets から作った関数で、今の文書を読むため、elements を目印にする。
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- assets は描画のたびに作り直されるため。
     [assets.assets, elements],
   );
   return (

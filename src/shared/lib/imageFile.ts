@@ -13,7 +13,9 @@ export const imageTypes: readonly ImageType[] = [
  * PNG・JPEG・WebP は先頭のバイト、SVG は先頭の文字列で判定する。
  */
 export function detectImageType(bytes: Uint8Array): ImageType | undefined {
-  const starts = (...values: number[]) => values.every((value, index) => bytes[index] === value);
+  function starts(...values: number[]) {
+    return values.every((value, index) => bytes[index] === value);
+  }
   if (starts(0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a)) return "image/png";
   if (starts(0xff, 0xd8, 0xff)) return "image/jpeg";
   if (starts(0x52, 0x49, 0x46, 0x46) && String.fromCharCode(...bytes.slice(8, 12)) === "WEBP") {
@@ -52,7 +54,7 @@ export function isBase64(value: string): boolean {
 
 /** base64 の文字列が表すバイト数。 */
 export function base64ByteLength(base64: string): number {
-  const padding = base64.endsWith("==") ? 2 : base64.endsWith("=") ? 1 : 0;
+  const padding = (base64.endsWith("==") ? 2 : (base64.endsWith("=") ? 1 : 0));
   return (base64.length / 4) * 3 - padding;
 }
 
@@ -65,5 +67,5 @@ export interface ImageFile {
 export async function readImageFile(file: Blob): Promise<ImageFile | undefined> {
   const bytes = new Uint8Array(await file.arrayBuffer());
   const type = detectImageType(bytes);
-  return type ? { type, bytes } : undefined;
+  return (type ? { type, bytes } : undefined);
 }

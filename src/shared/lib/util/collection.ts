@@ -3,14 +3,14 @@ export function insertBetween<T, U>(
   sepFactory: (range: [T, T], index: [number, number]) => U,
 ) {
   let isFirst = true;
-  let prevItem: T | null = null;
+  let prevItem: T | undefined;
   return Iterator.from(iterable).flatMap((item, index) => {
     if (isFirst) {
       isFirst = false;
       prevItem = item;
       return [item];
     }
-    if (prevItem == null) throw new Error();
+    if (prevItem === undefined) throw new Error();
     const separator = sepFactory([prevItem, item], [index - 1, index]);
     prevItem = item;
     return [separator, item];

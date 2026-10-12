@@ -1,21 +1,21 @@
-import DesignerCanvas from "@src/features/designer/canvas/DesignerCanvas";
+import { DesignerCanvas } from "@src/features/designer/canvas/DesignerCanvas";
 import { minCanvasWidth } from "@src/features/designer/canvas/units";
-import useDesignerKeyboard from "@src/features/designer/hooks/useDesignerKeyboard";
+import { useDesignerKeyboard } from "@src/features/designer/hooks/useDesignerKeyboard";
 import type { LayoutDocument } from "@src/features/designer/layoutCss";
-import { fromLayoutDocument, toLayoutDocument, type Layout } from "@src/features/designer/model";
-import ElementPalette, { paletteWidth } from "@src/features/designer/palette/ElementPalette";
+import { fromLayoutDocument, type Layout, toLayoutDocument } from "@src/features/designer/model";
+import { ElementPalette, paletteWidth } from "@src/features/designer/palette/ElementPalette";
 import { defaultPresets } from "@src/features/designer/presets";
-import SidePanel from "@src/features/designer/properties/SidePanel";
+import { SidePanel } from "@src/features/designer/properties/SidePanel";
 import type { Values } from "@src/features/designer/render";
 import {
+  type DesignerConfig,
   DesignerConfigContext,
   DesignerStoreContext,
-  type DesignerConfig,
 } from "@src/features/designer/state/DesignerContext";
 import { DesignerStore } from "@src/features/designer/state/designerStore";
-import DesignerToolbar from "@src/features/designer/toolbar/DesignerToolbar";
+import { DesignerToolbar } from "@src/features/designer/toolbar/DesignerToolbar";
 import type { CssEditorComponent, ElementPreset } from "@src/features/designer/types";
-import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from "react";
+import { type ReactNode, useEffect, useLayoutEffect, useMemo, useState } from "react";
 
 export interface DesignerProps {
   value: Layout;
@@ -41,8 +41,10 @@ export interface DesignerProps {
  * 状態を作って配り、中の領域どうしを連携させるだけで、各領域は必要な状態と操作だけを使う。
  * アプリの状態には依存せず、値は props で受け取る。
  */
-export default function Designer(props: DesignerProps) {
-  const notify = (layout: LayoutDocument) => props.onChange(fromLayoutDocument(layout));
+export function Designer(props: DesignerProps) {
+  function notify(layout: LayoutDocument) {
+    props.onChange(fromLayoutDocument(layout));
+  }
   const [store] = useState(() => new DesignerStore(toLayoutDocument(props.value), notify));
   // 最新の onChange で知らせる。描画中に書き換えないよう、描画の確定後に差し替える。
   useLayoutEffect(() => {

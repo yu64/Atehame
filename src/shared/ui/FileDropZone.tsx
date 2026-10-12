@@ -1,5 +1,5 @@
-import Button from "@src/shared/ui/Button";
-import { useRef, useState, type ReactNode } from "react";
+import { Button } from "@src/shared/ui/Button";
+import { type ReactNode, useRef, useState } from "react";
 
 export interface Props {
   /** 選べるファイルの種類（input の accept と同じ書き方）。 */
@@ -15,14 +15,14 @@ export interface Props {
 }
 
 /** ファイルを選ぶか、ドロップして受け取る場所。 */
-export default function FileDropZone(props: Props) {
+export function FileDropZone(props: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
-  const receive = (files: File[]) => {
+  function receive(files: File[]) {
     if (props.disabled || files.length === 0) return;
     props.onFiles(props.multiple ? files : files.slice(0, 1));
-  };
+  }
 
   return (
     <div

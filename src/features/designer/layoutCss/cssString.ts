@@ -22,5 +22,5 @@ export function decodeCssString(source: string): string | undefined {
   }
   if (value.type !== "Value" || value.children.size !== 1) return undefined;
   const node = value.children.first;
-  return node?.type === "String" ? node.value : undefined;
+  return (node?.type === "String" ? node.value : undefined);
 }

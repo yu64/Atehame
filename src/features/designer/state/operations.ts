@@ -62,10 +62,10 @@ export function setPaperSize(layout: LayoutDocument, size: PageSize): LayoutDocu
 
 /** CSS の left / top（mm）。mm で読めない場合は表示上の位置を使う。 */
 function positionOf(rule: ElementRule, shown: ElementRect | undefined) {
-  const read = (property: "left" | "top") => {
+  function read(property: "left" | "top") {
     const value = rule.declarations.get(property)?.value;
     return (value !== undefined ? lengthToMm(value) : undefined) ?? shown?.[property] ?? 0;
-  };
+  }
   return { left: read("left"), top: read("top") };
 }
 

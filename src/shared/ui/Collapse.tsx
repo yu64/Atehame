@@ -3,7 +3,7 @@ export interface Props {
   children: React.ReactNode;
 }
 
-export default function Collapse(props: Props) {
+export function Collapse(props: Props) {
   return (
     <details
       className={`

@@ -1,7 +1,7 @@
-import { insertAt, moveAt, removeAt } from "@src/shared/lib/CollectionUtil";
-import Button from "@src/shared/ui/Button";
-import DropdownMenu from "@src/shared/ui/DropdownMenu";
-import type { ReactNode, Key } from "react";
+import { insertAt, moveAt, removeAt } from "@src/shared/lib/util/collection";
+import { Button } from "@src/shared/ui/Button";
+import { DropdownMenu } from "@src/shared/ui/DropdownMenu";
+import type { Key, ReactNode } from "react";
 
 export interface EditableListProps<T> {
   items: T[];
@@ -13,7 +13,7 @@ export interface EditableListProps<T> {
   onChange: (items: T[]) => void;
 }
 
-export default function EditableList<T>(props: EditableListProps<T>) {
+export function EditableList<T>(props: EditableListProps<T>) {
   function addAt(index: number) {
     props.onChange(insertAt(props.items, index, props.dataFactory(index)));
   }

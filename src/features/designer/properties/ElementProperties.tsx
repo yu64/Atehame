@@ -1,22 +1,23 @@
 import {
   decodeCssString,
+  type ElementRule,
   encodeCssString,
   imageProperty,
   splitProperty,
   textProperty,
-  type ElementRule,
 } from "@src/features/designer/layoutCss";
-import NameField from "@src/features/designer/properties/NameField";
-import TextTemplateField from "@src/features/designer/properties/TextTemplateField";
-import { CssChoiceField, CssValueField } from "@src/features/designer/properties/fields";
+import { CssChoiceField } from "@src/features/designer/properties/CssChoiceField";
+import { CssValueField } from "@src/features/designer/properties/CssValueField";
+import { NameField } from "@src/features/designer/properties/NameField";
+import { TextTemplateField } from "@src/features/designer/properties/TextTemplateField";
 import {
   defaultFont,
   fontFamilyValue,
-  fontVariables,
   type FontKey,
+  fontVariables,
 } from "@src/features/designer/render";
-import Button from "@src/shared/ui/Button";
-import Checkbox from "@src/shared/ui/Checkbox";
+import { Button } from "@src/shared/ui/Button";
+import { Checkbox } from "@src/shared/ui/Checkbox";
 
 export interface Props {
   rule: ElementRule;
@@ -43,11 +44,14 @@ const fontOptions = (Object.keys(fontVariables) as FontKey[]).map(key => ({
  * 部品の設定。値はすべて部品の CSS の規則（[data-name="名前"]）を読み書きする。
  * ここにない設定は CSS タブで直接書く。
  */
-export default function ElementProperties(props: Props) {
+export function ElementProperties(props: Props) {
   const { rule } = props;
-  const value = (property: string) => rule.declarations.get(property)?.value;
-  const set = (property: string) => (next: string | undefined) =>
-    props.onDeclaration(property, next);
+  function value(property: string) {
+    return rule.declarations.get(property)?.value;
+  }
+  function set(property: string) {
+    return (next: string | undefined) => props.onDeclaration(property, next);
+  }
   const isImage = value(imageProperty) !== undefined;
 
   return (
@@ -112,10 +116,10 @@ export default function ElementProperties(props: Props) {
         />
       </div>
 
-      {isImage ? (
-        <ImageFields value={value} set={set} assetNames={props.assetNames} />
-      ) : (
-        <TextFields value={value} set={set} onDeclaration={props.onDeclaration} />
+      {(
+        isImage
+        ? <ImageFields value={value} set={set} assetNames={props.assetNames} />
+        : <TextFields value={value} set={set} onDeclaration={props.onDeclaration} />
       )}
     </div>
   );
@@ -244,7 +248,7 @@ function TextFields(props: {
       <Checkbox
         label='1文字ずつ分ける（[data-part="char"] で1文字ずつ指定できます）'
         checked={value(splitProperty) === "char"}
-        onChange={checked => props.onDeclaration(splitProperty, checked ? "char" : undefined)}
+        onChange={checked => props.onDeclaration(splitProperty, (checked ? "char" : undefined))}
       />
     </>
   );

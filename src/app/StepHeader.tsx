@@ -1,4 +1,4 @@
-import Button from "@src/shared/ui/Button";
+import { Button } from "@src/shared/ui/Button";
 
 export interface Props {
   title: string;
@@ -9,7 +9,7 @@ export interface Props {
 }
 
 /** 編集の各段階の見出しと、前後の段階へ移動するボタン。 */
-export default function StepHeader(props: Props) {
+export function StepHeader(props: Props) {
   return (
     <section
       className={`

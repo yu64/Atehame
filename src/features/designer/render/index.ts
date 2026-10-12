@@ -12,8 +12,8 @@ export {
 export {
   defaultFont,
   fontFamilyValue,
-  fontVariables,
   type FontKey,
+  fontVariables,
 } from "@src/features/designer/render/fonts";
 export { printLayout, printPages } from "@src/features/designer/render/print";
 export { sanitizeCss, type SanitizedCss } from "@src/features/designer/render/sanitizeCss";

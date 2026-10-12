@@ -10,11 +10,11 @@ export interface Props {
   /** 描画した部品の位置と大きさ（mm）。 */
   rects: Map<string, ElementRect>;
   paper: PageSize;
-  selected: string | null;
+  selected: string | undefined;
   /** 1mm あたりの表示上の px（拡大率を含む）。 */
   unit: number;
   gridSnap: boolean;
-  onSelect: (name: string | null) => void;
+  onSelect: (name: string | undefined) => void;
   /** ドラッグ中の変更（mm）。履歴には記録しない。 */
   onPreview: (name: string, rect: Partial<ElementRect>) => void;
   /** ドラッグの終了。直前までの変更を1回分として記録する。 */
@@ -24,7 +24,7 @@ export interface Props {
 /**
  * 用紙の上に重ねる透明な操作レイヤー。部品の枠は、描画した結果を測った位置に置く。
  */
-export default function SelectionLayer(props: Props) {
+export function SelectionLayer(props: Props) {
   const { unit } = props;
   const boxRefs = useRef(new Map<string, HTMLDivElement>());
   const moveableRef = useRef<Moveable>(null);
@@ -50,14 +50,16 @@ export default function SelectionLayer(props: Props) {
     .filter(([name]) => name !== props.selected)
     .map(([, box]) => box);
 
-  const toMm = (px: number) => px / unit;
+  function toMm(px: number) {
+    return px / unit;
+  }
 
   return (
     <div
       className="absolute left-0 top-0"
       style={{ width: props.paper.width * unit, height: props.paper.height * unit }}
       onPointerDown={event => {
-        if (event.target === event.currentTarget) props.onSelect(null);
+        if (event.target === event.currentTarget) props.onSelect(undefined);
       }}
     >
       {props.names.map(name => {

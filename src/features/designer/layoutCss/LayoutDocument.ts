@@ -1,4 +1,4 @@
-import { emptyAssets, type Assets, type LayoutAsset } from "@src/features/designer/assets/assets";
+import { type Assets, emptyAssets, type LayoutAsset } from "@src/features/designer/assets/assets";
 import { decodeCssString } from "@src/features/designer/layoutCss/cssString";
 import {
   addElementRule,
@@ -6,17 +6,17 @@ import {
   moveElementRule,
   renameElement,
   replaceStringValues,
+  type RuleTarget,
   setDeclaration,
   setDeclarations,
-  type RuleTarget,
 } from "@src/features/designer/layoutCss/edit";
 import {
-  imageProperty,
-  parseLayoutCss,
-  readPageSize,
   type ElementRule,
+  imageProperty,
   type LayoutCss,
   type PageSize,
+  parseLayoutCss,
+  readPageSize,
 } from "@src/features/designer/layoutCss/parse";
 import { removeElementRule } from "@src/features/designer/layoutCss/remove";
 
@@ -65,12 +65,12 @@ export class LayoutDocument {
 
   /** CSS を置き換えた文書。同じ CSS なら自身を返す。 */
   withCss(css: string): LayoutDocument {
-    return css === this.css ? this : new LayoutDocument(css, this.assets);
+    return (css === this.css ? this : new LayoutDocument(css, this.assets));
   }
 
   /** 画像を置き換えた文書。CSS はそのままなので、解析結果も引き継ぐ。 */
   withAssets(assets: Assets): LayoutDocument {
-    return assets === this.assets ? this : new LayoutDocument(this.css, assets, this.#parsed);
+    return (assets === this.assets ? this : new LayoutDocument(this.css, assets, this.#parsed));
   }
 
   /** 画像を登録する。同じ名前があれば置き換える（差し替え）。 */
@@ -90,7 +90,7 @@ export class LayoutDocument {
     const asset = this.assets[from];
     if (asset === undefined || from === to || to in this.assets) return this;
     const assets = Object.fromEntries(
-      Object.entries(this.assets).map(([name, value]) => [name === from ? to : name, value]),
+      Object.entries(this.assets).map(([name, value]) => [(name === from ? to : name), value]),
     );
     return LayoutDocument.from(replaceStringValues(this.css, imageProperty, from, to), assets);
   }

@@ -1,7 +1,7 @@
 import type { Values } from "@src/features/designer/render";
 import type { DesignerState, DesignerStore } from "@src/features/designer/state/designerStore";
 import type { CssEditorComponent, ElementPreset } from "@src/features/designer/types";
-import useStoreSelector from "@src/shared/hooks/useStoreSelector";
+import { useStoreSelector } from "@src/shared/hooks/useStoreSelector";
 import { createContext, useContext } from "react";
 
 /** Designer に渡された設定（props）。部品の雛形やプレビューの値など。 */
@@ -12,8 +12,8 @@ export interface DesignerConfig {
   cssEditor?: CssEditorComponent;
 }
 
-export const DesignerStoreContext = createContext<DesignerStore | null>(null);
-export const DesignerConfigContext = createContext<DesignerConfig | null>(null);
+export const DesignerStoreContext = createContext<DesignerStore | undefined>(undefined);
+export const DesignerConfigContext = createContext<DesignerConfig | undefined>(undefined);
 
 /**
  * デザイナーの状態。外には公開せず、用途ごとのフック（hooks/）からだけ使う。

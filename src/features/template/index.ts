@@ -3,19 +3,19 @@ export {
   createTemplate,
   defaultTransformCode,
   fromTemplateFile,
+  type ParseResult,
   parseTemplateFile,
   serializeTemplateFile,
-  toFileName,
-  toTemplateFile,
-  type ParseResult,
   type Template,
   type TemplateFile,
+  toFileName,
+  toTemplateFile,
 } from "@src/features/template/model";
 export {
   createSchemaField,
-  fieldTypeLabels,
   type DataSchema,
   type FieldType,
+  fieldTypeLabels,
   type SchemaField,
 } from "@src/features/template/schema";
 export {
@@ -28,7 +28,4 @@ export {
   templateNameAtom,
   transformCodeAtom,
 } from "@src/features/template/store";
-export {
-  default as TemplateFilePicker,
-  TemplateSummary,
-} from "@src/features/template/TemplateFilePicker";
+export { TemplateFilePicker, TemplateSummary } from "@src/features/template/TemplateFilePicker";

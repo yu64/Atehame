@@ -1,8 +1,8 @@
 import {
+  type Assets,
   checkAssetLimits,
   createAsset,
   uniqueAssetName,
-  type Assets,
 } from "@src/features/designer/assets/assets";
 import {
   useDesignerSelector,
@@ -18,7 +18,7 @@ async function readAsset(file: File, assets: Assets) {
   const asset = createAsset(image.type, image.bytes);
   if (!asset) return { error: `「${file.name}」は SVG として読み込めませんでした。` };
   const error = checkAssetLimits(assets, asset);
-  return error ? { error } : { asset };
+  return (error ? { error } : { asset });
 }
 
 /** 画像（アセット）の一覧と、登録・差し替え・名前の変更・削除。どれも元に戻せる。 */
@@ -53,5 +53,3 @@ export function useDesignerAssets() {
     usage: (name: string) => store.layout.assetUsage(name),
   };
 }
-
-export default useDesignerAssets;

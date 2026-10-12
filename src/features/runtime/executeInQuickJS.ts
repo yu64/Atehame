@@ -1,11 +1,11 @@
-import { limits } from "@src/features/runtime/protocol";
 import type {
   ExecutionErrorCode,
   ExecutionRequest,
   ExecutionResult,
   SourceLocation,
 } from "@src/features/runtime/protocol";
-import type { QuickJSWASMModule, QuickJSHandle, QuickJSContext } from "quickjs-emscripten-core";
+import { limits } from "@src/features/runtime/protocol";
+import type { QuickJSContext, QuickJSHandle, QuickJSWASMModule } from "quickjs-emscripten-core";
 
 // Function('input', body)はQuickJS内で次の形にコンパイルされ、bodyは4行目から始まる。
 // (function anonymous(input\n) {\n"use strict";\n<code>\n})
@@ -112,10 +112,12 @@ export function executeInQuickJS(
       const stackExhausted = error instanceof RangeError;
       return {
         type: "error",
-        code: stackExhausted ? "STACK_OVERFLOW" : "WORKER_ERROR",
-        message: stackExhausted
+        code: (stackExhausted ? "STACK_OVERFLOW" : "WORKER_ERROR"),
+        message: (
+          stackExhausted
           ? "再帰が深すぎます。"
-          : "実行エンジンで予期しないエラーが発生しました。",
+          : "実行エンジンで予期しないエラーが発生しました。"
+        ),
         fatal,
       };
     }
@@ -129,7 +131,7 @@ export function executeInQuickJS(
 
     // 例外の整形中（toStringのgetterなど）に期限を迎えた場合も時間超過とする。
     const result = guestErrorResult(error as QuickJSHandle);
-    return interrupted ? timeoutResult() : result;
+    return (interrupted ? timeoutResult() : result);
   } finally {
     // 値を先に解放し、その所有元であるContextとRuntimeを破棄する。
     if (!fatal) {
@@ -178,10 +180,11 @@ export function executeInQuickJS(
     const line = formatted.line - guestLineOffset;
     if (line >= 1 && formatted.column >= 1) {
       const lines = request.code.split("\n");
-      location =
+      location = (
         line > lines.length
-          ? { line: lines.length, column: lines[lines.length - 1].length + 1 }
-          : { line, column: formatted.column };
+        ? { line: lines.length, column: lines[lines.length - 1].length + 1 }
+        : { line, column: formatted.column }
+      );
     }
 
     return { type: "error", code, message, location, fatal };
@@ -206,7 +209,7 @@ export function executeInQuickJS(
       typeof (value as FormattedError).message === "string" &&
       Number.isInteger((value as FormattedError).line) &&
       Number.isInteger((value as FormattedError).column);
-    return valid ? (value as FormattedError) : undefined;
+    return (valid ? (value as FormattedError) : undefined);
   }
 }
 

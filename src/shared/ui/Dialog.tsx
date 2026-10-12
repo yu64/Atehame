@@ -1,5 +1,5 @@
-import Button from "@src/shared/ui/Button";
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { Button } from "@src/shared/ui/Button";
+import { type ReactNode, useEffect, useId, useRef } from "react";
 
 export interface Props {
   open: boolean;
@@ -21,7 +21,7 @@ export interface Props {
  * ブラウザに閉じさせずに onClose を呼び、呼び出し側が open を変えたときに閉じる。
  * close イベントだけに頼ると、届かない・遅れる環境で状態とずれるため。
  */
-export default function Dialog(props: Props) {
+export function Dialog(props: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const onCloseRef = useRef(props.onClose);
@@ -38,14 +38,14 @@ export default function Dialog(props: Props) {
     const dialog = ref.current;
     if (!dialog) return;
     // Esc キー。ブラウザに閉じさせず、呼び出し側に閉じてもらう。
-    const onCancel = (event: Event) => {
+    function onCancel(event: Event) {
       event.preventDefault();
       onCloseRef.current();
-    };
+    }
     // ほかの理由でブラウザが閉じた場合も知らせる（閉じたままのときだけ。遅れて届くことがある）。
-    const onClose = () => {
-      if (!dialog.open) onCloseRef.current();
-    };
+    function onClose() {
+      if (!ref.current?.open) onCloseRef.current();
+    }
     dialog.addEventListener("cancel", onCancel);
     dialog.addEventListener("close", onClose);
     return () => {

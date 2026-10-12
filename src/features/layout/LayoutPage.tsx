@@ -1,17 +1,17 @@
-import MainContent from "@src/app/MainContent";
-import StepHeader from "@src/app/StepHeader";
-import CodeEditor from "@src/app/ThemedCodeEditor";
+import { MainContent } from "@src/app/MainContent";
+import { StepHeader } from "@src/app/StepHeader";
+import { ThemedCodeEditor as CodeEditor } from "@src/app/ThemedCodeEditor";
 import { Designer, type Values } from "@src/features/designer";
 import { layoutAtom } from "@src/features/template";
 import { useSampleOutput } from "@src/features/transform";
-import Alert from "@src/shared/ui/Alert";
+import { Alert } from "@src/shared/ui/Alert";
 import { useAtom } from "jotai";
 import { useMemo } from "react";
 import { navigate } from "vike/client/router";
 
 const emptyValues: Values = {};
 
-export default function Page() {
+export function LayoutPage() {
   const [layout, setLayout] = useAtom(layoutAtom);
   const { preview } = useSampleOutput();
 
@@ -20,7 +20,7 @@ export default function Page() {
     if (preview.status !== "success") return undefined;
     const output = preview.output;
     const isObject = typeof output === "object" && output !== null && !Array.isArray(output);
-    return isObject ? (output as Values) : undefined;
+    return (isObject ? (output as Values) : undefined);
   }, [preview]);
   const fields = useMemo(() => Object.keys(sample ?? {}), [sample]);
 

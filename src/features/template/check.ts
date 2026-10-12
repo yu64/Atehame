@@ -1,5 +1,5 @@
 import { layoutWarnings } from "@src/features/designer";
-import { toFileName, type Template } from "@src/features/template/model";
+import { type Template, toFileName } from "@src/features/template/model";
 
 /**
  * 保存の前に知らせる問題（保存はできるが、使うときに困るもの）。

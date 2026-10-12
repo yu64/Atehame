@@ -20,7 +20,7 @@ export interface Props<T extends string> {
 }
 
 /** 枠付きのカードで選ぶラジオボタン。選んだカードは枠の色を変える。 */
-export default function RadioCardGroup<T extends string>(props: Props<T>) {
+export function RadioCardGroup<T extends string>(props: Props<T>) {
   return (
     <fieldset className="fieldset m-0 p-0 gap-2">
       <legend className={props.hideLegend ? "sr-only" : "fieldset-legend m-0 pt-0 pb-1"}>

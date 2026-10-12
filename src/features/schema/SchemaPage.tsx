@@ -1,13 +1,13 @@
-import MainContent from "@src/app/MainContent";
-import StepHeader from "@src/app/StepHeader";
-import SchemaFieldEditor from "@src/features/schema/SchemaFieldEditor";
+import { MainContent } from "@src/app/MainContent";
+import { StepHeader } from "@src/app/StepHeader";
+import { SchemaFieldEditor } from "@src/features/schema/SchemaFieldEditor";
 import { createSchemaField, schemaAtom, type SchemaField } from "@src/features/template";
-import Button from "@src/shared/ui/Button";
-import EditableList from "@src/shared/ui/EditableList";
+import { Button } from "@src/shared/ui/Button";
+import { EditableList } from "@src/shared/ui/EditableList";
 import { useAtom } from "jotai";
 import { navigate } from "vike/client/router";
 
-export default function Page() {
+export function SchemaPage() {
   const [schema, setSchema] = useAtom(schemaAtom);
 
   function updateField(value: SchemaField) {

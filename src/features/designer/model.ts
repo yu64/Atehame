@@ -1,9 +1,9 @@
 import {
   assetBytes,
   assetLimits,
+  type Assets,
   isValidAsset,
   totalAssetBytes,
-  type Assets,
 } from "@src/features/designer/assets/assets";
 import { LayoutDocument, type PageSize } from "@src/features/designer/layoutCss";
 import { imageTypes } from "@src/shared/lib/imageFile";
@@ -52,7 +52,7 @@ export function toLayoutDocument(layout: Layout): LayoutDocument {
 /** 文書を保存用のレイアウトにする。 */
 export function fromLayoutDocument(layoutDocument: LayoutDocument): Layout {
   const { css, assets } = layoutDocument;
-  return Object.keys(assets).length === 0 ? { version: 1, css } : { version: 1, css, assets };
+  return (Object.keys(assets).length === 0 ? { version: 1, css } : { version: 1, css, assets });
 }
 
 export interface LayoutSummary {

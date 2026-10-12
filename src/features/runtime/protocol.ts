@@ -1,5 +1,3 @@
-import type { JsonValue } from "@src/shared/lib/json";
-
 // 加工処理で受け渡しできる値。
 export type { JsonValue } from "@src/shared/lib/json";
 

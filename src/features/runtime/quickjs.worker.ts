@@ -11,10 +11,10 @@ let modulePromise: ModulePromise | undefined;
 // WASMの状態が壊れた後は、ホストがWorkerを破棄するまで実行を拒否する。
 let broken = false;
 
-const getModule = () => {
+function getModule() {
   modulePromise ??= newQuickJSWASMModuleFromVariant(variant);
   return modulePromise;
-};
+}
 
 // 初期化待ちと加工処理を分け、ホスト側でそれぞれの期限を監視できるようにする。
 const api: WorkerApi = {

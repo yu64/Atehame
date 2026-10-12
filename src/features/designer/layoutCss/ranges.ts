@@ -23,7 +23,7 @@ export function expandRuleRange(css: string, range: TextRange): TextRange {
     if (!before.endsWith("*/") || (between.match(/\n/g)?.length ?? 0) > 1) break;
     // コメントは入れ子にならないため、直前のコメントの終わりより後の最初の /* が始まり。
     const previousEnd = css.lastIndexOf("*/", before.length - 3);
-    const commentStart = css.indexOf("/*", previousEnd < 0 ? 0 : previousEnd + 2);
+    const commentStart = css.indexOf("/*", (previousEnd < 0 ? 0 : previousEnd + 2));
     if (commentStart < 0 || commentStart >= before.length - 2) break;
     start = commentStart;
   }

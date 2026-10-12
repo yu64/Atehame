@@ -7,7 +7,7 @@ export default defineConfig({
     timeout: 5000,
   },
   fullyParallel: true,
-  retries: process.env.CI ? 2 : 0,
+  retries: (process.env.CI ? 2 : 0),
   reporter: [["html", { outputFolder: "temp/playwright-report" }]],
   outputDir: "temp/playwright-output",
   use: {

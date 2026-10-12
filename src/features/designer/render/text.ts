@@ -15,7 +15,7 @@ export interface TextRun {
 
 /** maxDigits 桁以下の半角数字の並びを縦中横にするよう分割する。 */
 export function splitTateChuYoko(text: string, maxDigits: number): TextRun[] {
-  if (maxDigits <= 0) return text === "" ? [] : [{ text, combine: false }];
+  if (maxDigits <= 0) return (text === "" ? [] : [{ text, combine: false }]);
 
   const runs: TextRun[] = [];
   let last = 0;
@@ -38,5 +38,5 @@ export function tateChuYokoDigits(value: string | undefined): number {
     ?.trim()
     .toLowerCase()
     .match(/^digits(?:\s+([2-4]))?$/);
-  return match ? Number(match[1] ?? 2) : 0;
+  return (match ? Number(match[1] ?? 2) : 0);
 }

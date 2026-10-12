@@ -1,5 +1,5 @@
-import MainContent from "@src/app/MainContent";
-import StepHeader from "@src/app/StepHeader";
+import { MainContent } from "@src/app/MainContent";
+import { StepHeader } from "@src/app/StepHeader";
 import { layoutSummary } from "@src/features/designer";
 import { exportStrategies } from "@src/features/save/export/strategies";
 import {
@@ -11,11 +11,11 @@ import {
 } from "@src/features/template";
 import { useSampleOutput } from "@src/features/transform";
 import { formatBytes } from "@src/shared/lib/units";
-import Alert from "@src/shared/ui/Alert";
-import Button from "@src/shared/ui/Button";
-import ConfirmDialog from "@src/shared/ui/ConfirmDialog";
+import { Alert } from "@src/shared/ui/Alert";
+import { Button } from "@src/shared/ui/Button";
+import { ConfirmDialog } from "@src/shared/ui/ConfirmDialog";
 import { Input } from "@src/shared/ui/Input";
-import RadioCardGroup from "@src/shared/ui/RadioCardGroup";
+import { RadioCardGroup } from "@src/shared/ui/RadioCardGroup";
 import { useAtom, useAtomValue } from "jotai";
 import { useMemo, useState } from "react";
 import { navigate } from "vike/client/router";
@@ -26,7 +26,7 @@ type SaveStatus =
   | { type: "saved"; label: string }
   | { type: "error"; message: string };
 
-export default function Page() {
+export function SavePage() {
   const template = useAtomValue(currentTemplateAtom);
   const { schema, layout } = template;
   const code = template.transform.code;
@@ -62,7 +62,7 @@ export default function Page() {
       const done = await selected.export(file);
       setStatus(done ? { type: "saved", label: selected.label } : { type: "idle" });
     } catch (error) {
-      setStatus({ type: "error", message: error instanceof Error ? error.message : String(error) });
+      setStatus({ type: "error", message: (error instanceof Error ? error.message : String(error)) });
     }
   }
 
@@ -90,7 +90,7 @@ export default function Page() {
             options={available.map(({ strategy, available }) => ({
               value: strategy.id,
               label: strategy.label,
-              description: available ? strategy.description : "このブラウザでは使えません。",
+              description: (available ? strategy.description : "このブラウザでは使えません。"),
               disabled: !available,
             }))}
             value={strategyId}
@@ -107,9 +107,11 @@ export default function Page() {
             </p>
             <p>
               画像:{" "}
-              {summary.imageCount === 0
+              {(
+                summary.imageCount === 0
                 ? "なし"
-                : `${summary.imageCount} 枚（${formatBytes(summary.imageBytes)}）`}
+                : `${summary.imageCount} 枚（${formatBytes(summary.imageBytes)}）`
+              )}
             </p>
           </section>
 

@@ -1,25 +1,25 @@
 import { useDesignerHistory } from "@src/features/designer/hooks/useDesignerHistory";
 import { useDesignerPrint } from "@src/features/designer/hooks/useDesignerPrint";
 import { useDesignerView } from "@src/features/designer/hooks/useDesignerView";
-import Alert from "@src/shared/ui/Alert";
-import Button from "@src/shared/ui/Button";
-import Checkbox from "@src/shared/ui/Checkbox";
+import { Alert } from "@src/shared/ui/Alert";
+import { Button } from "@src/shared/ui/Button";
+import { Checkbox } from "@src/shared/ui/Checkbox";
 import { useState } from "react";
 
 export const zoomSteps = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3];
 
 /** デザイナーの操作バー。元に戻す、拡大率、吸着、サンプルの印刷。 */
-export default function DesignerToolbar() {
+export function DesignerToolbar() {
   const history = useDesignerHistory();
   const view = useDesignerView();
   const print = useDesignerPrint();
-  const [printError, setPrintError] = useState<string | null>(null);
+  const [printError, setPrintError] = useState<string>();
 
   const zoomIn = zoomSteps.find(step => step > view.zoom + 0.001) ?? view.zoom;
   const zoomOut = [...zoomSteps].reverse().find(step => step < view.zoom - 0.001) ?? view.zoom;
 
   async function printSample() {
-    setPrintError(null);
+    setPrintError(undefined);
     try {
       await print();
     } catch (error) {

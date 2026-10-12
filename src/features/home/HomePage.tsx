@@ -1,18 +1,20 @@
-import MainContent from "@src/app/MainContent";
-import NormalHeader from "@src/app/NormalHeader";
-import PageFrame from "@src/app/PageFrame";
-import CreateDialog from "@src/features/home/CreateDialog";
-import StandardDialog from "@src/features/home/StandardDialog";
-import UseDialog from "@src/features/home/UseDialog";
-import SelectCard from "@src/shared/ui/SelectCard";
+import { MainContent } from "@src/app/MainContent";
+import { NormalHeader } from "@src/app/NormalHeader";
+import { PageFrame } from "@src/app/PageFrame";
+import { CreateDialog } from "@src/features/home/CreateDialog";
+import { StandardDialog } from "@src/features/home/StandardDialog";
+import { UseDialog } from "@src/features/home/UseDialog";
+import { SelectCard } from "@src/shared/ui/SelectCard";
 import { useState } from "react";
 
 type HomeDialog = "standard" | "create" | "use";
 
 /** トップ。3つの使い方から選び、それぞれのダイアログで始め方を選ぶ。 */
-export default function HomePage() {
-  const [dialog, setDialog] = useState<HomeDialog | null>(null);
-  const close = () => setDialog(null);
+export function HomePage() {
+  const [dialog, setDialog] = useState<HomeDialog>();
+  function close() {
+    setDialog(undefined);
+  }
 
   return (
     <PageFrame>

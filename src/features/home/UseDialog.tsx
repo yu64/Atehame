@@ -1,7 +1,7 @@
-import { TemplateFilePicker, type Template } from "@src/features/template";
+import { type Template, TemplateFilePicker } from "@src/features/template";
 import { usingTemplateAtom } from "@src/features/use";
-import Button from "@src/shared/ui/Button";
-import Dialog from "@src/shared/ui/Dialog";
+import { Button } from "@src/shared/ui/Button";
+import { Dialog } from "@src/shared/ui/Dialog";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
@@ -12,7 +12,7 @@ export interface Props {
 }
 
 /** レイアウトを使う：保存したテンプレートを読み込む。 */
-export default function UseDialog(props: Props) {
+export function UseDialog(props: Props) {
   const setUsing = useSetAtom(usingTemplateAtom);
   const [loaded, setLoaded] = useState<Template>();
 

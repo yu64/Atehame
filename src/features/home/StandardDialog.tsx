@@ -1,8 +1,8 @@
 import { standardTemplates } from "@src/features/standard";
 import { usingTemplateAtom } from "@src/features/use";
-import Button from "@src/shared/ui/Button";
-import Dialog from "@src/shared/ui/Dialog";
-import RadioCardGroup from "@src/shared/ui/RadioCardGroup";
+import { Button } from "@src/shared/ui/Button";
+import { Dialog } from "@src/shared/ui/Dialog";
+import { RadioCardGroup } from "@src/shared/ui/RadioCardGroup";
 import { useSetAtom } from "jotai";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
@@ -13,7 +13,7 @@ export interface Props {
 }
 
 /** 標準レイアウトを使う：Atehame が用意したテンプレートから選ぶ。 */
-export default function StandardDialog(props: Props) {
+export function StandardDialog(props: Props) {
   const setUsing = useSetAtom(usingTemplateAtom);
   const [selectedId, setSelectedId] = useState(standardTemplates[0]?.id);
   const selected = standardTemplates.find(standard => standard.id === selectedId);

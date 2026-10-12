@@ -22,12 +22,12 @@ export class ElementIds {
     renamed?: { from: string; to: string },
   ): void {
     if (this.#maps.has(layout)) return;
-    const base = previous ? this.#maps.get(previous) : undefined;
+    const base = (previous ? this.#maps.get(previous) : undefined);
     const map = new Map<string, string>();
     const used = new Set<string>();
     for (const { name } of layout.elements) {
-      const inherited = renamed?.to === name ? base?.get(renamed.from) : base?.get(name);
-      const id = inherited !== undefined && !used.has(inherited) ? inherited : this.#newId();
+      const inherited = (renamed?.to === name ? base?.get(renamed.from) : base?.get(name));
+      const id = (inherited !== undefined && !used.has(inherited) ? inherited : this.#newId());
       used.add(id);
       map.set(name, id);
     }

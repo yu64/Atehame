@@ -7,7 +7,9 @@ import {
 } from "@src/shared/lib/imageFile";
 import { describe, expect, test } from "vitest";
 
-const text = (value: string) => new TextEncoder().encode(value);
+function text(value: string) {
+  return new TextEncoder().encode(value);
+}
 
 describe("画像の形式の判定", () => {
   test.each([

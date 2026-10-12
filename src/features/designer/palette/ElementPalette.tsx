@@ -1,6 +1,6 @@
 import { useAddElement } from "@src/features/designer/hooks/useAddElement";
 import { useDesignerConfig } from "@src/features/designer/state/DesignerContext";
-import Button from "@src/shared/ui/Button";
+import { Button } from "@src/shared/ui/Button";
 
 /** パレットの幅（px）。 */
 export const paletteWidth = 192;
@@ -9,7 +9,7 @@ export const paletteWidth = 192;
  * 部品を追加するパレット（左の欄）。クリックで用紙に追加する。
  * 出力の項目からは、先頭の雛形でその値を埋め込んだ部品を追加する。
  */
-export default function ElementPalette() {
+export function ElementPalette() {
   const { fields, presets } = useDesignerConfig();
   const add = useAddElement();
   const fieldPreset = presets[0];

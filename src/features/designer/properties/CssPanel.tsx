@@ -1,5 +1,5 @@
 import type { CssEditorComponent, RevealRequest } from "@src/features/designer/types";
-import Alert from "@src/shared/ui/Alert";
+import { Alert } from "@src/shared/ui/Alert";
 
 export interface Props {
   css: string;
@@ -10,7 +10,7 @@ export interface Props {
 }
 
 /** レイアウトの CSS。部品も用紙もここに書かれた内容がすべて。 */
-export default function CssPanel(props: Props) {
+export function CssPanel(props: Props) {
   const Editor = props.editor;
 
   return (
@@ -38,21 +38,25 @@ export default function CssPanel(props: Props) {
         </ul>
       </details>
       <div className="flex-1 min-h-0 border-y border-surface-border">
-        {Editor ? (
-          <Editor
-            value={props.css}
-            onChange={props.onChange}
-            language="css"
-            ariaLabel="レイアウトの CSS"
-            reveal={props.reveal}
-          />
-        ) : (
-          <textarea
-            aria-label="レイアウトの CSS"
-            className="size-full p-2 font-mono text-sm resize-none outline-none"
-            value={props.css}
-            onChange={event => props.onChange(event.currentTarget.value)}
-          />
+        {(
+          Editor
+          ? (
+            <Editor
+              value={props.css}
+              onChange={props.onChange}
+              language="css"
+              ariaLabel="レイアウトの CSS"
+              reveal={props.reveal}
+            />
+          )
+          : (
+            <textarea
+              aria-label="レイアウトの CSS"
+              className="size-full p-2 font-mono text-sm resize-none outline-none"
+              value={props.css}
+              onChange={event => props.onChange(event.currentTarget.value)}
+            />
+          )
         )}
       </div>
       {props.warnings.length > 0 && (

@@ -1,4 +1,4 @@
-import { changedRange } from "@src/shared/lib/TextUtil";
+import { changedRange } from "@src/shared/lib/util/text";
 import { describe, expect, test } from "vitest";
 
 describe("文字列の差分", () => {

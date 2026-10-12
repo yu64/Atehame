@@ -1,1 +1,1 @@
-export { standardTemplates, type StandardTemplate } from "@src/features/standard/templates";
+export { type StandardTemplate, standardTemplates } from "@src/features/standard/templates";

@@ -56,8 +56,9 @@ describe("レイアウトの画像", () => {
   });
 
   test("読み込むときに、画像の形式・中身・大きさを確かめる", () => {
-    const parse = (assets: unknown) =>
-      layoutSchema.safeParse({ version: 1, css: "", assets }).success;
+    function parse(assets: unknown) {
+      return layoutSchema.safeParse({ version: 1, css: "", assets }).success;
+    }
     expect(parse({ logo: png })).toBe(true);
     expect(parse({ logo: { type: "image/gif", data: png.data } })).toBe(false);
     expect(parse({ logo: { type: "image/png", data: "<script>" } })).toBe(false);

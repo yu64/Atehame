@@ -1,8 +1,6 @@
-import Logo from "@src/app/Logo";
+import { Logo } from "@src/app/Logo";
 
-export interface Props {}
-
-export default function NormalHeader(props: Props) {
+export function NormalHeader() {
   return (
     <header
       className={`

@@ -9,10 +9,10 @@ export function parseTextTemplate(template: string): TemplateSegment[] {
   let text = "";
   let index = 0;
 
-  const flush = () => {
+  function flush() {
     if (text !== "") segments.push({ kind: "text", text });
     text = "";
-  };
+  }
 
   while (index < template.length) {
     const char = template[index];
@@ -26,7 +26,7 @@ export function parseTextTemplate(template: string): TemplateSegment[] {
 
     if (char === "{") {
       const end = template.indexOf("}", index + 1);
-      const key = end === -1 ? "" : template.slice(index + 1, end);
+      const key = (end === -1 ? "" : template.slice(index + 1, end));
       if (key !== "" && !key.includes("{")) {
         flush();
         segments.push({ kind: "field", key });
@@ -46,7 +46,7 @@ export function parseTextTemplate(template: string): TemplateSegment[] {
 /** 埋め込まれている値の名前の一覧（重複なし）。 */
 export function templateFields(template: string): string[] {
   const keys = parseTextTemplate(template).flatMap(segment =>
-    segment.kind === "field" ? [segment.key] : [],
+    (segment.kind === "field" ? [segment.key] : []),
   );
   return [...new Set(keys)];
 }

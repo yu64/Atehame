@@ -5,7 +5,7 @@ export interface Props {
   width?: "full" | "contained";
 }
 
-export default function MainContent(props: Props) {
+export function MainContent(props: Props) {
   const canvas = props.mode === "canvas";
 
   return (

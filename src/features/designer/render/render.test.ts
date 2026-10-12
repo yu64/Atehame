@@ -15,7 +15,9 @@ beforeEach(() => {
   doc = document.implementation.createHTMLDocument("render");
 });
 
-const layout = (css: string) => LayoutDocument.from(css);
+function layout(css: string) {
+  return LayoutDocument.from(css);
+}
 
 describe("描画用の文書", () => {
   test("外部への通信を禁止する CSP を持つ", () => {

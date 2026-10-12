@@ -1,5 +1,5 @@
-import PaperFrame from "@src/features/designer/canvas/PaperFrame";
-import SelectionLayer from "@src/features/designer/canvas/SelectionLayer";
+import { PaperFrame } from "@src/features/designer/canvas/PaperFrame";
+import { SelectionLayer } from "@src/features/designer/canvas/SelectionLayer";
 import { canvasPadding } from "@src/features/designer/canvas/units";
 import { useDesignerCanvas } from "@src/features/designer/hooks/useDesignerCanvas";
 import { useDesignerView } from "@src/features/designer/hooks/useDesignerView";
@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
  * 用紙を表示する領域。用紙（描画）と、その上の操作レイヤーを重ねる。
  * 用紙の外（灰色の部分）を押すと選択を外し、用紙の設定を表示できるようにする。
  */
-export default function DesignerCanvas() {
+export function DesignerCanvas() {
   const canvas = useDesignerCanvas();
   const view = useDesignerView();
   const areaRef = useRef<HTMLDivElement>(null);
@@ -41,7 +41,7 @@ export default function DesignerCanvas() {
         const onScrollbar =
           event.nativeEvent.offsetX >= area.clientWidth ||
           event.nativeEvent.offsetY >= area.clientHeight;
-        if (event.target === area && !onScrollbar) select(null);
+        if (event.target === area && !onScrollbar) select(undefined);
       }}
     >
       <div

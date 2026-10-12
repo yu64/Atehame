@@ -1,5 +1,5 @@
-import { JsExecutionEngine, JsExecutionError } from "@src/features/runtime";
 import type { ExecutionErrorCode, SourceLocation } from "@src/features/runtime";
+import { JsExecutionEngine, JsExecutionError } from "@src/features/runtime";
 import type { JsonValue } from "@src/shared/lib/json";
 import { useEffect, useRef, useState } from "react";
 
@@ -26,7 +26,7 @@ const debounceMs = 300;
  * コードと入力の変更に追従して加工処理を試行する。
  * エンジンは逐次実行のため、実行中に変更された場合は完了後に最新の内容だけを実行する。
  */
-export default function useTransformPreview(code: string, input: JsonValue): TransformPreview {
+export function useTransformPreview(code: string, input: JsonValue): TransformPreview {
   const [preview, setPreview] = useState<TransformPreview>({ status: "idle" });
   const engineRef = useRef<JsExecutionEngine | null>(null);
   const runningRef = useRef(false);

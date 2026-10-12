@@ -1,8 +1,8 @@
 import { layoutSummary } from "@src/features/designer";
 import { fromTemplateFile, parseTemplateFile, type Template } from "@src/features/template/model";
 import { formatBytes } from "@src/shared/lib/units";
-import Alert from "@src/shared/ui/Alert";
-import FileDropZone from "@src/shared/ui/FileDropZone";
+import { Alert } from "@src/shared/ui/Alert";
+import { FileDropZone } from "@src/shared/ui/FileDropZone";
 import { useState } from "react";
 
 /** 読み込むファイルの大きさの上限。画像を含めても、これより大きいテンプレートは作れない。 */
@@ -15,7 +15,7 @@ export interface Props {
 }
 
 /** テンプレートのファイルを選んで検証する。読めなければ理由を、読めれば概要を表示する。 */
-export default function TemplateFilePicker(props: Props) {
+export function TemplateFilePicker(props: Props) {
   const [error, setError] = useState<string>();
   const [fileName, setFileName] = useState<string>();
 

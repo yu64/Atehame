@@ -8,5 +8,3 @@ import { useSyncExternalStore } from "react";
 export function useStoreSelector<S, T>(store: ReadableStore<S>, select: (state: S) => T): T {
   return useSyncExternalStore(store.subscribe, () => select(store.getState()));
 }
-
-export default useStoreSelector;

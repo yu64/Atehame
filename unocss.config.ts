@@ -1,6 +1,6 @@
-import { defineConfig, presetIcons, presetWebFonts, presetWind4, symbols } from "unocss";
-import { presetTheme } from "unocss-preset-theme";
 import { presetDaisy } from "@ameinhardt/unocss-preset-daisy";
+import { defineConfig, type Preset, presetIcons, presetWebFonts, presetWind4 } from "unocss";
+import { presetTheme } from "unocss-preset-theme";
 
 const themeConfig = {
   light: {
@@ -126,6 +126,13 @@ const themeConfig = {
   },
 } as const satisfies Record<string, object>;
 
+// unocss-preset-theme の型が presetWind4 のテーマの型と合わないため、型を合わせる（動作には影響しない）。
+const themePreset = presetTheme({
+  theme: {
+    dark: themeConfig.dark,
+  },
+}) as unknown as Preset;
+
 export default defineConfig({
   content: {
     pipeline: {
@@ -152,11 +159,7 @@ export default defineConfig({
     // アプリの配色はいまは明るいものだけのため、daisyUI も prefers-color-scheme で
     // 暗い配色に切り替わらないよう light に固定する。
     presetDaisy({ themes: ["light --default"] }),
-    presetTheme({
-      theme: {
-        dark: themeConfig.dark,
-      },
-    }) as any,
+    themePreset,
   ],
   layers: {
     properties: 10,

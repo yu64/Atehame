@@ -6,7 +6,7 @@ import {
   type Values,
 } from "@src/features/designer/render";
 import type { ElementRect } from "@src/features/designer/state/operations";
-import useFrameDocument from "@src/shared/hooks/useFrameDocument";
+import { useFrameDocument } from "@src/shared/hooks/useFrameDocument";
 import { scriptlessFrameSandbox } from "@src/shared/lib/frame/isolatedFrame";
 import { measureRelative } from "@src/shared/lib/frame/measure";
 import { useEffect, useMemo, useRef } from "react";
@@ -28,7 +28,7 @@ export interface Props {
  * 中身は親が DOM で組み立て、値は textContent でのみ入れる。
  * 部品の位置は CSS で決まるため、描画した結果を測って操作レイヤーに渡す。
  */
-export default function PaperFrame(props: Props) {
+export function PaperFrame(props: Props) {
   const frame = useFrameDocument();
   const srcDoc = useMemo(() => createDocumentHtml(), []);
   const callbacks = useRef(props);
@@ -41,11 +41,13 @@ export default function PaperFrame(props: Props) {
     callbacks.current.onCssWarnings(applyLayoutStyles(doc, props.layout));
     renderPages(doc, props.layout, [props.sample], { placeholder: true });
 
-    const measure = () => callbacks.current.onMeasure(measureElements(doc, props.pxPerMm));
-    measure();
+    function measure(target: Document) {
+      callbacks.current.onMeasure(measureElements(target, props.pxPerMm));
+    }
+    measure(doc);
     // 大きさを指定していない部品は文字で大きさが決まるため、フォントの読み込み後にも測る。
     let cancelled = false;
-    void doc.fonts.ready.then(() => !cancelled && measure());
+    void doc.fonts.ready.then(() => !cancelled && measure(doc));
     return () => {
       cancelled = true;
     };

@@ -10,5 +10,3 @@ export function useDesignerHistory() {
   const canRedo = useDesignerSelector(() => store.canRedo());
   return { canUndo, canRedo, undo: store.undo, redo: store.redo };
 }
-
-export default useDesignerHistory;

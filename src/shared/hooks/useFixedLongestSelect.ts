@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect, type RefObject } from "react";
+import { type RefObject, useLayoutEffect } from "react";
 
 /**
  * select要素の幅を、選択肢（option）の中で最も長いテキストの幅に自動で固定するフック
  * @param selectRef 対象となるselect要素のReact Ref
  */
-export default function useFixedLongestSelect(
+export function useFixedLongestSelect(
   selectRef: RefObject<HTMLSelectElement | null>,
   enable: boolean = true,
 ) {
@@ -56,5 +56,5 @@ export default function useFixedLongestSelect(
     return () => {
       observer.disconnect();
     };
-  }, [selectRef.current?.options.length]);
+  }, [selectRef, enable]);
 }

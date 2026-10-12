@@ -19,11 +19,12 @@ const keyStep = 16;
  * 右の欄の左端に置く区切り。ドラッグで欄の幅を変える（左へ動かすと広がる）。
  * 欄の要素は position: relative にしておくこと。
  */
-export default function PaneResizer(props: Props) {
+export function PaneResizer(props: Props) {
   const dragRef = useRef<{ startX: number; startWidth: number } | null>(null);
 
-  const clamp = (width: number) =>
-    Math.round(Math.max(props.min, Math.min(Math.max(props.min, props.max()), width)));
+  function clamp(width: number) {
+    return Math.round(Math.max(props.min, Math.min(Math.max(props.min, props.max()), width)));
+  }
 
   return (
     <div
@@ -56,7 +57,7 @@ export default function PaneResizer(props: Props) {
       onDoubleClick={() => props.onResize(clamp(props.defaultWidth))}
       onKeyDown={event => {
         const delta =
-          event.key === "ArrowLeft" ? keyStep : event.key === "ArrowRight" ? -keyStep : 0;
+          (event.key === "ArrowLeft" ? keyStep : (event.key === "ArrowRight" ? -keyStep : 0));
         if (delta === 0) return;
         event.preventDefault();
         event.stopPropagation();

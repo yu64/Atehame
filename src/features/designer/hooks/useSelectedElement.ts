@@ -29,7 +29,7 @@ export function useSelectedElement(): SelectedElement | undefined {
 
   return useMemo(() => {
     const rule = elements.find(element => element.name === selected);
-    if (!rule || id === null) return undefined;
+    if (!rule || id === undefined) return undefined;
     const name = rule.name;
     return {
       rule,
@@ -44,5 +44,3 @@ export function useSelectedElement(): SelectedElement | undefined {
     };
   }, [store, elements, selected, id]);
 }
-
-export default useSelectedElement;

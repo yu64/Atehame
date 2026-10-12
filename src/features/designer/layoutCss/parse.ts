@@ -1,5 +1,5 @@
 import { lengthToMm } from "@src/shared/lib/units";
-import { parse, type AttributeSelector, type CssNode, type Declaration, type Rule } from "css-tree";
+import { type AttributeSelector, type CssNode, type Declaration, parse, type Rule } from "css-tree";
 
 /**
  * レイアウトの CSS の約束事。
@@ -70,7 +70,7 @@ export function parseCss(css: string): CssNode {
 /** [data-name=…] なら、その値（部品の名前）を返す。 */
 export function dataNameOf(node: AttributeSelector): string | undefined {
   if (node.name.name !== "data-name" || !node.value) return undefined;
-  return node.value.type === "String" ? node.value.value : node.value.name;
+  return (node.value.type === "String" ? node.value.value : node.value.name);
 }
 
 /** レイアウトの CSS を解析する。書きかけの CSS も解析できる範囲で読む。 */
@@ -124,8 +124,9 @@ function readRule(css: string, node: CssNode, block: CssNode): RuleInfo | undefi
   let declarationsEnd: number | undefined;
   block.children.forEach(child => {
     if (child.type !== "Declaration") {
-      if (declarationsEnd === undefined && child.type !== "Raw")
+      if (declarationsEnd === undefined && child.type !== "Raw") {
         declarationsEnd = lastDeclarationEnd;
+      }
       return;
     }
     const info = readDeclaration(css, child);
@@ -144,7 +145,7 @@ function readRule(css: string, node: CssNode, block: CssNode): RuleInfo | undefi
 
 function readDeclaration(css: string, node: Declaration): DeclarationInfo | undefined {
   if (!node.loc) return undefined;
-  const property = node.property.startsWith("--") ? node.property : node.property.toLowerCase();
+  const property = (node.property.startsWith("--") ? node.property : node.property.toLowerCase());
 
   let valueRange: TextRange | undefined;
   const value = node.value;
@@ -202,6 +203,6 @@ export function readPageSize(layout: LayoutCss): PageSize | undefined {
   if (!width || !height || width <= 0 || height <= 0) return undefined;
 
   const swap =
-    orientation === "landscape" ? width < height : orientation === "portrait" && width > height;
-  return swap ? { width: height, height: width } : { width, height };
+    (orientation === "landscape" ? width < height : orientation === "portrait" && width > height);
+  return (swap ? { width: height, height: width } : { width, height });
 }

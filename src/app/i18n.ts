@@ -1,4 +1,3 @@
-import en from "@src/assets/locales/en/translation.json";
 import ja from "@src/assets/locales/ja/translation.json";
 import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
@@ -45,4 +44,4 @@ i18n
     },
   });
 
-export default i18n;
+export { i18n };

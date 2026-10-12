@@ -8,5 +8,3 @@ export function useAddElement(): (preset: ElementPreset, key?: string) => void {
   /** 雛形から追加する。key を指定すると、その値を埋め込む。 */
   return (preset, key) => store.add(preset, fields, key);
 }
-
-export default useAddElement;

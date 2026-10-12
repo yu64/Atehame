@@ -1,17 +1,14 @@
-import Field from "@src/shared/ui/Field";
-import { ComponentPropsWithoutRef, forwardRef, useId } from "react";
+import { Field } from "@src/shared/ui/Field";
+import { type ComponentPropsWithRef, useId } from "react";
 
-export interface Props extends ComponentPropsWithoutRef<"input"> {
+export interface Props extends ComponentPropsWithRef<"input"> {
   label?: string;
   description?: string;
   /** 指定時は説明の代わりにエラーとして表示する。 */
   error?: string;
 }
 
-export const Input = forwardRef<HTMLInputElement, Props>(function Input(
-  props: Props,
-  ref: React.ForwardedRef<HTMLInputElement>,
-) {
+export function Input(props: Props) {
   const { label, description, error, ...inputProps } = props;
   const generatedId = useId();
   const id = props.id ?? generatedId;
@@ -26,16 +23,8 @@ export const Input = forwardRef<HTMLInputElement, Props>(function Input(
           ${error ? "border-status-error" : ""}
         `}
       >
-        <input
-          id={id}
-          className="grow"
-          ref={ref}
-          aria-invalid={error ? true : undefined}
-          {...inputProps}
-        />
+        <input id={id} className="grow" aria-invalid={error ? true : undefined} {...inputProps} />
       </label>
     </Field>
   );
-});
-
-export default Input;
+}

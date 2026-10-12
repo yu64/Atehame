@@ -1,14 +1,14 @@
-import MainContent from "@src/app/MainContent";
-import StepHeader from "@src/app/StepHeader";
-import CodeEditor from "@src/app/ThemedCodeEditor";
+import { MainContent } from "@src/app/MainContent";
+import { StepHeader } from "@src/app/StepHeader";
+import { ThemedCodeEditor as CodeEditor } from "@src/app/ThemedCodeEditor";
 import type { ExecutionErrorCode } from "@src/features/runtime";
 import { fieldTypeLabels, schemaAtom, transformCodeAtom } from "@src/features/template";
-import useSampleOutput from "@src/features/transform/hooks/useSampleOutput";
+import { useSampleOutput } from "@src/features/transform/hooks/useSampleOutput";
 import type { TransformPreview } from "@src/features/transform/hooks/useTransformPreview";
 import { createInputDeclaration } from "@src/features/transform/model";
 import { sampleRowAtom } from "@src/features/transform/store";
-import Alert from "@src/shared/ui/Alert";
-import Button from "@src/shared/ui/Button";
+import { Alert } from "@src/shared/ui/Alert";
+import { Button } from "@src/shared/ui/Button";
 import type { CodeEditorHandle, EditorMarker } from "@src/shared/ui/CodeEditor";
 import { Input } from "@src/shared/ui/Input";
 import { useAtom, useAtomValue } from "jotai";
@@ -30,7 +30,7 @@ const errorLabels: Record<ExecutionErrorCode, string> = {
   WORKER_ERROR: "エンジンエラー",
 };
 
-export default function Page() {
+export function TransformPage() {
   const schema = useAtomValue(schemaAtom);
   const [code, setCode] = useAtom(transformCodeAtom);
   const [sampleRow, setSampleRow] = useAtom(sampleRowAtom);
@@ -89,31 +89,35 @@ export default function Page() {
           >
             <section className="flex flex-col gap-3">
               <h2 className="font-bold text-text-primary">サンプル入力</h2>
-              {schema.fields.length === 0 ? (
-                <div className="flex flex-col items-start gap-2 text-sm text-text-secondary">
-                  <p>カラムが定義されていません。先にスキーマでカラムを追加してください。</p>
-                  <Button label="スキーマへ" onClick={() => navigate("/edit/schema")} />
-                </div>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  {schema.fields.map(field => {
-                    const problem = conversion.problems.find(p => p.fieldId === field.id);
-                    return (
-                      <Input
-                        key={field.id}
-                        type="text"
-                        label={field.name === "" ? "（名前なし）" : field.name}
-                        description={`${fieldTypeLabels[field.type].name}${field.memo ? `・${field.memo}` : ""}`}
-                        error={problem?.message}
-                        value={sampleRow[field.id] ?? ""}
-                        onChange={event => {
-                          const text = event.currentTarget.value;
-                          setSampleRow(current => ({ ...current, [field.id]: text }));
-                        }}
-                      />
-                    );
-                  })}
-                </div>
+              {(
+                schema.fields.length === 0
+                ? (
+                  <div className="flex flex-col items-start gap-2 text-sm text-text-secondary">
+                    <p>カラムが定義されていません。先にスキーマでカラムを追加してください。</p>
+                    <Button label="スキーマへ" onClick={() => navigate("/edit/schema")} />
+                  </div>
+                )
+                : (
+                  <div className="flex flex-col gap-3">
+                    {schema.fields.map(field => {
+                      const problem = conversion.problems.find(p => p.fieldId === field.id);
+                      return (
+                        <Input
+                          key={field.id}
+                          type="text"
+                          label={field.name === "" ? "（名前なし）" : field.name}
+                          description={`${fieldTypeLabels[field.type].name}${field.memo ? `・${field.memo}` : ""}`}
+                          error={problem?.message}
+                          value={sampleRow[field.id] ?? ""}
+                          onChange={event => {
+                            const text = event.currentTarget.value;
+                            setSampleRow(current => ({ ...current, [field.id]: text }));
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                )
               )}
             </section>
 
@@ -192,7 +196,7 @@ function PreviewBody(props: PreviewBodyProps) {
       overflow-auto
     `}
     >
-      {preview.status === "success" ? JSON.stringify(preview.output, null, 2) : "…"}
+      {(preview.status === "success" ? JSON.stringify(preview.output, null, 2) : "…")}
     </pre>
   );
 }

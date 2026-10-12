@@ -10,7 +10,7 @@ export interface Props {
 }
 
 /** 入力欄の枠。見出し・入力欄・説明（またはエラー）を縦に並べる。 */
-export default function Field(props: Props) {
+export function Field(props: Props) {
   const message = props.error ?? props.description;
   return (
     <fieldset className="fieldset m-0 p-0 gap-1">

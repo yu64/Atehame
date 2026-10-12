@@ -43,7 +43,7 @@ export function historyReducer<T>(history: History<T>, action: HistoryAction<T>)
         action.now - settled.lastTime < mergeWindowMs;
 
       return {
-        past: merge ? settled.past : pushLimited(settled.past, settled.present),
+        past: (merge ? settled.past : pushLimited(settled.past, settled.present)),
         present: action.next,
         future: [],
         lastMergeKey: action.mergeKey,
@@ -110,7 +110,7 @@ function settle<T>(history: History<T>): History<T> {
 
 function pushLimited<T>(items: T[], item: T): T[] {
   const next = [...items, item];
-  return next.length > historyLimit ? next.slice(next.length - historyLimit) : next;
+  return (next.length > historyLimit ? next.slice(next.length - historyLimit) : next);
 }
 
 export function canUndo<T>(history: History<T>): boolean {

@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 
 export interface DropdownMenuItem {
   id: string;
@@ -13,7 +13,7 @@ export interface Props {
   items: DropdownMenuItem[];
 }
 
-export default function DropdownMenu(props: Props) {
+export function DropdownMenu(props: Props) {
   const menuRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {

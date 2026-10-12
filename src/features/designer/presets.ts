@@ -17,8 +17,8 @@ export const textPreset: ElementPreset = {
   defaultName: "テキスト",
   create({ key, paper, count }) {
     const vertical = paper.height >= paper.width;
-    const width = vertical ? 15 : Math.min(60, paper.width - 20);
-    const height = vertical ? Math.min(80, paper.height - 20) : 12;
+    const width = (vertical ? 15 : Math.min(60, paper.width - 20));
+    const height = (vertical ? Math.min(80, paper.height - 20) : 12);
     const offset = (count % 5) * 5;
 
     return {

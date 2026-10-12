@@ -1,4 +1,4 @@
-import { toLayoutDocument, type Layout } from "@src/features/designer/model";
+import { type Layout, toLayoutDocument } from "@src/features/designer/model";
 import { layoutDocumentWarnings } from "@src/features/designer/render/document";
 
 /**

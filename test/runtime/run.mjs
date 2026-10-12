@@ -32,10 +32,10 @@ async function check(url, mode) {
     const results = await page.evaluate(async () => {
       const engine = new window.JsExecutionEngine();
       const results = [];
-      const record = (name, passed) => {
+      function record(name, passed) {
         if (!passed) throw new Error(`FAIL: ${name}`);
         results.push(name);
-      };
+      }
       async function rejects(name, code, input, expected, options, target = engine) {
         try {
           await target.execute(code, input, options);
@@ -222,6 +222,7 @@ async function check(url, mode) {
         constructor(...args) {
           super(...args);
           created++;
+          // eslint-disable-next-line @typescript-eslint/no-this-alias -- 作られた Worker を外から操作するため。
           latestWorker = this;
         }
         postMessage(message, ...args) {

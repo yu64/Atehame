@@ -1,4 +1,4 @@
-import useSyncedText from "@src/shared/hooks/useSyncedText";
+import { useSyncedText } from "@src/shared/hooks/useSyncedText";
 import { Input } from "@src/shared/ui/Input";
 
 export interface Props {
@@ -10,17 +10,20 @@ export interface Props {
 }
 
 /** 名前の欄。空や重複する名前は確定せず、理由を表示する。 */
-export default function NameField(props: Props) {
+export function NameField(props: Props) {
   // 名前は前後の空白を除いて確定するため、空白を除いて同じなら打ちかけの空白を保つ。
   const [text, setText] = useSyncedText(props.name, text => text.trim() === props.name);
 
   const trimmed = text.trim();
-  const error =
+  const error = (
     trimmed === ""
-      ? "名前を入力してください。"
-      : props.otherNames.includes(trimmed)
-        ? "同じ名前の部品があります。"
-        : undefined;
+    ? "名前を入力してください。"
+    : (
+      props.otherNames.includes(trimmed)
+      ? "同じ名前の部品があります。"
+      : undefined
+    )
+  );
 
   return (
     <Input
@@ -35,8 +38,9 @@ export default function NameField(props: Props) {
         const next = event.currentTarget.value;
         setText(next);
         const name = next.trim();
-        if (name !== "" && name !== props.name && !props.otherNames.includes(name))
+        if (name !== "" && name !== props.name && !props.otherNames.includes(name)) {
           props.onRename(name);
+        }
       }}
     />
   );

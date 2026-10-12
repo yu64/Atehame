@@ -20,9 +20,9 @@ const iconSizes = { sm: "size-4", md: "size-5" };
  * ボタン。見た目は variant・size・danger で選ぶ。
  * そのほかの属性（disabled・aria-*・tabIndex など）は、そのまま button に渡す。
  */
-export default function Button(props: Props) {
+export function Button(props: Props) {
   const { label, icon, iconOnly, variant, danger, size = "sm", className, ...buttonProps } = props;
-  const text = typeof label === "string" ? label : undefined;
+  const text = (typeof label === "string" ? label : undefined);
 
   return (
     <button
@@ -33,7 +33,7 @@ export default function Button(props: Props) {
       className={`
         ${variant === "primary" ? "atehame-btn-primary" : "atehame-btn-secondary"}
         ${size === "sm" ? "btn-sm" : ""}
-        ${iconOnly ? "btn-square p-0" : size === "sm" ? "px-2 font-normal" : ""}
+        ${iconOnly ? "btn-square p-0" : (size === "sm" ? "px-2 font-normal" : "")}
         ${danger ? "text-status-error" : ""}
         ${className ?? ""}
       `}

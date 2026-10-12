@@ -2,7 +2,9 @@
 import { createPersistentStorage } from "@src/shared/lib/persistentStorage";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const parse = (value: unknown) => (typeof value === "number" ? value : undefined);
+function parse(value: unknown) {
+  return (typeof value === "number" ? value : undefined);
+}
 
 describe("localStorage に保存する入れ物", () => {
   beforeEach(() => {

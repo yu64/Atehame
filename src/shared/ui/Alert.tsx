@@ -23,7 +23,7 @@ const styles: Record<AlertKind, { color: string; icon: string }> = {
  * エラー・注意・成功などを文章で示す枠。
  * エラーは割り込んで読み上げ（role="alert"）、それ以外は控えめに読み上げる（role="status"）。
  */
-export default function Alert(props: Props) {
+export function Alert(props: Props) {
   const style = styles[props.kind];
   const messages = props.messages ?? [];
 

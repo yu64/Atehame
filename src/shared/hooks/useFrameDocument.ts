@@ -10,5 +10,3 @@ export function useFrameDocument() {
   const onLoad = useCallback(() => setDocument(ref.current?.contentDocument ?? null), []);
   return { ref, onLoad, document };
 }
-
-export default useFrameDocument;

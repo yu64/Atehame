@@ -1,9 +1,9 @@
-import useSyncedText from "@src/shared/hooks/useSyncedText";
+import { useSyncedText } from "@src/shared/hooks/useSyncedText";
 import { formatBytes } from "@src/shared/lib/units";
-import Alert from "@src/shared/ui/Alert";
-import Button from "@src/shared/ui/Button";
-import ConfirmDialog from "@src/shared/ui/ConfirmDialog";
-import FileDropZone from "@src/shared/ui/FileDropZone";
+import { Alert } from "@src/shared/ui/Alert";
+import { Button } from "@src/shared/ui/Button";
+import { ConfirmDialog } from "@src/shared/ui/ConfirmDialog";
+import { FileDropZone } from "@src/shared/ui/FileDropZone";
 import { Input } from "@src/shared/ui/Input";
 import { useRef, useState } from "react";
 
@@ -32,7 +32,7 @@ export interface Props {
 const accept = "image/png,image/jpeg,image/webp,image/svg+xml,.svg";
 
 /** 画像（アセット）の一覧。登録した画像は、画像の部品から名前で選ぶ。 */
-export default function AssetsPanel(props: Props) {
+export function AssetsPanel(props: Props) {
   const [errors, setErrors] = useState<string[]>([]);
 
   async function add(files: File[]) {
@@ -56,26 +56,28 @@ export default function AssetsPanel(props: Props) {
 
       {errors.length > 0 && <Alert kind="error" messages={errors} />}
 
-      {props.items.length === 0 ? (
-        <p className="text-sm text-text-secondary">画像がありません。</p>
-      ) : (
-        <ul aria-label="画像の一覧" className="flex flex-col gap-2">
-          {props.items.map((item, index) => (
-            <AssetRow
-              // 名前で区別すると、名前を1文字打つたびに行が作り直されてフォーカスが外れる。
-              // 名前を変えても一覧の中の位置は変わらないため、位置で区別する。
-              key={index}
-              item={item}
-              otherNames={props.items.filter(other => other !== item).map(other => other.name)}
-              onReplace={async file => {
-                const error = await props.onReplace(item.name, file);
-                setErrors(error ? [error] : []);
-              }}
-              onRename={to => props.onRename(item.name, to)}
-              onRemove={() => props.onRemove(item.name)}
-            />
-          ))}
-        </ul>
+      {(
+        props.items.length === 0
+        ? <p className="text-sm text-text-secondary">画像がありません。</p>
+        : (
+          <ul aria-label="画像の一覧" className="flex flex-col gap-2">
+            {props.items.map((item, index) => (
+              <AssetRow
+                // 名前で区別すると、名前を1文字打つたびに行が作り直されてフォーカスが外れる。
+                // 名前を変えても一覧の中の位置は変わらないため、位置で区別する。
+                key={index}
+                item={item}
+                otherNames={props.items.filter(other => other !== item).map(other => other.name)}
+                onReplace={async file => {
+                  const error = await props.onReplace(item.name, file);
+                  setErrors(error ? [error] : []);
+                }}
+                onRename={to => props.onRename(item.name, to)}
+                onRemove={() => props.onRemove(item.name)}
+              />
+            ))}
+          </ul>
+        )
       )}
     </div>
   );
@@ -93,28 +95,31 @@ function AssetRow(props: {
   const replaceRef = useRef<HTMLInputElement>(null);
 
   const trimmed = text.trim();
-  const error =
+  const error = (
     trimmed === ""
-      ? "名前を入力してください。"
-      : props.otherNames.includes(trimmed)
-        ? "同じ名前の画像があります。"
-        : undefined;
+    ? "名前を入力してください。"
+    : (
+      props.otherNames.includes(trimmed)
+      ? "同じ名前の画像があります。"
+      : undefined
+    )
+  );
 
   const [confirming, setConfirming] = useState(false);
 
   /** 使っている部品があれば、削除してよいか確かめる。削除は元に戻すで戻せる。 */
-  const remove = () => {
+  function remove() {
     if (item.usage.length > 0) setConfirming(true);
     else props.onRemove();
-  };
+  }
 
   return (
     <li className="flex gap-2 rounded-lg border border-surface-border p-2">
       <div className="size-16 shrink-0 rounded bg-base flex items-center justify-center overflow-hidden">
-        {item.url ? (
-          <img src={item.url} alt="" className="max-w-full max-h-full object-contain" />
-        ) : (
-          <span className="text-xs text-status-error">表示できません</span>
+        {(
+          item.url
+          ? <img src={item.url} alt="" className="max-w-full max-h-full object-contain" />
+          : <span className="text-xs text-status-error">表示できません</span>
         )}
       </div>
       <div className="flex flex-1 min-w-0 flex-col gap-1">
@@ -135,7 +140,7 @@ function AssetRow(props: {
         <span className="text-xs text-text-tertiary">
           {item.type.replace("image/", "").replace("+xml", "").toUpperCase()}・
           {formatBytes(item.bytes)}・
-          {item.usage.length > 0 ? `${item.usage.length} 個の部品で使用` : "未使用"}
+          {(item.usage.length > 0 ? `${item.usage.length} 個の部品で使用` : "未使用")}
         </span>
         <div className="flex gap-1">
           <Button

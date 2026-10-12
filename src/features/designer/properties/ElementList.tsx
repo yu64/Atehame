@@ -1,20 +1,20 @@
 import {
   decodeCssString,
+  type ElementRule,
   imageProperty,
   textProperty,
-  type ElementRule,
 } from "@src/features/designer/layoutCss";
-import Button from "@src/shared/ui/Button";
+import { Button } from "@src/shared/ui/Button";
 
 export interface Props {
   elements: ElementRule[];
-  selected: string | null;
+  selected: string | undefined;
   onSelect: (name: string) => void;
   onRemove: (name: string) => void;
 }
 
 /** 部品の一覧。前面の部品（CSS で後ろに書かれた部品）を上に並べる。 */
-export default function ElementList(props: Props) {
+export function ElementList(props: Props) {
   const elements = [...props.elements].reverse();
 
   if (elements.length === 0) {
@@ -31,10 +31,11 @@ export default function ElementList(props: Props) {
       {elements.map(element => {
         const selected = element.name === props.selected;
         const image = element.declarations.get(imageProperty)?.value;
-        const text =
+        const text = (
           image !== undefined
-            ? `画像: ${decodeCssString(image) ?? ""}`
-            : (decodeCssString(element.declarations.get(textProperty)?.value ?? "") ?? "");
+          ? `画像: ${decodeCssString(image) ?? ""}`
+          : (decodeCssString(element.declarations.get(textProperty)?.value ?? "") ?? "")
+        );
 
         return (
           <li

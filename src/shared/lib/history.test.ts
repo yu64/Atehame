@@ -2,11 +2,11 @@ import {
   canRedo,
   canUndo,
   createHistory,
+  type History,
+  type HistoryAction,
   historyLimit,
   historyReducer,
   mergeWindowMs,
-  type History,
-  type HistoryAction,
 } from "@src/shared/lib/history";
 import { describe, expect, test } from "vitest";
 
@@ -61,7 +61,9 @@ describe("元に戻す・やり直す", () => {
   });
 
   test("直前の値から計算する変更は、連続しても取りこぼさない", () => {
-    const increment = (value: number) => value + 1;
+    function increment(value: number) {
+      return value + 1;
+    }
     const history = apply(
       createHistory(0),
       { type: "update", apply: increment, mergeKey: "nudge", now: 0 },

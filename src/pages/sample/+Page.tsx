@@ -1,19 +1,19 @@
-import MainContent from "@src/app/MainContent";
-import PageFrame from "@src/app/PageFrame";
+import { MainContent } from "@src/app/MainContent";
+import { PageFrame } from "@src/app/PageFrame";
 import { isDarkAtom } from "@src/app/store";
-import Collapse from "@src/shared/ui/Collapse";
+import { Collapse } from "@src/shared/ui/Collapse";
 import { Input } from "@src/shared/ui/Input";
 import { Select } from "@src/shared/ui/Select";
-import SelectCard from "@src/shared/ui/SelectCard";
+import { SelectCard } from "@src/shared/ui/SelectCard";
 import { useAtom } from "jotai";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 
 export default function Page() {
   const [dark, setDark] = useAtom(isDarkAtom);
 
   useEffect(() => {
     const root = window.document.documentElement;
-    dark ? root.classList.add("dark") : root.classList.remove("dark");
+    root.classList.toggle("dark", dark);
   }, [dark]);
 
   return (

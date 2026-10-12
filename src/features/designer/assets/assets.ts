@@ -2,9 +2,9 @@ import {
   base64ByteLength,
   base64ToBytes,
   bytesToBase64,
+  type ImageType,
   imageTypes,
   isBase64,
-  type ImageType,
 } from "@src/shared/lib/imageFile";
 import { sanitizeSvg } from "@src/shared/lib/sanitizeSvg";
 import { formatBytes } from "@src/shared/lib/units";
@@ -47,9 +47,11 @@ export function isValidAsset(asset: LayoutAsset): boolean {
 export function createAsset(type: ImageType, bytes: Uint8Array): LayoutAsset | undefined {
   if (type !== "image/svg+xml") return { type, data: bytesToBase64(bytes) };
   const svg = sanitizeSvg(new TextDecoder().decode(bytes));
-  return svg === undefined
+  return (
+    svg === undefined
     ? undefined
-    : { type, data: bytesToBase64(new TextEncoder().encode(svg)) };
+    : { type, data: bytesToBase64(new TextEncoder().encode(svg)) }
+  );
 }
 
 /** 追加できるか。できなければ理由を返す。 */

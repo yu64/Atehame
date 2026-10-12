@@ -1,12 +1,12 @@
 import {
   dataNameOf,
+  type LayoutCss,
   parseCss,
   parseLayoutCss,
-  type LayoutCss,
   type TextRange,
 } from "@src/features/designer/layoutCss/parse";
 import { expandRuleRange, replaceRanges } from "@src/features/designer/layoutCss/ranges";
-import { walk, type CssNode, type List } from "css-tree";
+import { type CssNode, type List, walk } from "css-tree";
 
 /**
  * 部品を取り除く。部品の規則に加えて、その部品だけを指定する規則（@media などの中も含む）と、
@@ -53,7 +53,7 @@ function collectRemovals(
     if (node.type !== "Rule") return;
     count++;
 
-    const selectors = node.prelude.type === "SelectorList" ? node.prelude.children.toArray() : [];
+    const selectors = (node.prelude.type === "SelectorList" ? node.prelude.children.toArray() : []);
     const matched = selectors.map(selector => referencesElement(selector, name));
     if (matched.length > 0 && matched.every(Boolean)) {
       removed++;

@@ -44,11 +44,11 @@ describe("デザイナーの状態", () => {
     const { store } = createStore();
     store.select("a");
     store.remove("a");
-    expect(store.getState().selected).toBeNull();
+    expect(store.getState().selected).toBeUndefined();
     store.undo();
     store.select("a");
     store.setCss("@page { size: 100mm 148mm; }");
-    expect(store.getState().selected).toBeNull();
+    expect(store.getState().selected).toBeUndefined();
   });
 
   test("名前を変えると選択も追う", () => {
@@ -77,9 +77,9 @@ describe("デザイナーの状態", () => {
     const { store } = createStore();
     store.select("a");
     store.remove("a");
-    expect(store.getState()).toMatchObject({ selectedId: null, selected: null });
+    expect(store.getState()).toMatchObject({ selectedId: undefined, selected: undefined });
     store.undo();
-    expect(store.getState().selected).toBeNull();
+    expect(store.getState().selected).toBeUndefined();
     store.select("a");
     expect(store.getState().selected).toBe("a");
   });

@@ -1,14 +1,14 @@
-import MainContent from "@src/app/MainContent";
-import NormalHeader from "@src/app/NormalHeader";
-import PageFrame from "@src/app/PageFrame";
-import StepHeader from "@src/app/StepHeader";
+import { MainContent } from "@src/app/MainContent";
+import { NormalHeader } from "@src/app/NormalHeader";
+import { PageFrame } from "@src/app/PageFrame";
+import { StepHeader } from "@src/app/StepHeader";
 import { TemplateSummary } from "@src/features/template";
 import { usingTemplateAtom } from "@src/features/use/store";
 import { useAtomValue } from "jotai";
 import { navigate } from "vike/client/router";
 
 /** テンプレートを使う画面。CSV を入れてプレビュー・出力する（準備中）。 */
-export default function UsePage() {
+export function UsePage() {
   const template = useAtomValue(usingTemplateAtom);
 
   return (
@@ -21,17 +21,21 @@ export default function UsePage() {
       />
       <MainContent width="contained">
         <div className="flex flex-col gap-4 py-6 max-w-2xl">
-          {template ? (
-            <>
-              <TemplateSummary template={template} />
+          {(
+            template
+            ? (
+              <>
+                <TemplateSummary template={template} />
+                <p className="text-sm text-text-secondary">
+                  CSV の読み込みと、プレビュー・出力は準備中です。
+                </p>
+              </>
+            )
+            : (
               <p className="text-sm text-text-secondary">
-                CSV の読み込みと、プレビュー・出力は準備中です。
+                テンプレートが選ばれていません。トップに戻って選んでください。
               </p>
-            </>
-          ) : (
-            <p className="text-sm text-text-secondary">
-              テンプレートが選ばれていません。トップに戻って選んでください。
-            </p>
+            )
           )}
         </div>
       </MainContent>

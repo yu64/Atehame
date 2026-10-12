@@ -1,1 +1,1 @@
-export { default as SavePage } from "@src/features/save/SavePage";
+export { SavePage } from "@src/features/save/SavePage";
