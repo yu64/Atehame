@@ -1,12 +1,12 @@
 import { MainContent } from "@src/app/MainContent";
 import { StepHeader } from "@src/app/StepHeader";
 import { ThemedCodeEditor as CodeEditor } from "@src/app/ThemedCodeEditor";
+import { useSampleOutput } from "@src/features/edit/transform/hooks/useSampleOutput";
+import type { TransformPreview } from "@src/features/edit/transform/hooks/useTransformPreview";
+import { createInputDeclaration } from "@src/features/edit/transform/model";
+import { sampleRowAtom } from "@src/features/edit/transform/store";
 import type { ExecutionErrorCode } from "@src/features/runtime";
 import { fieldTypeLabels, schemaAtom, transformCodeAtom } from "@src/features/template";
-import { useSampleOutput } from "@src/features/transform/hooks/useSampleOutput";
-import type { TransformPreview } from "@src/features/transform/hooks/useTransformPreview";
-import { createInputDeclaration } from "@src/features/transform/model";
-import { sampleRowAtom } from "@src/features/transform/store";
 import { Alert } from "@src/shared/ui/Alert";
 import { Button } from "@src/shared/ui/Button";
 import type { CodeEditorHandle, EditorMarker } from "@src/shared/ui/CodeEditor";

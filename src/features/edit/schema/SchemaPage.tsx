@@ -1,6 +1,6 @@
 import { MainContent } from "@src/app/MainContent";
 import { StepHeader } from "@src/app/StepHeader";
-import { SchemaFieldEditor } from "@src/features/schema/SchemaFieldEditor";
+import { SchemaFieldEditor } from "@src/features/edit/schema/SchemaFieldEditor";
 import { createSchemaField, schemaAtom, type SchemaField } from "@src/features/template";
 import { Button } from "@src/shared/ui/Button";
 import { EditableList } from "@src/shared/ui/EditableList";

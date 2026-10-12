@@ -1,5 +1,5 @@
-import { standardTemplates } from "@src/features/standard";
-import { usingTemplateAtom } from "@src/features/use";
+import { usingTemplateAtom } from "@src/features/use/apply";
+import { standardTemplates } from "@src/features/use/standard";
 import { Button } from "@src/shared/ui/Button";
 import { Dialog } from "@src/shared/ui/Dialog";
 import { RadioCardGroup } from "@src/shared/ui/RadioCardGroup";

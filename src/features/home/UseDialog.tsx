@@ -1,5 +1,5 @@
 import { type Template, TemplateFilePicker } from "@src/features/template";
-import { usingTemplateAtom } from "@src/features/use";
+import { usingTemplateAtom } from "@src/features/use/apply";
 import { Button } from "@src/shared/ui/Button";
 import { Dialog } from "@src/shared/ui/Dialog";
 import { useSetAtom } from "jotai";

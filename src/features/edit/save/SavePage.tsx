@@ -1,7 +1,8 @@
 import { MainContent } from "@src/app/MainContent";
 import { StepHeader } from "@src/app/StepHeader";
 import { layoutSummary } from "@src/features/designer";
-import { exportStrategies } from "@src/features/save/export/strategies";
+import { exportStrategies } from "@src/features/edit/save/export/strategies";
+import { useSampleOutput } from "@src/features/edit/transform";
 import {
   currentTemplateAtom,
   templateNameAtom,
@@ -9,7 +10,6 @@ import {
   toFileName,
   toTemplateFile,
 } from "@src/features/template";
-import { useSampleOutput } from "@src/features/transform";
 import { formatBytes } from "@src/shared/lib/units";
 import { Alert } from "@src/shared/ui/Alert";
 import { Button } from "@src/shared/ui/Button";

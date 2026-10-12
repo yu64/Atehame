@@ -1,6 +1,6 @@
 import { layoutSchema } from "@src/features/designer";
-import { standardTemplates } from "@src/features/standard/templates";
 import { parseTemplateFile, serializeTemplateFile, toTemplateFile } from "@src/features/template";
+import { standardTemplates } from "@src/features/use/standard/templates";
 import { describe, expect, test } from "vitest";
 
 describe("標準のテンプレート", () => {

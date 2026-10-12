@@ -1,1 +1,1 @@
-export { TransformPage as default } from "@src/features/transform";
+export { TransformPage as default } from "@src/features/edit/transform";

@@ -3,7 +3,7 @@ import { NormalHeader } from "@src/app/NormalHeader";
 import { PageFrame } from "@src/app/PageFrame";
 import { StepHeader } from "@src/app/StepHeader";
 import { TemplateSummary } from "@src/features/template";
-import { usingTemplateAtom } from "@src/features/use/store";
+import { usingTemplateAtom } from "@src/features/use/apply/store";
 import { useAtomValue } from "jotai";
 import { navigate } from "vike/client/router";
 

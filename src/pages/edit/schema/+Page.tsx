@@ -1,1 +1,1 @@
-export { SchemaPage as default } from "@src/features/schema";
+export { SchemaPage as default } from "@src/features/edit/schema";

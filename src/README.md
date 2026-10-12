@@ -4,7 +4,7 @@
 
 ```
 src/
-├─ pages/      Vike のルーティングだけ。画面は features から読み込む（例: export { LayoutPage as default } from "@src/features/layout"）
+├─ pages/      Vike のルーティングだけ。画面は features から読み込む（例: export { LayoutPage as default } from "@src/features/edit/layout"）
 ├─ features/   機能。画面を持つものと、画面を持たない部品・処理がある
 ├─ app/        アプリの枠（ヘッダー・ページの枠・見出し）と、アプリ全体の状態（ダークモード・言語）
 ├─ shared/     Atehame のことを知らない汎用部分
