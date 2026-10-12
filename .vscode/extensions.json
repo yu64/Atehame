@@ -1,6 +1,9 @@
 {
   "recommendations": [
     "antfu.unocss", //66.4.2
-    "esbenp.prettier-vscode"
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    // 保存時に Prettier → ESLint の順で整形するため（settings.json の codeActionsOnSave）。
+    "rohit-gohri.format-code-action"
   ]
 }

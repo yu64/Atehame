@@ -12,5 +12,8 @@
   "editor.tabSize": 2,
   "js/ts.tsdk.path": "node_modules\\typescript\\lib",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true
+  // 保存時は Prettier の後に ESLint の修正をかける（三項演算子の形は ESLint が最後に決める）。
+  // formatOnSave は ESLint の修正より後に動いて形を戻すため使わず、Format Code Action で順番を決める。
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": ["source.fixAll.format", "source.fixAll.eslint"]
 }
