@@ -120,6 +120,7 @@ function Card(props: CardProps) {
               icon="i-lucide-trash-2"
               label="削除"
               iconOnly
+              danger
               size="md"
               onClick={props.onRemove}
             />

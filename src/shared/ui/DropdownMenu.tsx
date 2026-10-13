@@ -12,6 +12,7 @@ export interface DropdownMenuItem {
 
 export interface Props {
   label: string;
+  /** 開くボタンの中身。なければ「…」のアイコンで、アイコンだけのボタンと同じ正方形にする。 */
   trigger?: ReactNode;
   items: DropdownMenuItem[];
 }
@@ -61,11 +62,12 @@ export function DropdownMenu(props: Props) {
         className={`
           atehame-btn-secondary
           list-none [&::-webkit-details-marker]:hidden
+          ${props.trigger ? "" : "btn-square p-0"}
         `}
         aria-label={props.label}
         title={props.label}
       >
-        {props.trigger ?? <span className="i-lucide-ellipsis size-6 shrink-0" aria-hidden="true" />}
+        {props.trigger ?? <span className="i-lucide-ellipsis size-5 shrink-0" aria-hidden="true" />}
       </summary>
       <div
         className={`
