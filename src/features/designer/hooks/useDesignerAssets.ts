@@ -9,6 +9,7 @@ import {
   useDesignerStore,
 } from "@src/features/designer/state/DesignerContext";
 import { selectLayout } from "@src/features/designer/state/designerStore";
+import { fileReadErrorMessage } from "@src/shared/lib/error";
 import { readImageFile } from "@src/shared/lib/imageFile";
 
 // #############################################################################
@@ -52,7 +53,12 @@ export function useDesignerAssets() {
 
 /** ファイルから画像を作る。できなければ理由を返す。 */
 async function readAsset(file: File, assets: Assets) {
-  const image = await readImageFile(file);
+  let image: Awaited<ReturnType<typeof readImageFile>>;
+  try {
+    image = await readImageFile(file);
+  } catch {
+    return { error: `「${file.name}」: ${fileReadErrorMessage}` };
+  }
   if (!image) return { error: `「${file.name}」は PNG・JPEG・WebP・SVG の画像ではありません。` };
   const asset = createAsset(image.type, image.bytes);
   if (!asset) return { error: `「${file.name}」は SVG として読み込めませんでした。` };

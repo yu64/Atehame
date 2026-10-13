@@ -1,6 +1,7 @@
 import { readCsvTable, type Template } from "@src/features/data";
 import type { CsvSource, LoadedCsv } from "@src/features/use/data";
 import { guessDelimiter, parseCsv } from "@src/shared/lib/csv";
+import { fileReadErrorMessage } from "@src/shared/lib/error";
 import { decodeText } from "@src/shared/lib/textFile";
 import { formatBytes } from "@src/shared/lib/units";
 import { useState } from "react";
@@ -51,7 +52,14 @@ export function useCsvReader(template: Template, onLoad: (csv: LoadedCsv | undef
       fail(`ファイルが大きすぎます（${formatBytes(maxCsvBytes)} まで）。`);
       return;
     }
-    const { text, encoding } = decodeText(new Uint8Array(await file.arrayBuffer()));
+    let bytes: Uint8Array;
+    try {
+      bytes = new Uint8Array(await file.arrayBuffer());
+    } catch {
+      fail(fileReadErrorMessage);
+      return;
+    }
+    const { text, encoding } = decodeText(bytes);
     readText(text, {
       kind: "file",
       fileName: file.name,

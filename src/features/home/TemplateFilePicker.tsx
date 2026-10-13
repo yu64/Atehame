@@ -1,5 +1,6 @@
 import { fromTemplateFile, parseTemplateFile, type Template } from "@src/features/data";
 import { TemplateSummary } from "@src/features/use/load";
+import { fileReadErrorMessage } from "@src/shared/lib/error";
 import { formatBytes } from "@src/shared/lib/units";
 import { Alert } from "@src/shared/ui/Alert";
 import { FileDropZone } from "@src/shared/ui/FileDropZone";
@@ -36,7 +37,14 @@ export function TemplateFilePicker(props: Props) {
       setError(`ファイルが大きすぎます（${formatBytes(maxFileBytes)} まで）。`);
       return;
     }
-    const result = parseTemplateFile(await file.text());
+    let text: string;
+    try {
+      text = await file.text();
+    } catch {
+      setError(fileReadErrorMessage);
+      return;
+    }
+    const result = parseTemplateFile(text);
     if (!result.ok) {
       setError(result.message);
       return;
