@@ -52,6 +52,7 @@ export function TemplateFilePicker(props: Props) {
         label="テンプレートのファイルを選ぶ"
         hint="保存したテンプレート（.atehame.json）"
         onFiles={([file]) => void read(file)}
+        onReject={() => setError(undefined)}
       />
       {error && (
         <Alert kind="error" messages={[`「${fileName}」を読み込めませんでした: ${error}`]} />

@@ -59,6 +59,7 @@ export function AssetsPanel(props: Props) {
         label="画像を追加"
         hint={`PNG・JPEG・WebP・SVG。1枚 ${formatBytes(props.limits.bytes)}、合計 ${formatBytes(props.limits.totalBytes)} まで`}
         onFiles={files => void add(files)}
+        onReject={() => setErrors([])}
       />
       <p className="text-xs text-text-secondary">画像の部品から、ここで付けた名前で選びます。</p>
       <p className="text-xs text-text-secondary">

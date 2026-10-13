@@ -106,6 +106,7 @@ function CsvLoader(props: {
             </>
           }
           onFiles={([file]) => void reader.readFile(file)}
+          onReject={reader.clearError}
         />
         {reader.error && (
           <Alert kind="error" messages={[`読み込めませんでした: ${reader.error}`]} />

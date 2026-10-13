@@ -59,8 +59,14 @@ export function useCsvReader(template: Template, onLoad: (csv: LoadedCsv | undef
     });
   }
 
+  /** 前の失敗の理由を消す。読み込んだ内容は残す。 */
+  function clearError() {
+    setError(undefined);
+  }
+
   return {
     error,
+    clearError,
     readText,
     readFile,
   };
