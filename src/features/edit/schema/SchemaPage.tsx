@@ -1,4 +1,5 @@
 import { MainContent } from "@src/app/MainContent";
+import { routes } from "@src/app/routes";
 import { StepHeader } from "@src/app/StepHeader";
 import { createSchemaField, type SchemaField } from "@src/features/data";
 import { schemaAtom } from "@src/features/edit/data";
@@ -42,8 +43,8 @@ export function SchemaPage() {
             <code className="font-mono">input</code> で使います。
           </>
         }
-        onBack={() => navigate("/")}
-        onNext={() => navigate("/edit/transform")}
+        onBack={() => navigate(routes.home)}
+        onNext={() => navigate(routes.edit.transform)}
       />
       <MainContent>
         <section className="flex flex-wrap gap-4 pt-4">

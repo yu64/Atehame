@@ -1,4 +1,5 @@
 import { MainContent } from "@src/app/MainContent";
+import { routes } from "@src/app/routes";
 import { StepHeader } from "@src/app/StepHeader";
 import { createCsvTemplate, csvTemplateFileName, type Template } from "@src/features/data";
 import { type LoadedCsv, loadedCsvAtom, usingTemplateAtom } from "@src/features/use/data";
@@ -27,8 +28,8 @@ export function LoadPage() {
       <StepHeader
         title="CSV の読み込み"
         description="印刷する内容の CSV を読み込みます。1行目は見出し（カラム名）にしてください。"
-        onBack={() => navigate("/")}
-        onNext={() => navigate("/use/preview")}
+        onBack={() => navigate(routes.home)}
+        onNext={() => navigate(routes.use.preview)}
         nextDisabled={!isReady}
       />
       <MainContent width="contained">
@@ -50,7 +51,12 @@ function NoTemplate() {
       <p className="text-sm text-text-secondary">
         テンプレートが選ばれていません。トップに戻って選んでください。
       </p>
-      <Button icon="i-lucide-house" label="トップへ戻る" size="md" onClick={() => navigate("/")} />
+      <Button
+        icon="i-lucide-house"
+        label="トップへ戻る"
+        size="md"
+        onClick={() => navigate(routes.home)}
+      />
     </div>
   );
 }

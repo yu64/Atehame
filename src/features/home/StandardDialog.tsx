@@ -1,3 +1,4 @@
+import { routes } from "@src/app/routes";
 import type { Template } from "@src/features/data";
 import { StandardTemplateDialog } from "@src/features/home/StandardTemplateDialog";
 import { startUsingAtom } from "@src/features/use/data";
@@ -23,7 +24,7 @@ export function StandardDialog(props: Props) {
   function use(template: Template) {
     setUsing(template);
     props.onClose();
-    void navigate("/use/load");
+    void navigate(routes.use.load);
   }
 
   return (

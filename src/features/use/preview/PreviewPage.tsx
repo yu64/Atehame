@@ -1,4 +1,5 @@
 import { MainContent } from "@src/app/MainContent";
+import { routes } from "@src/app/routes";
 import { StepHeader } from "@src/app/StepHeader";
 import { inputFields, type Template } from "@src/features/data";
 import { Designer, layoutSummary, printLayout } from "@src/features/designer";
@@ -37,7 +38,7 @@ export function PreviewPage() {
       <StepHeader
         title="確認と印刷"
         description="加工した結果を確かめ、印刷する行を選んで印刷します。"
-        onBack={() => navigate("/use/load")}
+        onBack={() => navigate(routes.use.load)}
       />
       <MainContent>
         <div className="flex flex-col gap-4 py-6">
@@ -62,7 +63,7 @@ function NotLoaded() {
         icon="i-lucide-chevron-left"
         label="CSV の読み込みへ"
         size="md"
-        onClick={() => navigate("/use/load")}
+        onClick={() => navigate(routes.use.load)}
       />
     </div>
   );

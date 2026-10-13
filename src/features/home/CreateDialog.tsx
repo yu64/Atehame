@@ -1,3 +1,4 @@
+import { routes } from "@src/app/routes";
 import { type Template } from "@src/features/data";
 import { hasDraftAtom, startNewTemplateAtom, startTemplateAtom } from "@src/features/edit/data";
 import { StandardTemplateDialog } from "@src/features/home/StandardTemplateDialog";
@@ -62,7 +63,7 @@ export function CreateDialog(props: Props) {
     if (start === "new") startNew();
     else if (start) startTemplate(start);
     props.onClose();
-    void navigate("/edit/schema");
+    void navigate(routes.edit.schema);
   }
 
   /**

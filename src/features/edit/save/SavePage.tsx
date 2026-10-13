@@ -1,4 +1,5 @@
 import { MainContent } from "@src/app/MainContent";
+import { routes } from "@src/app/routes";
 import { StepHeader } from "@src/app/StepHeader";
 import { templateWarnings, toFileName, toTemplateFile } from "@src/features/data";
 import { layoutSummary } from "@src/features/designer";
@@ -93,7 +94,7 @@ export function SavePage() {
       <StepHeader
         title="保存"
         description="スキーマ・加工・レイアウトをテンプレートとして保存します。"
-        onBack={() => navigate("/edit/layout")}
+        onBack={() => navigate(routes.edit.layout)}
       />
       <MainContent width="contained">
         <div className="flex flex-col gap-6 py-6 max-w-2xl">
@@ -151,7 +152,7 @@ export function SavePage() {
               icon="i-lucide-house"
               label="トップへ戻る"
               size="md"
-              onClick={() => navigate("/")}
+              onClick={() => navigate(routes.home)}
             />
           </div>
           {status.type === "saved" && (

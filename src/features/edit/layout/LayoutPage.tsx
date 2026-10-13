@@ -1,4 +1,5 @@
 import { MainContent } from "@src/app/MainContent";
+import { routes } from "@src/app/routes";
 import { StepHeader } from "@src/app/StepHeader";
 import { ThemedCodeEditor as CodeEditor } from "@src/app/ThemedCodeEditor";
 import { Designer, type Values } from "@src/features/designer";
@@ -41,8 +42,8 @@ export function LayoutPage() {
             した値を配置する、印刷用のレイアウトを作ります。
           </>
         }
-        onBack={() => navigate("/edit/transform")}
-        onNext={() => navigate("/edit/save")}
+        onBack={() => navigate(routes.edit.transform)}
+        onNext={() => navigate(routes.edit.save)}
       />
       {preview.status === "error" && (
         <Alert

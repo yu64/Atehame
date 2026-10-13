@@ -1,3 +1,4 @@
+import { routes } from "@src/app/routes";
 import { type Template } from "@src/features/data";
 import { TemplateFilePicker } from "@src/features/home/TemplateFilePicker";
 import { startUsingAtom } from "@src/features/use/data";
@@ -39,7 +40,7 @@ export function UseDialog(props: Props) {
             if (!loaded) return;
             setUsing(loaded);
             props.onClose();
-            void navigate("/use/load");
+            void navigate(routes.use.load);
           }}
         />
       }

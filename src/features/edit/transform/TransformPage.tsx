@@ -1,4 +1,5 @@
 import { MainContent } from "@src/app/MainContent";
+import { routes } from "@src/app/routes";
 import { StepHeader } from "@src/app/StepHeader";
 import { ThemedCodeEditor as CodeEditor } from "@src/app/ThemedCodeEditor";
 import { fieldTypeLabels, transformLibraryDeclaration } from "@src/features/data";
@@ -83,8 +84,8 @@ export function TransformPage() {
             <code className="font-mono">return</code> します。
           </>
         }
-        onBack={() => navigate("/edit/schema")}
-        onNext={() => navigate("/edit/layout")}
+        onBack={() => navigate(routes.edit.schema)}
+        onNext={() => navigate(routes.edit.layout)}
       />
       <MainContent mode="canvas">
         <div
@@ -123,7 +124,7 @@ export function TransformPage() {
                 ? (
                   <div className="flex flex-col items-start gap-2 text-sm text-text-secondary">
                     <p>カラムが定義されていません。先にスキーマでカラムを追加してください。</p>
-                    <Button label="スキーマへ" onClick={() => navigate("/edit/schema")} />
+                    <Button label="スキーマへ" onClick={() => navigate(routes.edit.schema)} />
                   </div>
                 )
                 : (
