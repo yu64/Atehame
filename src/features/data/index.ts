@@ -24,6 +24,7 @@ export {
   type FieldType,
   fieldTypeLabels,
   inputFields,
+  normalizeFieldName,
   type SchemaField,
 } from "@src/features/data/schema";
 export {

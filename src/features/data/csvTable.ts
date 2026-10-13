@@ -1,5 +1,5 @@
 import { safeFileBaseName } from "@src/features/data/model";
-import { type DataSchema, inputFields } from "@src/features/data/schema";
+import { type DataSchema, inputFields, normalizeFieldName } from "@src/features/data/schema";
 import type { RowCells } from "@src/features/data/transformInput";
 import { stringifyCsv } from "@src/shared/lib/csv";
 
@@ -26,7 +26,7 @@ export interface CsvTable {
  */
 export function readCsvTable(schema: DataSchema, table: string[][]): CsvTable {
   const [header = [], ...body] = table;
-  const headerNames = header.map(name => name.trim());
+  const headerNames = header.map(normalizeFieldName);
   const columns = inputFields(schema).map(field => ({
     field,
     index: headerNames.indexOf(field.name),

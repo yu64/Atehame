@@ -67,15 +67,21 @@ export function createSchemaField(): SchemaField {
 }
 
 /**
+ * カラム名と、CSV の見出しを、比べられる形にそろえる。前後の空白（全角の空白も）を除く。
+ * 入力のときに紛れた空白で、対応が外れないようにするため。名前の途中の空白は、そのまま残す。
+ */
+export function normalizeFieldName(name: string): string {
+  return name.trim();
+}
+
+/**
  * 各カラムの扱いを決める。カラム名に関わる規則（どれが input に入るか）は、ここだけに書く。
- *
- * カラム名は、前後の空白（全角の空白も）を除いて扱う。CSV の見出しも同じように除いて比べるため、
- * 入力のときに紛れた空白で対応が外れないようにする。名前の途中の空白は、そのまま残す。
+ * カラム名は normalizeFieldName でそろえてから比べる。
  */
 export function classifyFields(schema: DataSchema): ClassifiedField[] {
   const seen = new Set<string>();
   return schema.fields.map(field => {
-    const name = field.name.trim();
+    const name = normalizeFieldName(field.name);
     const role = (name === "" ? "unnamed" : (seen.has(name) ? "duplicate" : "input"));
     seen.add(name);
     return {

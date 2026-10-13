@@ -1,4 +1,9 @@
-import { type FieldType, fieldTypeLabels, type SchemaField } from "@src/features/data";
+import {
+  type FieldType,
+  fieldTypeLabels,
+  normalizeFieldName,
+  type SchemaField,
+} from "@src/features/data";
 import { Input } from "@src/shared/ui/Input";
 import { Select } from "@src/shared/ui/Select";
 
@@ -36,10 +41,10 @@ export function SchemaFieldEditor(props: Props) {
               name: event.currentTarget.value,
             })
           }
-          // 前後の空白は使うときに除かれるため、入力を終えたら見た目もそろえる。
+          // カラム名は使うときにそろえられるため、入力を終えたら見た目も同じにする。
           // 打っている間に除くと、途中に空白を入れられなくなる。
           onBlur={() => {
-            const name = props.value.name.trim();
+            const name = normalizeFieldName(props.value.name);
             if (name !== props.value.name) {
               props.onChange({
                 ...props.value,
