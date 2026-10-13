@@ -23,7 +23,6 @@ export interface Props {
   paper: PageSize;
   scale: number;
   pxPerMm: number;
-  onCssWarnings: (warnings: string[]) => void;
   /** 描画した部品の位置と大きさ（mm）。名前ごと。 */
   onMeasure: (rects: Map<string, ElementRect>) => void;
 }
@@ -46,7 +45,7 @@ export function PaperFrame(props: Props) {
   useEffect(() => {
     if (!doc) return;
 
-    callbacks.current.onCssWarnings(applyLayoutStyles(doc, props.layout));
+    applyLayoutStyles(doc, props.layout);
     renderPages(doc, props.layout, [props.sample], { placeholder: props.placeholder });
 
     /** 部品の表示上の位置と大きさを測り、知らせる。 */

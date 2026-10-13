@@ -3,6 +3,7 @@ import { LayoutDocument } from "@src/features/designer/layoutCss";
 import {
   applyLayoutStyles,
   createDocumentHtml,
+  layoutDocumentWarnings,
   renderPage,
   renderPages,
 } from "@src/features/designer/render";
@@ -29,18 +30,24 @@ describe("描画用の文書", () => {
   });
 
   test("用紙の大きさと安全化した CSS を設定する", () => {
-    const warnings = applyLayoutStyles(
-      doc,
-      layout(
-        '@page { size: 120mm 235mm } @import "https://example.com/x.css"; [data-name="氏名"] { color: red }',
-      ),
+    const document = layout(
+      '@page { size: 120mm 235mm } @import "https://example.com/x.css"; [data-name="氏名"] { color: red }',
     );
+    applyLayoutStyles(doc, document);
     expect(doc.getElementById("atehame-paper")?.textContent).toContain(
       "width: 120mm; height: 235mm",
     );
     expect(doc.getElementById("atehame-author")?.textContent).toContain("color:red");
     expect(doc.getElementById("atehame-author")?.textContent).not.toContain("example.com");
+    expect(layoutDocumentWarnings(document).length).toBeGreaterThan(0);
+  });
+
+  test("警告は文書だけから決まり、同じ文書には同じ配列を返す", () => {
+    const document = layout('@import "https://example.com/x.css";');
+    const warnings = layoutDocumentWarnings(document);
     expect(warnings.length).toBeGreaterThan(0);
+    expect(layoutDocumentWarnings(document)).toBe(warnings);
+    expect(layoutDocumentWarnings(layout('[data-name="氏名"] { color: red }'))).toEqual([]);
   });
 });
 describe("ページの描画", () => {
@@ -179,7 +186,7 @@ describe("画像の部品", () => {
   });
 
   test("見つからない画像を警告する", () => {
-    expect(applyLayoutStyles(doc, layout(css))).toContain("画像「logo」が登録されていません。");
-    expect(applyLayoutStyles(doc, layout(css).setAsset("logo", png))).toEqual([]);
+    expect(layoutDocumentWarnings(layout(css))).toContain("画像「logo」が登録されていません。");
+    expect(layoutDocumentWarnings(layout(css).setAsset("logo", png))).toEqual([]);
   });
 });

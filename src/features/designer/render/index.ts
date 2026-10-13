@@ -1,6 +1,7 @@
 export {
   applyLayoutStyles,
   createDocumentHtml,
+  layoutDocumentWarnings,
   renderPage,
   renderPages,
 } from "@src/features/designer/render/document";

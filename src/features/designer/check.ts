@@ -1,5 +1,5 @@
 import { type Layout, toLayoutDocument } from "@src/features/designer/model";
-import { layoutDocumentWarnings } from "@src/features/designer/render/document";
+import { layoutDocumentWarnings } from "@src/features/designer/render";
 
 // #############################################################################
 // MARK: 関数

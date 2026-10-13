@@ -72,7 +72,6 @@ export function DesignerCanvas(props: Props) {
           paper={paper}
           scale={view.zoom}
           pxPerMm={pxPerMm}
-          onCssWarnings={canvas.setCssWarnings}
           onMeasure={canvas.setRects}
         />
         {!props.readOnly && (

@@ -32,6 +32,5 @@ export function useDesignerCanvas() {
     preview: (name: string, rect: Partial<ElementRect>) => store.preview(name, rect),
     commitPreview: store.commitPreview,
     setRects: store.setRects,
-    setCssWarnings: store.setCssWarnings,
   };
 }

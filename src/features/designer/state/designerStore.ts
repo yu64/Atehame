@@ -42,8 +42,6 @@ export interface DesignerState {
   gridSnap: boolean;
   /** 描画した部品の位置と大きさ（mm）。 */
   rects: Map<string, ElementRect>;
-  /** CSS を安全化したときに取り除いた記述の警告。 */
-  cssWarnings: string[];
 }
 
 /** 状態から、今の文書を選ぶ。 */
@@ -73,7 +71,6 @@ export class DesignerStore extends Store<DesignerState> {
       fitRequest: 0,
       gridSnap: false,
       rects: new Map(),
-      cssWarnings: [],
     });
     this.#committed = initial;
     this.onCommit = onCommit;
@@ -208,12 +205,6 @@ export class DesignerStore extends Store<DesignerState> {
     this.#set(state => ({
       ...state,
       rects,
-    }));
-  /** CSS の安全化で取り除いた記述を記録する。 */
-  setCssWarnings = (cssWarnings: string[]) =>
-    this.#set(state => ({
-      ...state,
-      cssWarnings,
     }));
 
   // ===========================================================================

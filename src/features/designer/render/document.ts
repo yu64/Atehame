@@ -65,8 +65,8 @@ export function createDocumentHtml(): string {
   });
 }
 
-/** 用紙の大きさと、作成者の CSS（安全化済み）を文書に設定する。取り除いた記述の警告を返す。 */
-export function applyLayoutStyles(doc: Document, layout: LayoutDocument): string[] {
+/** 用紙の大きさと、作成者の CSS（安全化済み）を文書に設定する。 */
+export function applyLayoutStyles(doc: Document, layout: LayoutDocument): void {
   const { width, height } = paperSizeOf(layout);
   // 作成者が @page で余白を指定しなければ 0 にする。作成者の CSS が後に来るため上書きできる。
   setStyleText(
@@ -76,20 +76,41 @@ export function applyLayoutStyles(doc: Document, layout: LayoutDocument): string
       + `.atehame-page { width: ${width}mm; height: ${height}mm; }`,
   );
 
-  const sanitized = sanitizeCss(layout.css);
-  setStyleText(doc, "atehame-author", sanitized.css);
-  return [...sanitized.warnings, ...missingAssetWarnings(layout)];
+  setStyleText(doc, "atehame-author", checkOf(layout).css);
 }
 
 // #############################################################################
 // MARK: 警告
 
+/** 文書の確認の結果。安全化した CSS と、警告。 */
+interface LayoutCheck {
+  css: string;
+  warnings: string[];
+}
+
+/** 文書ごとの確認の結果。文書は不変なので、1つの文書につき1回だけ調べる。 */
+const checks = new WeakMap<LayoutDocument, LayoutCheck>();
+
+/** 文書を確認する（CSS の安全化と、登録されていない画像）。描画と警告で同じ結果を使う。 */
+function checkOf(layout: LayoutDocument): LayoutCheck {
+  let check = checks.get(layout);
+  if (!check) {
+    const sanitized = sanitizeCss(layout.css);
+    check = {
+      css: sanitized.css,
+      warnings: [...sanitized.warnings, ...missingAssetWarnings(layout)],
+    };
+    checks.set(layout, check);
+  }
+  return check;
+}
+
 /**
  * レイアウトの警告。安全化で取り除く記述と、登録されていない画像。
- * 描画と同じ確認を、描画せずに行う（保存の前の確認などで使う）。
+ * 文書だけから決まり、描画しなくてもわかる。同じ文書には同じ配列を返す（書き換えないこと）。
  */
 export function layoutDocumentWarnings(layout: LayoutDocument): string[] {
-  return [...sanitizeCss(layout.css).warnings, ...missingAssetWarnings(layout)];
+  return checkOf(layout).warnings;
 }
 
 /** 部品が参照している画像のうち、登録されていないものの警告。 */

@@ -1,8 +1,9 @@
+import { layoutDocumentWarnings } from "@src/features/designer/render";
 import {
   useDesignerSelector,
   useDesignerStore,
 } from "@src/features/designer/state/DesignerContext";
-import type { SidePanelTab } from "@src/features/designer/state/designerStore";
+import { selectLayout, type SidePanelTab } from "@src/features/designer/state/designerStore";
 
 // #############################################################################
 // MARK: フック
@@ -15,7 +16,9 @@ export function useDesignerTab(): {
 } {
   const store = useDesignerStore();
   const tab = useDesignerSelector(state => state.tab);
-  const cssWarning = useDesignerSelector(state => state.cssWarnings.length > 0);
+  const cssWarning = useDesignerSelector(
+    state => layoutDocumentWarnings(selectLayout(state)).length > 0,
+  );
   return {
     tab,
     setTab: store.setTab,
