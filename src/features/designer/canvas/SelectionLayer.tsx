@@ -1,3 +1,4 @@
+import { pxToMm, resizedRect } from "@src/features/designer/canvas/geometry";
 import type { PageSize } from "@src/features/designer/layoutCss";
 import type { ElementRect } from "@src/features/designer/state/operations";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -59,12 +60,6 @@ export function SelectionLayer(props: Props) {
   const otherBoxes = [...boxRefs.current.entries()]
     .filter(([name]) => name !== props.selected)
     .map(([, box]) => box);
-
-  /** 表示上の px を mm に直す（拡大率を含む）。1mm 刻みのときは整数の mm に丸める。 */
-  function toMm(px: number) {
-    const mm = px / unit;
-    return (props.gridSnap ? Math.round(mm) : mm);
-  }
 
   return (
     <div
@@ -130,8 +125,8 @@ export function SelectionLayer(props: Props) {
           horizontalGuidelines={guidelines.horizontal}
           elementGuidelines={otherBoxes}
           onDrag={event => {
-            const left = toMm(event.left);
-            const top = toMm(event.top);
+            const left = pxToMm(event.left, unit, props.gridSnap);
+            const top = pxToMm(event.top, unit, props.gridSnap);
             event.target.style.left = `${left * unit}px`;
             event.target.style.top = `${top * unit}px`;
             props.onPreview(selected, {
@@ -141,22 +136,22 @@ export function SelectionLayer(props: Props) {
           }}
           onDragEnd={() => props.onCommit()}
           onResize={event => {
-            // 1mm 刻みのときは、幅や高さではなく四辺をそれぞれ 1mm の位置に合わせる。
-            const left = toMm(event.drag.left);
-            const top = toMm(event.drag.top);
-            const width = Math.max(toMm(event.drag.left + event.width) - left, 1);
-            const height = Math.max(toMm(event.drag.top + event.height) - top, 1);
+            const rect = resizedRect(
+              {
+                left: event.drag.left,
+                top: event.drag.top,
+                width: event.width,
+                height: event.height,
+              },
+              unit,
+              props.gridSnap,
+            );
             const style = event.target.style;
-            style.left = `${left * unit}px`;
-            style.top = `${top * unit}px`;
-            style.width = `${width * unit}px`;
-            style.height = `${height * unit}px`;
-            props.onPreview(selected, {
-              left,
-              top,
-              width,
-              height,
-            });
+            style.left = `${rect.left * unit}px`;
+            style.top = `${rect.top * unit}px`;
+            style.width = `${rect.width * unit}px`;
+            style.height = `${rect.height * unit}px`;
+            props.onPreview(selected, rect);
           }}
           onResizeEnd={() => props.onCommit()}
         />

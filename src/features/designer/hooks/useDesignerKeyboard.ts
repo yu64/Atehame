@@ -1,13 +1,7 @@
+import { keyCommand } from "@src/features/designer/hooks/keyCommand";
 import type { DesignerStore } from "@src/features/designer/state/designerStore";
 import { isEditableTarget } from "@src/shared/lib/dom";
-import { pxPerMm } from "@src/shared/lib/units";
 import { type KeyboardEvent, useCallback } from "react";
-
-// #############################################################################
-// MARK: 定数
-
-/** 矢印キーで 1px、Shift と矢印キーで 1mm 動かす。 */
-const pxInMm = 1 / pxPerMm;
 
 // #############################################################################
 // MARK: フック
@@ -21,24 +15,32 @@ export function useDesignerKeyboard(store: DesignerStore) {
     (event: KeyboardEvent<HTMLElement>) => {
       if (event.defaultPrevented || isEditable(event.target)) return;
 
+      const command = keyCommand(event);
+      if (!command) return;
       const selected = store.getState().selected;
-      const mod = event.ctrlKey || event.metaKey;
-      const key = event.key.toLowerCase();
 
-      if (mod && key === "z" && !event.shiftKey) store.undo();
-      else if (mod && (key === "y" || (key === "z" && event.shiftKey))) store.redo();
-      else if (mod && key === "d") {
-        if (selected !== undefined) store.duplicate(selected);
-      } else if (key === "delete" || key === "backspace") {
-        if (selected !== undefined) store.remove(selected);
-      } else if (key === "escape") store.select(undefined);
-      else if (key.startsWith("arrow")) {
-        if (selected === undefined) return;
-        const step = (event.shiftKey ? 1 : pxInMm);
-        const dx = (key === "arrowleft" ? -step : (key === "arrowright" ? step : 0));
-        const dy = (key === "arrowup" ? -step : (key === "arrowdown" ? step : 0));
-        store.nudge(selected, dx, dy);
-      } else return;
+      switch (command.type) {
+        case "undo":
+          store.undo();
+          break;
+        case "redo":
+          store.redo();
+          break;
+        case "duplicate":
+          if (selected !== undefined) store.duplicate(selected);
+          break;
+        case "remove":
+          if (selected !== undefined) store.remove(selected);
+          break;
+        case "deselect":
+          store.select(undefined);
+          break;
+        case "nudge":
+          // 選択がなければ、矢印キーは標準の動き（スクロール）のままにする。
+          if (selected === undefined) return;
+          store.nudge(selected, command.dx, command.dy);
+          break;
+      }
 
       event.preventDefault();
     },

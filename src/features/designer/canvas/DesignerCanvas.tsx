@@ -1,3 +1,4 @@
+import { fitZoom } from "@src/features/designer/canvas/geometry";
 import { PaperFrame } from "@src/features/designer/canvas/PaperFrame";
 import { SelectionLayer } from "@src/features/designer/canvas/SelectionLayer";
 import { canvasPadding } from "@src/features/designer/canvas/units";
@@ -34,10 +35,18 @@ export function DesignerCanvas(props: Props) {
   useEffect(() => {
     const area = areaRef.current;
     if (!area) return;
-    const width = area.clientWidth - canvasPadding * 2;
-    const height = area.clientHeight - canvasPadding * 2;
-    const fit = Math.min(width / (paper.width * pxPerMm), height / (paper.height * pxPerMm));
-    setZoom(Math.max(0.1, Math.min(3, Math.floor(fit * 100) / 100)));
+    setZoom(
+      fitZoom(
+        {
+          width: area.clientWidth,
+          height: area.clientHeight,
+        },
+        {
+          width: paper.width,
+          height: paper.height,
+        },
+      ),
+    );
   }, [paper.width, paper.height, view.fitRequest, setZoom]);
 
   return (
