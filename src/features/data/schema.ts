@@ -20,6 +20,16 @@ export interface DataSchema {
   fields: SchemaField[];
 }
 
+/** カラムの扱い。input は加工の input に入る。unnamed は名前がない。duplicate は同じ名前の2つ目以降。 */
+export type FieldRole = "input" | "unnamed" | "duplicate";
+
+export interface ClassifiedField {
+  field: SchemaField;
+  /** 前後の空白を除いたカラム名。input のキーと、CSV の見出しとの対応に使う。 */
+  name: string;
+  role: FieldRole;
+}
+
 // #############################################################################
 // MARK: 定数
 
@@ -57,14 +67,34 @@ export function createSchemaField(): SchemaField {
 }
 
 /**
- * 加工の input に入るカラム（名前があり、同じ名前の2つ目以降でないもの）。
+ * 各カラムの扱いを決める。カラム名に関わる規則（どれが input に入るか）は、ここだけに書く。
+ *
+ * カラム名は、前後の空白（全角の空白も）を除いて扱う。CSV の見出しも同じように除いて比べるため、
+ * 入力のときに紛れた空白で対応が外れないようにする。名前の途中の空白は、そのまま残す。
+ */
+export function classifyFields(schema: DataSchema): ClassifiedField[] {
+  const seen = new Set<string>();
+  return schema.fields.map(field => {
+    const name = field.name.trim();
+    const role = (name === "" ? "unnamed" : (seen.has(name) ? "duplicate" : "input"));
+    seen.add(name);
+    return {
+      field,
+      name,
+      role,
+    };
+  });
+}
+
+/**
+ * 加工の input に入るカラム（名前があり、同じ名前の2つ目以降でないもの）。名前は、前後の空白を除いたもの。
  * 名前が空のカラムと、重複した名前のカラムは input に入らないため、CSV の対応や一覧の表示からも除く。
  */
 export function inputFields(schema: DataSchema): SchemaField[] {
-  const seen = new Set<string>();
-  return schema.fields.filter(field => {
-    if (field.name === "" || seen.has(field.name)) return false;
-    seen.add(field.name);
-    return true;
-  });
+  return classifyFields(schema)
+    .filter(classified => classified.role === "input")
+    .map(({ field, name }) => ({
+      ...field,
+      name,
+    }));
 }

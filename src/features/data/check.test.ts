@@ -52,6 +52,30 @@ describe("保存の前の確認", () => {
     ]);
   });
 
+  test("空白だけのカラム名は名前なし、前後の空白だけが違う名前は重複として挙げる", () => {
+    const template = {
+      ...createTemplate(),
+      name: "年賀状",
+      schema: {
+        version: 1 as const,
+        fields: ["氏名", " 氏名", "　"].map((name, index) => ({
+          id: String(index),
+          name,
+          type: "string" as const,
+          memo: "",
+        })),
+      },
+      layout: {
+        version: 1 as const,
+        css: '[data-name="宛名"] { --atehame-text: "{氏名}"; }',
+      },
+    };
+    expect(templateWarnings(template)).toEqual([
+      "スキーマに名前のないカラムがあります（加工の input に含まれません）。",
+      "スキーマのカラム名「氏名」が重複しています。",
+    ]);
+  });
+
   test("問題がなければ空", () => {
     const template = {
       ...createTemplate(),

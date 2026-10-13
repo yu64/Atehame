@@ -1,4 +1,4 @@
-import type { DataSchema, FieldType } from "@src/features/data/schema";
+import { classifyFields, type DataSchema, type FieldType } from "@src/features/data/schema";
 import type { JsonValue } from "@src/shared/lib/json";
 
 // #############################################################################
@@ -58,14 +58,13 @@ export function convertCell(
   }
 }
 
-/** スキーマに従ってCSVの1行を `input` に変換する。 */
+/** スキーマに従ってCSVの1行を `input` に変換する。キーは、前後の空白を除いたカラム名。 */
 export function createTransformInput(schema: DataSchema, cells: RowCells): InputConversion {
   const input: TransformInput = {};
   const problems: InputProblem[] = [];
-  const names = new Set<string>();
 
-  for (const field of schema.fields) {
-    if (field.name === "") {
+  for (const { field, name, role } of classifyFields(schema)) {
+    if (role === "unnamed") {
       problems.push({
         kind: "schema",
         fieldId: field.id,
@@ -73,15 +72,14 @@ export function createTransformInput(schema: DataSchema, cells: RowCells): Input
       });
       continue;
     }
-    if (names.has(field.name)) {
+    if (role === "duplicate") {
       problems.push({
         kind: "schema",
         fieldId: field.id,
-        message: `カラム名「${field.name}」が重複しています。`,
+        message: `カラム名「${name}」が重複しています。`,
       });
       continue;
     }
-    names.add(field.name);
 
     const converted = convertCell(field.type, cells[field.id] ?? "");
     if ("error" in converted) {
@@ -90,9 +88,9 @@ export function createTransformInput(schema: DataSchema, cells: RowCells): Input
         fieldId: field.id,
         message: converted.error,
       });
-      input[field.name] = null;
+      input[name] = null;
     } else {
-      input[field.name] = converted.value;
+      input[name] = converted.value;
     }
   }
 

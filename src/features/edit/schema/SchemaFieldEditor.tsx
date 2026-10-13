@@ -36,6 +36,17 @@ export function SchemaFieldEditor(props: Props) {
               name: event.currentTarget.value,
             })
           }
+          // 前後の空白は使うときに除かれるため、入力を終えたら見た目もそろえる。
+          // 打っている間に除くと、途中に空白を入れられなくなる。
+          onBlur={() => {
+            const name = props.value.name.trim();
+            if (name !== props.value.name) {
+              props.onChange({
+                ...props.value,
+                name,
+              });
+            }
+          }}
         />
       </div>
       <div className="md:col-start-2">
