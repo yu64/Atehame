@@ -1,4 +1,5 @@
 import type {
+  EngineOptions,
   ExecutionErrorCode,
   ExecutionOptions,
   ExecutionRequest,
@@ -12,6 +13,7 @@ import type { Remote } from "comlink";
 import { releaseProxy, wrap } from "comlink";
 
 export type {
+  EngineOptions,
   ExecutionErrorCode,
   ExecutionOptions,
   JsonValue,
@@ -43,9 +45,18 @@ interface WorkerSession {
 
 /** Workerを再利用し、呼び出しごとに独立したQuickJS環境で逐次実行する。 */
 export class JsExecutionEngine {
+  private readonly prelude: string;
   private session?: WorkerSession;
   private disposed = false;
   private cancel?: (error: JsExecutionError) => void;
+
+  /** 前置きのコード（options.prelude）は、ユーザーのコードの前に毎回実行する。 */
+  constructor(options: EngineOptions = {}) {
+    this.prelude = options.prelude ?? "";
+    if (typeof this.prelude !== "string" || this.prelude.length > limits.preludeLength) {
+      throw new JsExecutionError("INVALID_INPUT", "前置きのコードが長すぎます。");
+    }
+  }
 
   // ===========================================================================
   // MARK: 実行
@@ -125,7 +136,12 @@ export class JsExecutionEngine {
       const session = this.session ?? this.createSession();
       if (!session.ready) {
         phase = "STARTUP_ERROR";
-        await this.waitFor(session.api.initialize(), cancelled, limits.startupTimeoutMs, phase);
+        await this.waitFor(
+          session.api.initialize(this.prelude),
+          cancelled,
+          limits.startupTimeoutMs,
+          phase,
+        );
         session.ready = true;
       }
 

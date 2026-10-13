@@ -18,6 +18,9 @@ let modulePromise: ModulePromise | undefined;
 /** WASMの状態が壊れた後は、ホストがWorkerを破棄するまで実行を拒否する。 */
 let broken = false;
 
+/** ユーザーのコードの前に実行する前置きのコード。初期化のときに受け取る。 */
+let prelude = "";
+
 // #############################################################################
 // MARK: 内部関数
 
@@ -32,7 +35,8 @@ function getModule() {
 
 // 初期化待ちと加工処理を分け、ホスト側でそれぞれの期限を監視できるようにする。
 const api: WorkerApi = {
-  async initialize() {
+  async initialize(value) {
+    prelude = value;
     await getModule();
   },
 
@@ -48,7 +52,7 @@ const api: WorkerApi = {
     }
 
     const quickjs = await getModule();
-    const result = executeInQuickJS(quickjs, request);
+    const result = executeInQuickJS(quickjs, request, prelude);
     if (result.type === "error" && result.fatal) broken = true;
     return result;
   },

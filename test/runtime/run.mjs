@@ -209,6 +209,88 @@ async function check(url, mode) {
         engine.dispose();
       }
 
+      // 前置きのコードが返したオブジェクトを、読み取り専用のグローバル変数として使える。
+      const withPrelude = new window.JsExecutionEngine({
+        prelude: [
+          'const suffix = " 様";',
+          "return {",
+          "  lib: {",
+          "    honorific(name) { return name + suffix; },",
+          '    fail() { throw new Error("helper"); },',
+          "    table: { a: [1] },",
+          "  },",
+          "};",
+        ].join("\n"),
+      });
+      try {
+        record(
+          "prelude: helper",
+          (await withPrelude.execute("return lib.honorific(input);", "山田")) === "山田 様",
+        );
+        record(
+          "prelude: internals hidden",
+          (await withPrelude.execute("return typeof suffix;", null)) === "undefined",
+        );
+        record(
+          "prelude: frozen",
+          (await withPrelude.execute(
+            [
+              "const tries = [",
+              "  () => { lib = null; },",
+              "  () => { lib.honorific = null; },",
+              "  () => { lib.table.a.push(2); },",
+              "];",
+              "return tries.filter(attempt => { try { attempt(); return false; } catch { return true; } }).length;",
+            ].join("\n"),
+            null,
+          )) === 3,
+        );
+        const helperError = await rejects(
+          "prelude: helper error",
+          "const a = 1;\nreturn lib.fail();",
+          null,
+          "SCRIPT_ERROR",
+          undefined,
+          withPrelude,
+        );
+        record("prelude: error points to user code", helperError.location?.line === 2);
+        await rejects(
+          "prelude: timeout",
+          "while (true) {}",
+          null,
+          "TIMEOUT",
+          { timeoutMs: 30 },
+          withPrelude,
+        );
+        record(
+          "prelude: recovery",
+          (await withPrelude.execute("return lib.table.a[0];", null)) === 1,
+        );
+      } finally {
+        withPrelude.dispose();
+      }
+      for (const [name, prelude] of [
+        ["prelude: syntax error", "return {;"],
+        ["prelude: non-object", "return 1;"],
+      ]) {
+        const broken = new window.JsExecutionEngine({ prelude });
+        try {
+          const error = await rejects(name, "return 1;", null, "STARTUP_ERROR", undefined, broken);
+          record(
+            `${name} message`,
+            error.message.startsWith("前置きのコードを読み込めませんでした。"),
+          );
+        } finally {
+          broken.dispose();
+        }
+      }
+      try {
+        new window.JsExecutionEngine({ prelude: " ".repeat(256 * 1024 + 1) });
+        record("prelude: oversized", false);
+      } catch (error) {
+        record(`prelude: oversized (${error.code})`, error.code === "INVALID_INPUT");
+      }
+
       const cold = new window.JsExecutionEngine();
       const controller = new AbortController();
       try {

@@ -25,6 +25,16 @@ export interface SourceLocation {
   column: number;
 }
 
+// エンジンを作るときに指定する内容。
+export interface EngineOptions {
+  /**
+   * ユーザーのコードの前に毎回実行する関数の本体（前置きのコード）。return でオブジェクトを返す。
+   * そのプロパティを、凍結した読み取り専用のグローバル変数としてユーザーのコードに見せる。
+   * 本体の中で宣言した変数はユーザーのコードからは見えない。
+   */
+  prelude?: string;
+}
+
 // 呼び出しごとに指定できる制限とキャンセル通知。
 export interface ExecutionOptions {
   timeoutMs?: number;
@@ -54,7 +64,8 @@ export type ExecutionResult =
 
 // Comlinkが公開する、初期化と加工処理の入口。
 export interface WorkerApi {
-  initialize(): Promise<void>;
+  /** WASM を読み込み、前置きのコードを受け取る（実行のたびには送らない）。 */
+  initialize(prelude: string): Promise<void>;
   execute(request: ExecutionRequest): Promise<ExecutionResult>;
 }
 
@@ -78,6 +89,7 @@ export const limits = {
 
   // UTF-16コード単位数。Workerへ転送する前、結果をホストへ取り出す前に制限する。
   codeLength: 64 * 1024,
+  preludeLength: 256 * 1024,
   inputLength: 1024 * 1024,
   outputLength: 1024 * 1024,
 } as const;

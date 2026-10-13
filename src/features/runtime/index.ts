@@ -1,4 +1,5 @@
 export type {
+  EngineOptions,
   ExecutionErrorCode,
   ExecutionOptions,
   SourceLocation,

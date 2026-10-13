@@ -36,6 +36,8 @@ export interface Executions {
 export interface ExecutionsOptions {
   /** コードや入力が変わってから実行するまで待つ時間（ミリ秒）。打ち込みの途中で実行しないため。 */
   debounceMs?: number;
+  /** 前置きのコード（JsExecutionEngine の options.prelude）。変わったらエンジンを作り直す。 */
+  prelude?: string;
 }
 
 interface Request {
@@ -72,17 +74,18 @@ export function useExecutions(
   const runningRef = useRef(false);
   const pendingRef = useRef<Request | null>(null);
   const debounceMs = options.debounceMs ?? 0;
+  const prelude = options.prelude ?? "";
 
   // 画面を離れたら Worker を終了する。
   useEffect(() => {
-    const engine = new JsExecutionEngine();
+    const engine = new JsExecutionEngine({ prelude });
     engineRef.current = engine;
     return () => {
       engineRef.current = null;
       pendingRef.current = null;
       engine.dispose();
     };
-  }, []);
+  }, [prelude]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -95,7 +98,7 @@ export function useExecutions(
     return () => clearTimeout(timer);
     // drain は描画のたびに作り直すが、中身は ref だけを読むので、依存に含めなくてよい。
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code, inputs, debounceMs]);
+  }, [code, inputs, debounceMs, prelude]);
 
   /** 待っている要求を順に行う。実行中に新しい要求が来たら、今の要求を打ち切って最新を行う。 */
   async function drain() {

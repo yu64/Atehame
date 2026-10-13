@@ -14,8 +14,9 @@ import type { QuickJSContext, QuickJSHandle, QuickJSWASMModule } from "quickjs-e
 export function executeInQuickJS(
   quickjs: QuickJSWASMModule,
   request: ExecutionRequest,
+  prelude = "",
 ): ExecutionResult {
-  return new GuestExecution(quickjs, request).run();
+  return new GuestExecution(quickjs, request, prelude).run();
 }
 
 // Function('input', body)はQuickJS内で次の形にコンパイルされ、bodyは4行目から始まる。
@@ -29,6 +30,7 @@ const guestLineOffset = 3;
  */
 class GuestExecution {
   readonly #request: ExecutionRequest;
+  readonly #prelude: string;
   readonly #runtime: ReturnType<QuickJSWASMModule["newRuntime"]>;
   readonly #vm: QuickJSContext;
   readonly #deadline: number;
@@ -43,8 +45,9 @@ class GuestExecution {
   /** ゲストの例外を整形する関数。ユーザーコードより前に作り、組み込み関数を捕捉しておく。 */
   #formatError?: QuickJSHandle;
 
-  constructor(quickjs: QuickJSWASMModule, request: ExecutionRequest) {
+  constructor(quickjs: QuickJSWASMModule, request: ExecutionRequest, prelude: string) {
     this.#request = request;
+    this.#prelude = prelude;
     this.#runtime = quickjs.newRuntime();
     this.#runtime.setMemoryLimit(request.memoryLimitBytes);
     this.#runtime.setMaxStackSize(limits.stackBytes);
@@ -86,12 +89,32 @@ class GuestExecution {
     this.#formatError = this.#evaluate(guestErrorFormatterSource);
     const run = this.#evaluate(guestRunnerSource);
     const serialize = this.#evaluate(guestSerializerSource);
+    this.#installPrelude();
 
     const code = this.#own(this.#vm.newString(functionBodyPrefix + this.#request.code));
     const input = this.#own(this.#vm.newString(this.#request.inputJson));
     const result = this.#unwrap(this.#vm.callFunction(run, this.#vm.undefined, code, input));
     this.#rejectPromise(result);
     return this.#serialize(serialize, result);
+  }
+
+  /**
+   * 前置きのコードを実行し、返したオブジェクトのプロパティを、凍結した読み取り専用のグローバル変数にする。
+   * 内部の関数（エラーの整形など）が組み込み関数を捕捉した後に実行する。
+   */
+  #installPrelude(): void {
+    if (this.#prelude === "") return;
+    try {
+      const source = `(function () {\n${functionBodyPrefix}${this.#prelude}\n})()`;
+      const exports = this.#unwrap(this.#vm.evalCode(source, "prelude.js"));
+      const install = this.#evaluate(guestPreludeInstallerSource);
+      this.#unwrap(this.#vm.callFunction(install, this.#vm.undefined, exports));
+    } catch (error) {
+      // 期限切れは時間超過として扱う。
+      if (!(error instanceof GuestError) || this.#interrupted) throw error;
+      const text = this.#format(error.handle)?.text ?? "";
+      throw new GuestFailure("STARTUP_ERROR", `前置きのコードを読み込めませんでした。${text}`);
+    }
   }
 
   /** Promise は実行を待たずに拒否する。内部の値も解放の対象に含める。 */
@@ -368,6 +391,44 @@ const guestErrorFormatterSource = `(() => {
     }
 
     return stringify(result);
+  };
+})()`;
+
+// 前置きのコードが返したオブジェクトのプロパティを、凍結して読み取り専用のグローバル変数にする。
+// 代入や中身の変更は例外になる。ただし QuickJS では、グローバルのプロパティだけは
+// Object.defineProperty で値を差し替えられてしまう。環境は実行ごとに作り直すため、影響はその実行の中に限られる。
+const guestPreludeInstallerSource = `(() => {
+  const freeze = Object.freeze;
+  const isFrozen = Object.isFrozen;
+  const ownKeys = Reflect.ownKeys;
+  const describe = Object.getOwnPropertyDescriptor;
+  const define = Object.defineProperty;
+  const global = globalThis;
+  const Invalid = TypeError;
+
+  const isObject = value => value !== null && (
+    typeof value === 'object' || typeof value === 'function'
+  );
+
+  // 先に凍結してから中をたどるので、循環していても止まる。
+  const deepFreeze = value => {
+    if (!isObject(value) || isFrozen(value)) return;
+    freeze(value);
+    for (const key of ownKeys(value)) {
+      const descriptor = describe(value, key);
+      if ('value' in descriptor) deepFreeze(descriptor.value);
+    }
+  };
+
+  return exports => {
+    if (!isObject(exports)) {
+      throw new Invalid('前置きのコードはオブジェクトを返してください。');
+    }
+    for (const key of ownKeys(exports)) {
+      const value = exports[key];
+      deepFreeze(value);
+      define(global, key, { value, writable: false, enumerable: false, configurable: false });
+    }
   };
 })()`;
 
