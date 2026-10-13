@@ -5,6 +5,7 @@ import {
   textProperty,
 } from "@src/features/designer/layoutCss";
 import { Button } from "@src/shared/ui/Button";
+import { Card } from "@src/shared/ui/Card";
 
 // #############################################################################
 // MARK: 型定義
@@ -44,12 +45,14 @@ export function ElementList(props: Props) {
         );
 
         return (
-          <li
+          <Card
             key={element.name}
-            className={`
-              flex items-center gap-1 rounded-lg border
-              ${selected ? "border-primary bg-surface-hover" : "border-transparent hover:bg-surface-hover"}
-            `}
+            as="li"
+            frame="ghost"
+            padding="none"
+            selected={selected}
+            className="flex items-center gap-1"
+            onClickCard={() => props.onSelect(element.name)}
           >
             <button
               type="button"
@@ -68,7 +71,7 @@ export function ElementList(props: Props) {
               className="shrink-0"
               onClick={() => props.onRemove(element.name)}
             />
-          </li>
+          </Card>
         );
       })}
     </ul>

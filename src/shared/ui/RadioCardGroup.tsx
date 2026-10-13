@@ -1,3 +1,4 @@
+import { Card } from "@src/shared/ui/Card";
 import type { ReactNode } from "react";
 
 // #############################################################################
@@ -35,11 +36,12 @@ export function RadioCardGroup<T extends string>(props: Props<T>) {
       {props.options.map(option => {
         const selected = option.value === props.value;
         return (
-          <label
+          <Card
             key={option.value}
+            as="label"
+            selected={selected}
             className={`
-              flex items-start gap-3 p-3 rounded-lg border bg-surface
-              ${selected ? "border-primary" : "border-surface-border"}
+              flex items-start gap-3
               ${option.disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
             `}
           >
@@ -58,7 +60,7 @@ export function RadioCardGroup<T extends string>(props: Props<T>) {
                 <span className="text-sm text-text-secondary">{option.description}</span>
               )}
             </span>
-          </label>
+          </Card>
         );
       })}
     </fieldset>

@@ -4,12 +4,19 @@ import type { MouseEvent, ReactNode } from "react";
 // MARK: 型定義
 
 export interface Props {
-  /** 要素の種類。一覧の項目なら "li"、見出しを持つまとまりなら "section"。既定は "div"。 */
-  as?: "div" | "section" | "li";
+  /**
+   * 要素の種類。一覧の項目なら "li"、見出しを持つまとまりなら "section"、
+   * 中の入力欄（ラジオボタンなど）を全体で押せるようにするなら "label"。既定は "div"。
+   */
+  as?: "div" | "section" | "li" | "label";
+  /** 枠の見せ方。"ghost" は、選ばれるまで枠も背景も出さない（項目が詰まって並ぶ一覧に使う）。既定は "outline"。 */
+  frame?: "outline" | "ghost";
+  /** 選ばれているとき。枠の色を変える。 */
+  selected?: boolean;
   /** 角の丸み。既定は "lg"。 */
   rounded?: "none" | "md" | "lg";
   /** 内側の余白。既定は "md"。 */
-  padding?: "sm" | "md" | "lg";
+  padding?: "none" | "sm" | "md" | "lg";
   /**
    * カード全体を押したとき。渡すと、押せる見た目（ホバー・カーソル）になる。
    * キーボードでは押せないため、同じ操作のボタンを中に置く。
@@ -29,6 +36,7 @@ const roundedClasses = {
 };
 
 const paddingClasses = {
+  none: "",
   sm: "p-2",
   md: "p-3",
   lg: "p-6",
@@ -50,6 +58,7 @@ const interactiveSelector = "a, button, input, select, textarea, label, summary,
 export function Card(props: Props) {
   const Tag = props.as ?? "div";
   const clickable = props.onClickCard !== undefined;
+  const ghost = props.frame === "ghost";
 
   /** 中の部品の操作でなければ、カード全体の操作にする。 */
   function clickCard(event: MouseEvent<HTMLElement>) {
@@ -58,14 +67,16 @@ export function Card(props: Props) {
     // 中に置いたダイアログは別の場所に描かれるが、クリックはここまで届く。
     if (!(target instanceof Element) || !card.contains(target)) return;
     const inner = target.closest(interactiveSelector);
-    if (inner && card.contains(inner)) return;
+    if (inner && inner !== card && card.contains(inner)) return;
     props.onClickCard?.();
   }
 
   return (
     <Tag
       className={`
-        border border-surface-border bg-surface
+        border
+        ${props.selected ? "border-primary" : (ghost ? "border-transparent" : "border-surface-border")}
+        ${ghost ? (props.selected ? "bg-surface-hover" : "") : "bg-surface"}
         ${roundedClasses[props.rounded ?? "lg"]}
         ${paddingClasses[props.padding ?? "md"]}
         ${clickable ? "group cursor-pointer hover:bg-surface-hover" : ""}
