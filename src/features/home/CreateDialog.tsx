@@ -3,8 +3,10 @@ import { hasDraftAtom, startNewTemplateAtom, startTemplateAtom } from "@src/feat
 import { StandardTemplateDialog } from "@src/features/home/StandardTemplateDialog";
 import { TemplateFilePicker } from "@src/features/home/TemplateFilePicker";
 import { Button } from "@src/shared/ui/Button";
+import { Card } from "@src/shared/ui/Card";
 import { ConfirmDialog } from "@src/shared/ui/ConfirmDialog";
 import { Dialog } from "@src/shared/ui/Dialog";
+import { SelectCard } from "@src/shared/ui/SelectCard";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 import { navigate } from "vike/client/router";
@@ -80,28 +82,34 @@ export function CreateDialog(props: Props) {
   return (
     <Dialog open={props.open} onClose={props.onClose} title="テンプレートを作る">
       {/* 作業中の内容がなくても消さない。消えると、先頭が「新しく作る」に変わって取り違えるため。 */}
-      <Choice
+      <SelectCard
+        size="sm"
+        heading="h3"
         title="続きから編集"
         description={
           hasDraft ? "作業中のテンプレートの編集を続けます。" : "作業中のテンプレートはありません。"
         }
-        action="続ける"
+        buttonText="続ける"
         disabled={!hasDraft}
         onClick={() => begin()}
       />
-      <Choice
+      <SelectCard
+        size="sm"
+        heading="h3"
         title="新しく作る"
         description="空のテンプレートから作ります。"
-        action="新しく作る"
+        buttonText="新しく作る"
         onClick={() => confirmThenStart("new")}
       />
-      <Choice
+      <SelectCard
+        size="sm"
+        heading="h3"
         title="標準テンプレートから作る"
         description="Atehame が用意したテンプレートを元に作ります。"
-        action="選ぶ"
+        buttonText="選ぶ"
         onClick={() => confirmThenStart("standard")}
       />
-      <section className="flex flex-col gap-2 rounded-lg border border-surface-border p-3">
+      <Card as="section" className="flex flex-col gap-2">
         <h3 className="font-bold">テンプレートを読み込んで編集</h3>
         <TemplateFilePicker value={loaded} onChange={setLoaded} />
         <div className="flex justify-end">
@@ -114,7 +122,7 @@ export function CreateDialog(props: Props) {
             }}
           />
         </div>
-      </section>
+      </Card>
 
       {/* 作成ダイアログの上に重ねて開く。破棄の確認は選ぶ前に済ませ、決定したら編集へ進む。 */}
       <StandardTemplateDialog
@@ -137,35 +145,5 @@ export function CreateDialog(props: Props) {
         onCancel={() => setPending(undefined)}
       />
     </Dialog>
-  );
-}
-
-// #############################################################################
-// MARK: 内部部品
-
-/** 始め方の選択肢（説明とボタン）。 */
-function Choice(props: {
-  title: string;
-  description: string;
-  action: string;
-  /** 選べないとき。文字を薄くし、ボタンを押せなくする。 */
-  disabled?: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <section className="flex items-center gap-3 rounded-lg border border-surface-border p-3">
-      <div className="flex flex-1 flex-col">
-        <h3 className={`font-bold ${props.disabled ? "text-text-tertiary" : ""}`}>{props.title}</h3>
-        <p className={`text-sm ${props.disabled ? "text-text-tertiary" : "text-text-secondary"}`}>
-          {props.description}
-        </p>
-      </div>
-      <Button
-        label={props.action}
-        variant="primary"
-        disabled={props.disabled}
-        onClick={props.onClick}
-      />
-    </section>
   );
 }

@@ -2,6 +2,7 @@ import { useSyncedText } from "@src/shared/hooks/useSyncedText";
 import { formatBytes } from "@src/shared/lib/units";
 import { Alert } from "@src/shared/ui/Alert";
 import { Button } from "@src/shared/ui/Button";
+import { Card } from "@src/shared/ui/Card";
 import { ConfirmDialog } from "@src/shared/ui/ConfirmDialog";
 import { FileDropZone } from "@src/shared/ui/FileDropZone";
 import { Input } from "@src/shared/ui/Input";
@@ -128,7 +129,7 @@ function AssetRow(props: {
   }
 
   return (
-    <li className="flex gap-2 rounded-lg border border-surface-border p-2">
+    <Card as="li" padding="sm" className="flex gap-2">
       <div className="size-16 shrink-0 rounded bg-base flex items-center justify-center overflow-hidden">
         {(
           item.url
@@ -194,6 +195,6 @@ function AssetRow(props: {
           />
         </div>
       </div>
-    </li>
+    </Card>
   );
 }
