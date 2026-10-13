@@ -19,11 +19,6 @@ const themeConfig = {
         hover: "#FAFAFA",
         border: "#E5E5E5",
       },
-      subtle: {
-        DEFAULT: "#FAFAFA",
-        hover: "#F4F4F4",
-        border: "#E5E5E5",
-      },
 
       text: {
         primary: "#1A1A1A",
@@ -33,8 +28,6 @@ const themeConfig = {
       },
 
       border: {
-        strong: "#C8C3B8",
-        DEFAULT: "#D8D3C8",
         subtle: "#E5E0D8",
       },
       status: {
@@ -51,78 +44,10 @@ const themeConfig = {
           bg: "#EDF7EE",
         },
       },
-
-      // base: {
-      //   DEFAULT: "#FFFFFF",
-      //   light: "#FAFAFA",
-      // },
-      // main: {
-      //   DEFAULT: "#DC2626",
-      // },
-      // secondary: {
-      //   DEFAULT: "#F97316",
-      // },
-      // accent: {
-      //   move: "#F97316",
-      //   focus: "#171717",
-      // },
-      // text: {
-      //   primary: "#262626",
-      //   secondary: "#737373",
-      //   accent: "#DC2626",
-      //   mute: "#A3A3A3",
-      //   reverse: "#FFFFFF",
-      // }
-
-      // base: {
-      //   "lv1": "oklch(99% 0 0)",      // 純白
-      //   "lv2": "oklch(97% 0.01 240)",  // 少し沈んだ背景
-      //   "lv3": "oklch(94% 0.02 240)"   // フォームやコードの背景
-      // },
-      // main: {
-      //   "lv1": "oklch(35% 0 0)",      // 濃いグレー（本文）
-      //   "lv2": "oklch(55% 0 0)",      // 中間（補足）
-      //   "lv3": "oklch(75% 0 0)"       // 薄い（注釈）
-      // },
-      // accent: "oklch(55% 0.18 250)",  // 鮮やかなブルー
-      // stroke: {
-      //   "lv1": "oklch(92% 0 0)",
-      //   "lv2": "oklch(88% 0 0)",
-      //   "lv3": "oklch(84% 0 0)"
-      // },
-      // state: {
-      //   unused: "oklch(70% 0.05 250)",
-      //   success: "oklch(65% 0.18 150)", // Success追加
-      //   warn: "oklch(75% 0.18 70)",
-      //   error: "oklch(65% 0.22 25)"
-      // }
     },
   },
   dark: {
-    colors: {
-      // base: {
-      //   "lv1": "oklch(25% 0.02 240)", // 濃紺グレー
-      //   "lv2": "oklch(29% 0.02 240)", // より深い
-      //   "lv3": "oklch(32% 0.02 240)"  // 最深部
-      // },
-      // main: {
-      //   "lv1": "oklch(95% 0 0)",      // ほぼ白（本文）
-      //   "lv2": "oklch(80% 0 0)",      // 明るいグレー（補足）
-      //   "lv3": "oklch(60% 0 0)"       // 沈んだグレー（注釈）
-      // },
-      // accent: "oklch(70% 0.14 250)",  // ダークモードで映える少し明るい青
-      // stroke: {
-      //   "lv1": "oklch(33% 0.02 240)",
-      //   "lv2": "oklch(37% 0.02 240)",
-      //   "lv3": "oklch(41% 0.02 240)"
-      // },
-      // state: {
-      //   unused:  "oklch(55% 0.05 250)",
-      //   success: "oklch(75% 0.15 150)",
-      //   warn:    "oklch(80% 0.15 70)",
-      //   error:   "oklch(70% 0.18 25)"
-      // }
-    },
+    colors: {},
   },
 } as const satisfies Record<string, object>;
 
