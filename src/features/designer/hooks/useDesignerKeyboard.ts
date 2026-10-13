@@ -1,4 +1,5 @@
 import type { DesignerStore } from "@src/features/designer/state/designerStore";
+import { isEditableTarget } from "@src/shared/lib/dom";
 import { pxPerMm } from "@src/shared/lib/units";
 import { type KeyboardEvent, useCallback } from "react";
 
@@ -50,9 +51,7 @@ export function useDesignerKeyboard(store: DesignerStore) {
 
 /** 文字を入力する場所か（そこではキー操作を横取りしない）。 */
 function isEditable(target: EventTarget): boolean {
-  if (!(target instanceof HTMLElement)) return false;
   // CSS エディターの中と、ダイアログ（削除の確認など）の中では、それぞれの操作を優先する。
-  if (target.closest(".monaco-editor, dialog")) return true;
-  const tag = target.tagName;
-  return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || target.isContentEditable;
+  if (target instanceof HTMLElement && target.closest(".monaco-editor, dialog")) return true;
+  return isEditableTarget(target);
 }

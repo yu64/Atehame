@@ -1,10 +1,11 @@
 import { MainContent } from "@src/app/MainContent";
 import { StepHeader } from "@src/app/StepHeader";
-import type { Template } from "@src/features/data";
+import { inputFields, type Template } from "@src/features/data";
 import { Designer, layoutSummary, printLayout } from "@src/features/designer";
 import { type LoadedCsv, loadedCsvAtom, usingTemplateAtom } from "@src/features/use/data";
 import { type RowResult, useTransformRows } from "@src/features/use/preview/hooks/useTransformRows";
 import { RowList } from "@src/features/use/preview/RowList";
+import { errorMessage } from "@src/shared/lib/error";
 import { Alert } from "@src/shared/ui/Alert";
 import { Button } from "@src/shared/ui/Button";
 import { useAtomValue } from "jotai";
@@ -84,9 +85,7 @@ function RowsPreview(props: { template: Template; csv: LoadedCsv }) {
     : []
   ),
   );
-  const fields = template.schema.fields
-    .filter(field => field.name !== "")
-    .slice(0, listedFieldCount);
+  const fields = inputFields(template.schema).slice(0, listedFieldCount);
   const paper = layoutSummary(template.layout).paper;
 
   /** 行の印刷するかを切り替える。 */
@@ -105,7 +104,7 @@ function RowsPreview(props: { template: Template; csv: LoadedCsv }) {
     try {
       await printLayout(template.layout, checkedValues);
     } catch (error) {
-      setPrintError(error instanceof Error ? error.message : String(error));
+      setPrintError(errorMessage(error));
     }
   }
 

@@ -5,6 +5,7 @@ import { layoutSummary } from "@src/features/designer";
 import { currentTemplateAtom, templateNameAtom } from "@src/features/edit/data";
 import { exportStrategies } from "@src/features/edit/save/export/strategies";
 import { useSampleOutput } from "@src/features/edit/transform";
+import { errorMessage } from "@src/shared/lib/error";
 import { formatBytes } from "@src/shared/lib/units";
 import { Alert } from "@src/shared/ui/Alert";
 import { Button } from "@src/shared/ui/Button";
@@ -82,7 +83,7 @@ export function SavePage() {
     } catch (error) {
       setStatus({
         type: "error",
-        message: (error instanceof Error ? error.message : String(error)),
+        message: errorMessage(error),
       });
     }
   }

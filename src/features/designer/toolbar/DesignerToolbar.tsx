@@ -1,6 +1,7 @@
 import { useDesignerHistory } from "@src/features/designer/hooks/useDesignerHistory";
 import { useDesignerPrint } from "@src/features/designer/hooks/useDesignerPrint";
 import { useDesignerView } from "@src/features/designer/hooks/useDesignerView";
+import { errorMessage } from "@src/shared/lib/error";
 import { Alert } from "@src/shared/ui/Alert";
 import { Button } from "@src/shared/ui/Button";
 import { Checkbox } from "@src/shared/ui/Checkbox";
@@ -30,7 +31,7 @@ export function DesignerToolbar() {
     try {
       await print();
     } catch (error) {
-      setPrintError(error instanceof Error ? error.message : String(error));
+      setPrintError(errorMessage(error));
     }
   }
 

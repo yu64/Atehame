@@ -23,6 +23,7 @@ export {
   type DataSchema,
   type FieldType,
   fieldTypeLabels,
+  inputFields,
   type SchemaField,
 } from "@src/features/data/schema";
 export {

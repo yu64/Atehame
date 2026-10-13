@@ -1,4 +1,4 @@
-import type { DataSchema, FieldType } from "@src/features/data";
+import { type DataSchema, type FieldType, inputFields } from "@src/features/data";
 
 // #############################################################################
 // MARK: 定数
@@ -15,13 +15,9 @@ const declarationTypes: Record<FieldType, string> = {
 
 /** エディターの補完用に、`input` の型宣言を生成する。 */
 export function createInputDeclaration(schema: DataSchema): string {
-  const names = new Set<string>();
   const members: string[] = [];
 
-  for (const field of schema.fields) {
-    if (field.name === "" || names.has(field.name)) continue;
-    names.add(field.name);
-
+  for (const field of inputFields(schema)) {
     // コメント終端でJSDocが壊れないようにする。
     const memo = field.memo.replaceAll("*/", "* /");
     if (memo !== "") members.push(`  /** ${memo} */`);

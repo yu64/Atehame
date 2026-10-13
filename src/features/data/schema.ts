@@ -55,3 +55,16 @@ export function createSchemaField(): SchemaField {
     memo: "",
   };
 }
+
+/**
+ * 加工の input に入るカラム（名前があり、同じ名前の2つ目以降でないもの）。
+ * 名前が空のカラムと、重複した名前のカラムは input に入らないため、CSV の対応や一覧の表示からも除く。
+ */
+export function inputFields(schema: DataSchema): SchemaField[] {
+  const seen = new Set<string>();
+  return schema.fields.filter(field => {
+    if (field.name === "" || seen.has(field.name)) return false;
+    seen.add(field.name);
+    return true;
+  });
+}

@@ -1,4 +1,4 @@
-import type { Template } from "@src/features/data";
+import { inputFields, type Template } from "@src/features/data";
 import type { CsvSource, LoadedCsv } from "@src/features/use/data";
 import type { TextEncoding } from "@src/shared/lib/textFile";
 import { Alert } from "@src/shared/ui/Alert";
@@ -28,8 +28,8 @@ const encodingLabels: Record<TextEncoding, string> = {
 /** 読み込んだ CSV の結果。足りないカラムや使わない列を知らせ、先頭の数行を表で見せる。 */
 export function CsvSummary(props: Props) {
   const { csv } = props;
-  const fields = props.template.schema.fields.filter(
-    field => field.name !== "" && !csv.missing.includes(field.name),
+  const fields = inputFields(props.template.schema).filter(
+    field => !csv.missing.includes(field.name),
   );
   const shown = csv.rows.slice(0, previewRowCount);
 

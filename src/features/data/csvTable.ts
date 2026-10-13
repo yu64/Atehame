@@ -1,5 +1,5 @@
 import { safeFileBaseName } from "@src/features/data/model";
-import type { DataSchema } from "@src/features/data/schema";
+import { type DataSchema, inputFields } from "@src/features/data/schema";
 import type { RowCells } from "@src/features/data/transformInput";
 import { stringifyCsv } from "@src/shared/lib/csv";
 
@@ -27,7 +27,7 @@ export interface CsvTable {
 export function readCsvTable(schema: DataSchema, table: string[][]): CsvTable {
   const [header = [], ...body] = table;
   const headerNames = header.map(name => name.trim());
-  const columns = namedFields(schema).map(field => ({
+  const columns = inputFields(schema).map(field => ({
     field,
     index: headerNames.indexOf(field.name),
   }));
@@ -60,18 +60,5 @@ export function csvTemplateFileName(templateName: string): string {
  * Excel で開いたときに文字化けしないよう、UTF-8 の BOM を付ける。
  */
 export function createCsvTemplate(schema: DataSchema): string {
-  return "\uFEFF" + stringifyCsv([namedFields(schema).map(field => field.name)]);
-}
-
-// #############################################################################
-// MARK: 内部関数
-
-/** 名前があり、重複していないカラム（加工の input に入るカラム）。 */
-function namedFields(schema: DataSchema) {
-  const seen = new Set<string>();
-  return schema.fields.filter(field => {
-    if (field.name === "" || seen.has(field.name)) return false;
-    seen.add(field.name);
-    return true;
-  });
+  return "\uFEFF" + stringifyCsv([inputFields(schema).map(field => field.name)]);
 }
