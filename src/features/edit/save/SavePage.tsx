@@ -166,14 +166,11 @@ export function SavePage() {
         open={confirming !== undefined}
         title="このまま保存しますか？"
         message={
-          <>
-            <p>次の点が気になります。保存はできますが、使うときに困るかもしれません。</p>
-            <ul className="mt-2 list-disc pl-5">
-              {confirming?.map(warning => (
-                <li key={warning}>{warning}</li>
-              ))}
-            </ul>
-          </>
+          <ul className="list-disc pl-5">
+            {confirming?.map(warning => (
+              <li key={warning}>{warning}</li>
+            ))}
+          </ul>
         }
         confirmLabel="このまま保存"
         cancelLabel="戻って直す"

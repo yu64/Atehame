@@ -1,7 +1,7 @@
 import { MainContent } from "@src/app/MainContent";
 import { StepHeader } from "@src/app/StepHeader";
 import { ThemedCodeEditor as CodeEditor } from "@src/app/ThemedCodeEditor";
-import { fieldTypeLabels } from "@src/features/data";
+import { fieldTypeLabels, transformLibraryDeclaration } from "@src/features/data";
 import { schemaAtom, transformCodeAtom } from "@src/features/edit/data";
 import { useSampleOutput } from "@src/features/edit/transform/hooks/useSampleOutput";
 import { createInputDeclaration } from "@src/features/edit/transform/model";
@@ -56,7 +56,11 @@ export function TransformPage() {
   const [sampleRow, setSampleRow] = useAtom(sampleRowAtom);
   const editorRef = useRef<CodeEditorHandle>(null);
 
-  const declarations = useMemo(() => createInputDeclaration(schema), [schema]);
+  // input の型と、関数集（atehame）の型を補完に使う。
+  const declarations = useMemo(
+    () => `${createInputDeclaration(schema)}\n\n${transformLibraryDeclaration}`,
+    [schema],
+  );
   const { conversion, preview } = useSampleOutput();
 
   const markers = useMemo<EditorMarker[]>(() => {

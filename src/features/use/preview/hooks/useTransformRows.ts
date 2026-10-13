@@ -1,4 +1,9 @@
-import { createTransformInput, type RowCells, type Template } from "@src/features/data";
+import {
+  createTransformInput,
+  type RowCells,
+  type Template,
+  transformPrelude,
+} from "@src/features/data";
 import type { Values } from "@src/features/designer";
 import { type ExecutionOutcome, useExecutions } from "@src/features/runtime";
 import type { JsonValue } from "@src/shared/lib/json";
@@ -38,7 +43,9 @@ export function useTransformRows(template: Template, rows: RowCells[]): Transfor
     [template.schema, rows],
   );
   const inputs = useMemo(() => conversions.map(conversion => conversion.input), [conversions]);
-  const { results, done } = useExecutions(template.transform.code, inputs);
+  const { results, done } = useExecutions(template.transform.code, inputs, {
+    prelude: transformPrelude,
+  });
 
   const rowResults = useMemo(() => {
     const fieldNames = new Map(template.schema.fields.map(field => [field.id, field.name]));

@@ -1,4 +1,4 @@
-import { createTransformInput } from "@src/features/data";
+import { createTransformInput, transformPrelude } from "@src/features/data";
 import { schemaAtom, transformCodeAtom } from "@src/features/edit/data";
 import { sampleRowAtom } from "@src/features/edit/transform/store";
 import { type ExecutionOutcome, useExecutions } from "@src/features/runtime";
@@ -22,7 +22,10 @@ export function useSampleOutput() {
 
   const conversion = useMemo(() => createTransformInput(schema, sampleRow), [schema, sampleRow]);
   const inputs = useMemo(() => [conversion.input], [conversion.input]);
-  const { results } = useExecutions(code, inputs, { debounceMs });
+  const { results } = useExecutions(code, inputs, {
+    debounceMs,
+    prelude: transformPrelude,
+  });
   const preview: ExecutionOutcome = results[0] ?? { status: "pending" };
 
   return {

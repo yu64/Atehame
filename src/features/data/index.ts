@@ -34,3 +34,8 @@ export {
   type RowCells,
   type TransformInput,
 } from "@src/features/data/transformInput";
+export {
+  transformLibraryDeclaration,
+  transformPrelude,
+} from "@src/features/data/transformLibrary/source";
+export type { Atehame } from "@src/features/data/transformLibrary/types";

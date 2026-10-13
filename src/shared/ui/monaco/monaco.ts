@@ -23,12 +23,13 @@ function configureWorkers() {
 /**
  * 加工コードは関数本体のため、トップレベルの return を許可する。
  * ブラウザAPIは実行環境（QuickJS）に存在しないため、DOMの型は読み込まない。
+ * 言語の版は QuickJS に合わせる（ES2024 の組み込み関数まで使える）。
  */
 function configureJavaScript() {
   const javascript = monaco.typescript.javascriptDefaults;
   javascript.setCompilerOptions({
-    target: monaco.typescript.ScriptTarget.ES2020,
-    lib: ["es2020"],
+    target: monaco.typescript.ScriptTarget.ESNext,
+    lib: ["es2024"],
     allowJs: true,
     checkJs: true,
     allowNonTsExtensions: true,
