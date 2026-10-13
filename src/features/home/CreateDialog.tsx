@@ -79,14 +79,16 @@ export function CreateDialog(props: Props) {
 
   return (
     <Dialog open={props.open} onClose={props.onClose} title="テンプレートを作る">
-      {hasDraft && (
-        <Choice
-          title="続きから編集"
-          description="作業中のテンプレートの編集を続けます。"
-          action="続ける"
-          onClick={() => begin()}
-        />
-      )}
+      {/* 作業中の内容がなくても消さない。消えると、先頭が「新しく作る」に変わって取り違えるため。 */}
+      <Choice
+        title="続きから編集"
+        description={
+          hasDraft ? "作業中のテンプレートの編集を続けます。" : "作業中のテンプレートはありません。"
+        }
+        action="続ける"
+        disabled={!hasDraft}
+        onClick={() => begin()}
+      />
       <Choice
         title="新しく作る"
         description="空のテンプレートから作ります。"
@@ -146,15 +148,24 @@ function Choice(props: {
   title: string;
   description: string;
   action: string;
+  /** 選べないとき。文字を薄くし、ボタンを押せなくする。 */
+  disabled?: boolean;
   onClick: () => void;
 }) {
   return (
     <section className="flex items-center gap-3 rounded-lg border border-surface-border p-3">
       <div className="flex flex-1 flex-col">
-        <h3 className="font-bold">{props.title}</h3>
-        <p className="text-sm text-text-secondary">{props.description}</p>
+        <h3 className={`font-bold ${props.disabled ? "text-text-tertiary" : ""}`}>{props.title}</h3>
+        <p className={`text-sm ${props.disabled ? "text-text-tertiary" : "text-text-secondary"}`}>
+          {props.description}
+        </p>
       </div>
-      <Button label={props.action} variant="primary" onClick={props.onClick} />
+      <Button
+        label={props.action}
+        variant="primary"
+        disabled={props.disabled}
+        onClick={props.onClick}
+      />
     </section>
   );
 }
