@@ -7,13 +7,22 @@ import { pxPerMm } from "@src/shared/lib/units";
 import { useEffect, useRef } from "react";
 
 // #############################################################################
+// MARK: 型定義
+
+export interface Props {
+  /** 読み取り専用にする（用紙を見せるだけで、選択や移動は受け付けない）。プレビューに使う。 */
+  readOnly?: boolean;
+}
+
+// #############################################################################
 // MARK: コンポーネント
 
 /**
  * 用紙を表示する領域。用紙（描画）と、その上の操作レイヤーを重ねる。
+ * readOnly なら操作レイヤーを置かず、値が空の部品にも名前を出さない（印刷と同じ見た目）。
  * 用紙の外（灰色の部分）を押すと選択を外し、用紙の設定を表示できるようにする。
  */
-export function DesignerCanvas() {
+export function DesignerCanvas(props: Props) {
   const canvas = useDesignerCanvas();
   const view = useDesignerView();
   const areaRef = useRef<HTMLDivElement>(null);
@@ -45,7 +54,7 @@ export function DesignerCanvas() {
           event.nativeEvent.offsetX >= area.clientWidth
           || event.nativeEvent.offsetY >= area.clientHeight
         );
-        if (event.target === area && !onScrollbar) select(undefined);
+        if (event.target === area && !onScrollbar && !props.readOnly) select(undefined);
       }}
     >
       <div
@@ -59,23 +68,26 @@ export function DesignerCanvas() {
         <PaperFrame
           layout={canvas.layout}
           sample={canvas.sample}
+          placeholder={!props.readOnly}
           paper={paper}
           scale={view.zoom}
           pxPerMm={pxPerMm}
           onCssWarnings={canvas.setCssWarnings}
           onMeasure={canvas.setRects}
         />
-        <SelectionLayer
-          names={canvas.names}
-          rects={canvas.rects}
-          paper={paper}
-          selected={canvas.selected}
-          unit={unit}
-          gridSnap={view.gridSnap}
-          onSelect={select}
-          onPreview={canvas.preview}
-          onCommit={canvas.commitPreview}
-        />
+        {!props.readOnly && (
+          <SelectionLayer
+            names={canvas.names}
+            rects={canvas.rects}
+            paper={paper}
+            selected={canvas.selected}
+            unit={unit}
+            gridSnap={view.gridSnap}
+            onSelect={select}
+            onPreview={canvas.preview}
+            onCommit={canvas.commitPreview}
+          />
+        )}
       </div>
     </div>
   );

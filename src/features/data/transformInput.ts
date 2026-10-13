@@ -13,6 +13,8 @@ export interface TransformInput {
 }
 
 export interface InputProblem {
+  /** schema: カラムの定義の問題（どの行でも同じ）。value: その行の値の問題（型に合わないなど）。 */
+  kind: "schema" | "value";
   /** 対象のフィールド。スキーマ全体の問題では undefined。 */
   fieldId?: string;
   message: string;
@@ -65,6 +67,7 @@ export function createTransformInput(schema: DataSchema, cells: RowCells): Input
   for (const field of schema.fields) {
     if (field.name === "") {
       problems.push({
+        kind: "schema",
         fieldId: field.id,
         message: "カラム名が空のため、input に含まれません。",
       });
@@ -72,6 +75,7 @@ export function createTransformInput(schema: DataSchema, cells: RowCells): Input
     }
     if (names.has(field.name)) {
       problems.push({
+        kind: "schema",
         fieldId: field.id,
         message: `カラム名「${field.name}」が重複しています。`,
       });
@@ -82,6 +86,7 @@ export function createTransformInput(schema: DataSchema, cells: RowCells): Input
     const converted = convertCell(field.type, cells[field.id] ?? "");
     if ("error" in converted) {
       problems.push({
+        kind: "value",
         fieldId: field.id,
         message: converted.error,
       });

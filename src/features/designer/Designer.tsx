@@ -22,10 +22,10 @@ import { type ReactNode, useEffect, useLayoutEffect, useMemo, useState } from "r
 
 export interface DesignerProps {
   value: Layout;
-  /** 確定した変更を通知する（ドラッグ中などの途中経過は通知しない）。 */
-  onChange: (layout: Layout) => void;
-  /** パレットに並べる値の名前（加工の出力のキー）。 */
-  fields: string[];
+  /** 確定した変更を通知する（ドラッグ中などの途中経過は通知しない）。読み取り専用なら省略できる。 */
+  onChange?: (layout: Layout) => void;
+  /** パレットに並べる値の名前（加工の出力のキー）。読み取り専用なら省略できる。 */
+  fields?: string[];
   /** プレビューに使う値。 */
   sample: Values;
   /** パレットの部品の雛形。先頭の雛形は、値の名前から追加する部品にも使う。 */
@@ -40,6 +40,12 @@ export interface DesignerProps {
 }
 
 // #############################################################################
+// MARK: 定数
+
+/** fields を省略したとき（描画のたびに新しい配列を作らないため）。 */
+const noFields: string[] = [];
+
+// #############################################################################
 // MARK: コンポーネント
 
 /**
@@ -50,7 +56,7 @@ export interface DesignerProps {
 export function Designer(props: DesignerProps) {
   /** 確定したレイアウトを、保存用の形にして呼び出し側へ知らせる。 */
   function notify(layout: LayoutDocument) {
-    props.onChange(fromLayoutDocument(layout));
+    props.onChange?.(fromLayoutDocument(layout));
   }
   const [store] = useState(() => new DesignerStore(toLayoutDocument(props.value), notify));
   // 最新の onChange で知らせる。描画中に書き換えないよう、描画の確定後に差し替える。
@@ -63,7 +69,7 @@ export function Designer(props: DesignerProps) {
 
   const config = useMemo<DesignerConfig>(
     () => ({
-      fields: props.fields,
+      fields: props.fields ?? noFields,
       sample: props.sample,
       presets: props.presets ?? defaultPresets,
       cssEditor: props.cssEditor,

@@ -17,6 +17,8 @@ import { useEffect, useMemo, useRef } from "react";
 export interface Props {
   layout: LayoutDocument;
   sample: Values;
+  /** 値が空の部品に、値の名前を薄く出す（編集用）。 */
+  placeholder: boolean;
   /** 用紙の大きさ（mm）。 */
   paper: PageSize;
   scale: number;
@@ -45,7 +47,7 @@ export function PaperFrame(props: Props) {
     if (!doc) return;
 
     callbacks.current.onCssWarnings(applyLayoutStyles(doc, props.layout));
-    renderPages(doc, props.layout, [props.sample], { placeholder: true });
+    renderPages(doc, props.layout, [props.sample], { placeholder: props.placeholder });
 
     /** 部品の表示上の位置と大きさを測り、知らせる。 */
     function measure(target: Document) {
@@ -58,7 +60,7 @@ export function PaperFrame(props: Props) {
     return () => {
       cancelled = true;
     };
-  }, [doc, props.layout, props.sample, props.pxPerMm]);
+  }, [doc, props.layout, props.sample, props.placeholder, props.pxPerMm]);
 
   const width = props.paper.width * props.pxPerMm;
   const height = props.paper.height * props.pxPerMm;

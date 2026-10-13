@@ -1,9 +1,15 @@
 import { createTransformInput } from "@src/features/data";
 import { schemaAtom, transformCodeAtom } from "@src/features/edit/data";
-import { useTransformPreview } from "@src/features/edit/transform/hooks/useTransformPreview";
 import { sampleRowAtom } from "@src/features/edit/transform/store";
+import { type ExecutionOutcome, useExecutions } from "@src/features/runtime";
 import { useAtomValue } from "jotai";
 import { useMemo } from "react";
+
+// #############################################################################
+// MARK: 定数
+
+/** 入力が落ち着いてから加工処理を実行する待ち時間（ミリ秒）。 */
+const debounceMs = 300;
 
 // #############################################################################
 // MARK: フック
@@ -15,7 +21,9 @@ export function useSampleOutput() {
   const sampleRow = useAtomValue(sampleRowAtom);
 
   const conversion = useMemo(() => createTransformInput(schema, sampleRow), [schema, sampleRow]);
-  const preview = useTransformPreview(code, conversion.input);
+  const inputs = useMemo(() => [conversion.input], [conversion.input]);
+  const { results } = useExecutions(code, inputs, { debounceMs });
+  const preview: ExecutionOutcome = results[0] ?? { status: "pending" };
 
   return {
     conversion,

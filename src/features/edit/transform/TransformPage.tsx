@@ -4,10 +4,9 @@ import { ThemedCodeEditor as CodeEditor } from "@src/app/ThemedCodeEditor";
 import { fieldTypeLabels } from "@src/features/data";
 import { schemaAtom, transformCodeAtom } from "@src/features/edit/data";
 import { useSampleOutput } from "@src/features/edit/transform/hooks/useSampleOutput";
-import type { TransformPreview } from "@src/features/edit/transform/hooks/useTransformPreview";
 import { createInputDeclaration } from "@src/features/edit/transform/model";
 import { sampleRowAtom } from "@src/features/edit/transform/store";
-import type { ExecutionErrorCode } from "@src/features/runtime";
+import type { ExecutionErrorCode, ExecutionOutcome } from "@src/features/runtime";
 import { Alert } from "@src/shared/ui/Alert";
 import { Button } from "@src/shared/ui/Button";
 import type { CodeEditorHandle, EditorMarker } from "@src/shared/ui/CodeEditor";
@@ -20,11 +19,11 @@ import { navigate } from "vike/client/router";
 // MARK: 型定義
 
 interface PreviewStatusProps {
-  preview: TransformPreview;
+  preview: ExecutionOutcome;
 }
 
 interface PreviewBodyProps {
-  preview: TransformPreview;
+  preview: ExecutionOutcome;
   /** エラー位置へエディターを移動する。 */
   onReveal: (line: number, column: number) => void;
 }
@@ -173,7 +172,7 @@ export function TransformPage() {
 /** 実行結果の状態（成功・エラー・実行待ち）と、かかった時間。 */
 function PreviewStatus(props: PreviewStatusProps) {
   const preview = props.preview;
-  if (preview.status === "idle") {
+  if (preview.status === "pending") {
     return <span className="text-sm text-text-tertiary">実行待ち</span>;
   }
 
