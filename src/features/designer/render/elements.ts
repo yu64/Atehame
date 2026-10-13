@@ -58,7 +58,8 @@ export function renderElement(
   const template = decodeCssString(rule.declarations.get(textProperty)?.value ?? "") ?? "";
   const pieces = fillTemplate(template, values, options);
 
-  if (rule.declarations.get(splitProperty)?.value.trim() === "char") {
+  const split = rule.declarations.get(splitProperty)?.value.trim();
+  if (split === "char") {
     // 1文字ずつ分ける。郵便番号の枠のように、文字ごとに位置を決める場合に使う。
     for (const piece of pieces) {
       for (const char of piece.text) {
@@ -72,15 +73,36 @@ export function renderElement(
     return element;
   }
 
+  const digits = tateChuYokoDigits(rule.declarations.get("text-combine-upright")?.value);
+  if (split === "line") {
+    // 改行ごとに分ける。行ごとの字下げのように、行ごとに位置を決める場合に使う。
+    for (const line of splitLines(pieces)) {
+      const span = doc.createElement("span");
+      span.dataset.part = "line";
+      appendPieces(doc, span, line, digits);
+      element.append(span);
+    }
+    return element;
+  }
+
   const content = doc.createElement("span");
   content.dataset.part = "content";
-  const digits = tateChuYokoDigits(rule.declarations.get("text-combine-upright")?.value);
+  appendPieces(doc, content, pieces, digits);
+  element.append(content);
+  return element;
+}
+
+// #############################################################################
+// MARK: 内部関数
+
+/** 文字を入れる。値のない埋め込みは薄く表示し、短い数字の並びは縦中横にする。 */
+function appendPieces(doc: Document, parent: HTMLElement, pieces: Piece[], digits: number) {
   for (const piece of pieces) {
     if (piece.placeholder) {
       const span = doc.createElement("span");
       span.className = "atehame-placeholder";
       span.textContent = piece.text;
-      content.append(span);
+      parent.append(span);
       continue;
     }
     for (const run of splitTateChuYoko(piece.text, digits)) {
@@ -88,18 +110,31 @@ export function renderElement(
         const span = doc.createElement("span");
         span.className = "atehame-tcy";
         span.textContent = run.text;
-        content.append(span);
+        parent.append(span);
       } else {
-        content.append(doc.createTextNode(run.text));
+        parent.append(doc.createTextNode(run.text));
       }
     }
   }
-  element.append(content);
-  return element;
 }
 
-// #############################################################################
-// MARK: 内部関数
+/** 区切りを、改行ごとの行に分ける。最後が改行で終わる場合も、その後ろの空の行は作らない。 */
+function splitLines(pieces: Piece[]): Piece[][] {
+  const lines: Piece[][] = [[]];
+  for (const piece of pieces) {
+    for (const [index, text] of piece.text.split("\n").entries()) {
+      if (index > 0) lines.push([]);
+      if (text !== "") {
+        lines[lines.length - 1].push({
+          ...piece,
+          text,
+        });
+      }
+    }
+  }
+  if (lines.length > 1 && lines[lines.length - 1].length === 0) lines.pop();
+  return lines;
+}
 
 /**
  * 画像を表示する。src は登録した画像から検証して組み立てた data: URL だけを使う。

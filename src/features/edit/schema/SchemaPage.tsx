@@ -42,6 +42,7 @@ export function SchemaPage() {
             <code className="font-mono">input</code> で使います。
           </>
         }
+        onBack={() => navigate("/")}
         onNext={() => navigate("/edit/transform")}
       />
       <MainContent>

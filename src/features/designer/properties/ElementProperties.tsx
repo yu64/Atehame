@@ -13,7 +13,6 @@ import { TextTemplateField } from "@src/features/designer/properties/TextTemplat
 import { defaultFont, fontFamilyValue, fontVariables } from "@src/features/designer/render";
 import { keysOf } from "@src/shared/lib/util/object";
 import { Button } from "@src/shared/ui/Button";
-import { Checkbox } from "@src/shared/ui/Checkbox";
 
 // #############################################################################
 // MARK: 型定義
@@ -322,10 +321,24 @@ function TextFields(props: {
         />
       </div>
 
-      <Checkbox
-        label='1文字ずつ分ける（[data-part="char"] で1文字ずつ指定できます）'
-        checked={value(splitProperty) === "char"}
-        onChange={checked => props.onDeclaration(splitProperty, (checked ? "char" : undefined))}
+      <CssChoiceField
+        label="文字の分け方"
+        value={value(splitProperty)}
+        options={[
+          {
+            value: "",
+            label: "分けない",
+          },
+          {
+            value: "char",
+            label: '1文字ずつ（[data-part="char"] で指定）',
+          },
+          {
+            value: "line",
+            label: '1行ずつ（[data-part="line"] で指定）',
+          },
+        ]}
+        onChange={set(splitProperty)}
       />
     </>
   );

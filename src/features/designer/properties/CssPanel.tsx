@@ -35,6 +35,10 @@ export function CssPanel(props: Props) {
           <li>
             <code className="font-mono">--atehame-split: char;</code> で1文字ずつに分かれ、
             <code className="font-mono">[data-part="char"]</code> で指定できます。
+            <code className="font-mono">--atehame-split: line;</code> なら改行ごとに分かれ、
+            <code className="font-mono">[data-part="line"]:nth-child(2)</code>{" "}
+            のように行ごとに指定できます（字下げは{" "}
+            <code className="font-mono">padding-inline-start: 2ic;</code> で2文字分）。
           </li>
           <li>
             用紙は <code className="font-mono">@page {"{ size: 100mm 148mm; }"}</code>、フォントは{" "}

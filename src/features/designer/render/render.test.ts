@@ -111,6 +111,44 @@ describe("ページの描画", () => {
     expect(chars).toEqual(["1", "5", "0", "0", "0", "4", "3"]);
   });
 
+  test("--atehame-split: line で改行ごとに分ける", () => {
+    const page = renderPage(
+      doc,
+      layout(
+        '[data-name="住所"] { --atehame-text: "{住所}\\A {建物}"; --atehame-split: line; text-combine-upright: digits 2 }',
+      ),
+      {
+        住所: "東京都渋谷区\n道玄坂1丁目23番",
+        建物: "サンプルビル",
+      },
+    );
+    const lines = [...page.querySelectorAll('[data-name="住所"] > [data-part="line"]')];
+    expect(lines.map(line => line.textContent)).toEqual([
+      "東京都渋谷区",
+      "道玄坂1丁目23番",
+      "サンプルビル",
+    ]);
+    expect([...lines[1].querySelectorAll(".atehame-tcy")].map(span => span.textContent)).toEqual([
+      "1",
+      "23",
+    ]);
+  });
+
+  test("--atehame-split: line で、空の行は残し、最後の改行の後ろには行を作らない", () => {
+    const page = renderPage(
+      doc,
+      layout('[data-name="a"] { --atehame-text: "{x}\\A {y}\\A"; --atehame-split: line }'),
+      {
+        x: "1行目",
+      },
+      { placeholder: false },
+    );
+    expect([...page.querySelectorAll('[data-part="line"]')].map(line => line.textContent)).toEqual([
+      "1行目",
+      "",
+    ]);
+  });
+
   test("行ごとに1ページずつ組み立てる", () => {
     renderPages(doc, layout('[data-name="a"] { --atehame-text: "{x}" }'), [{ x: "A" }, { x: "B" }]);
     expect([...doc.body.querySelectorAll(".atehame-page")].map(page => page.textContent)).toEqual([

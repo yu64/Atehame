@@ -1,3 +1,4 @@
+import { createJavaScriptLanguage } from "@src/shared/ui/monaco/javascriptTokens";
 import { editorThemes } from "@src/shared/ui/monaco/themes";
 import * as monaco from "monaco-editor";
 import EditorWorker from "monaco-editor/editor/editor.worker?worker";
@@ -5,6 +6,27 @@ import CssWorker from "monaco-editor/language/css/css.worker?worker";
 import TypeScriptWorker from "monaco-editor/language/typescript/ts.worker?worker";
 
 export { monaco };
+
+// #############################################################################
+// MARK: 型定義
+
+interface NameColors {
+  variable: string;
+  function: string;
+}
+
+// #############################################################################
+// MARK: 定数
+
+const lightNameColors: NameColors = {
+  variable: "001080",
+  function: "795E26",
+};
+
+const darkNameColors: NameColors = {
+  variable: "9CDCFE",
+  function: "DCDCAA",
+};
 
 // #############################################################################
 // MARK: 内部関数
@@ -44,8 +66,34 @@ function configureJavaScript() {
 }
 
 /**
- * JavaScriptの色分けはASCII以外の識別子を不正なトークン（赤字）とする。
- * 日本語の識別子も使えるよう、通常の文字色で表示する。構文の誤りは診断の波線で示される。
+ * JavaScript の字句の定義を、変数・関数・プロパティを色分けするものに置き換える（javascriptTokens.ts）。
+ * Monaco の元の定義は読み込みを遅らせて登録されるが、直接登録したものが優先される。
+ */
+function configureJavaScriptTokens() {
+  monaco.languages.setMonarchTokensProvider("javascript", createJavaScriptLanguage());
+}
+
+/** 変数・関数・プロパティの色の規則。 */
+function nameRules(colors: NameColors): monaco.editor.ITokenThemeRule[] {
+  return [
+    {
+      token: "identifier",
+      foreground: colors.variable,
+    },
+    {
+      token: "property",
+      foreground: colors.variable,
+    },
+    {
+      token: "function",
+      foreground: colors.function,
+    },
+  ];
+}
+
+/**
+ * 配色を定義する。変数・関数・プロパティの色は VS Code の既定の配色に合わせる。
+ * 名前として読めない文字は不正なトークン（赤字）になるが、構文の誤りは診断の波線で示されるため、通常の文字色にする。
  */
 function defineThemes() {
   monaco.editor.defineTheme(editorThemes.light, {
@@ -56,6 +104,7 @@ function defineThemes() {
         token: "invalid",
         foreground: "000000",
       },
+      ...nameRules(lightNameColors),
     ],
     colors: {},
   });
@@ -67,6 +116,7 @@ function defineThemes() {
         token: "invalid",
         foreground: "D4D4D4",
       },
+      ...nameRules(darkNameColors),
     ],
     colors: {},
   });
@@ -77,4 +127,5 @@ function defineThemes() {
 
 configureWorkers();
 configureJavaScript();
+configureJavaScriptTokens();
 defineThemes();

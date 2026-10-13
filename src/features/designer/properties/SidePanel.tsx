@@ -116,6 +116,9 @@ export function SidePanel(props: Props) {
         {tab === "list" && <ListTab />}
         {tab === "assets" && <AssetsTab />}
         {tab === "css" && <CssTab />}
+        {/* 最後の項目も見やすい位置までスクロールできるよう、下に表示範囲1枚分の余白を置く。
+            CSS タブはエディターが高さいっぱいに広がるため置かない。 */}
+        {tab !== "css" && <div aria-hidden="true" className="h-full" />}
       </div>
     </aside>
   );
