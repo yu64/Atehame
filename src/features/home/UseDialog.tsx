@@ -1,6 +1,6 @@
 import { type Template } from "@src/features/data";
 import { TemplateFilePicker } from "@src/features/home/TemplateFilePicker";
-import { usingTemplateAtom } from "@src/features/use/data";
+import { startUsingAtom } from "@src/features/use/data";
 import { Button } from "@src/shared/ui/Button";
 import { Dialog } from "@src/shared/ui/Dialog";
 import { useSetAtom } from "jotai";
@@ -20,7 +20,7 @@ export interface Props {
 
 /** レイアウトを使う：保存したテンプレートを読み込む。 */
 export function UseDialog(props: Props) {
-  const setUsing = useSetAtom(usingTemplateAtom);
+  const setUsing = useSetAtom(startUsingAtom);
   const [loaded, setLoaded] = useState<Template>();
 
   return (

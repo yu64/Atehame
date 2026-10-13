@@ -1,5 +1,11 @@
 export { templateWarnings } from "@src/features/data/check";
 export {
+  createCsvTemplate,
+  type CsvTable,
+  csvTemplateFileName,
+  readCsvTable,
+} from "@src/features/data/csvTable";
+export {
   createTemplate,
   defaultTransformCode,
   fromTemplateFile,

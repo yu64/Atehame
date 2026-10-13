@@ -1,4 +1,4 @@
-import { usingTemplateAtom } from "@src/features/use/data";
+import { startUsingAtom } from "@src/features/use/data";
 import { standardTemplates } from "@src/features/use/standard";
 import { Button } from "@src/shared/ui/Button";
 import { Dialog } from "@src/shared/ui/Dialog";
@@ -20,7 +20,7 @@ export interface Props {
 
 /** 標準レイアウトを使う：Atehame が用意したテンプレートから選ぶ。 */
 export function StandardDialog(props: Props) {
-  const setUsing = useSetAtom(usingTemplateAtom);
+  const setUsing = useSetAtom(startUsingAtom);
   const [selectedId, setSelectedId] = useState(standardTemplates[0]?.id);
   const selected = standardTemplates.find(standard => standard.id === selectedId);
 

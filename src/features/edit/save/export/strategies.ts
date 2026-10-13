@@ -1,4 +1,5 @@
 import { serializeTemplateFile, type TemplateFile, toFileName } from "@src/features/data";
+import { downloadBlob } from "@src/shared/lib/download";
 
 // #############################################################################
 // MARK: 型定義
@@ -34,16 +35,7 @@ export const downloadJsonStrategy: ExportStrategy = {
   isAvailable: () => true,
   async export(file) {
     const blob = new Blob([serializeTemplateFile(file)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    try {
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = toFileName(file.name);
-      link.click();
-    } finally {
-      // クリック直後に破棄するとダウンロードが始まらないブラウザがあるため、少し待つ。
-      setTimeout(() => URL.revokeObjectURL(url), 10_000);
-    }
+    downloadBlob(blob, toFileName(file.name));
     return true;
   },
 };

@@ -142,9 +142,13 @@ export function parseTemplateFile(json: string): ParseResult {
   };
 }
 
-/** ファイル名に使えない文字を置き換える。 */
+/** テンプレートのファイル名。 */
 export function toFileName(name: string): string {
+  return `${safeFileBaseName(name)}.atehame.json`;
+}
+
+/** テンプレートの名前から、ファイル名に使える部分を作る。使えない文字は置き換え、空なら template。 */
+export function safeFileBaseName(name: string): string {
   // eslint-disable-next-line no-control-regex -- ファイル名に使えない制御文字を置き換えるため。
-  const base = name.trim().replace(/[\\/:*?"<>|\u0000-\u001f]/g, "_") || "template";
-  return `${base}.atehame.json`;
+  return name.trim().replace(/[\\/:*?"<>|\u0000-\u001f]/g, "_") || "template";
 }

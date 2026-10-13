@@ -9,6 +9,8 @@ export interface Props {
   /** 未指定の場合も、ページ間で位置を揃えるため戻るボタンの領域を確保する。 */
   onBack?: () => void;
   onNext?: () => void;
+  /** 次へ進めない（必要なものがそろっていない）とき。 */
+  nextDisabled?: boolean;
 }
 
 // #############################################################################
@@ -44,6 +46,7 @@ export function StepHeader(props: Props) {
           variant="primary"
           size="md"
           className="ml-auto"
+          disabled={props.nextDisabled}
           onClick={props.onNext}
         />
       )}
