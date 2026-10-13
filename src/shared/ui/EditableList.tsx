@@ -1,5 +1,6 @@
 import { insertAt, moveAt, removeAt } from "@src/shared/lib/util/collection";
 import { Button } from "@src/shared/ui/Button";
+import { Card } from "@src/shared/ui/Card";
 import { DropdownMenu } from "@src/shared/ui/DropdownMenu";
 import type { Key, ReactNode } from "react";
 
@@ -16,7 +17,7 @@ export interface EditableListProps<T> {
   onChange: (items: T[]) => void;
 }
 
-interface CardProps {
+interface ItemProps {
   label: string;
   first: boolean;
   last: boolean;
@@ -42,20 +43,19 @@ export function EditableList<T>(props: EditableListProps<T>) {
     <div className="flex flex-col gap-2">
       <ul className="flex flex-col gap-2">
         {props.items.map((item, index) => (
-          <li key={props.getKey(item)} className="min-w-0">
-            <Card
-              label={props.label(item, index)}
-              first={index === 0}
-              last={index === props.items.length - 1}
-              onPrev={() => props.onChange(moveAt(props.items, index, index - 1))}
-              onNext={() => props.onChange(moveAt(props.items, index, index + 1))}
-              onAddBefore={() => addAt(index)}
-              onAddAfter={() => addAt(index + 1)}
-              onRemove={() => props.onChange(removeAt(props.items, index))}
-            >
-              {props.children(item, index)}
-            </Card>
-          </li>
+          <Item
+            key={props.getKey(item)}
+            label={props.label(item, index)}
+            first={index === 0}
+            last={index === props.items.length - 1}
+            onPrev={() => props.onChange(moveAt(props.items, index, index - 1))}
+            onNext={() => props.onChange(moveAt(props.items, index, index + 1))}
+            onAddBefore={() => addAt(index)}
+            onAddAfter={() => addAt(index + 1)}
+            onRemove={() => props.onChange(removeAt(props.items, index))}
+          >
+            {props.children(item, index)}
+          </Item>
         ))}
       </ul>
       <Button
@@ -72,62 +72,55 @@ export function EditableList<T>(props: EditableListProps<T>) {
 // #############################################################################
 // MARK: 内部部品
 
-/** リスト専用のカード。内容の種類や入力欄の配置には依存しない。 */
-function Card(props: CardProps) {
+/** 一覧の項目。見出しと操作のボタンの下に、中身を置く。内容の種類や入力欄の配置には依存しない。 */
+function Item(props: ItemProps) {
   return (
-    <div
-      className={`
-      card w-full min-w-0
-      bg-surface border border-surface-border rounded-lg
-    `}
-    >
-      <div className="card-body min-w-0 gap-1 px-4 py-3">
-        <div className="flex items-center justify-between gap-3">
-          <span className="min-w-0 break-words text-text-secondary">{props.label}</span>
-          <div className="flex items-center gap-1 shrink-0">
-            <Button
-              icon="i-lucide-arrow-up"
-              label="上へ移動"
-              iconOnly
-              size="md"
-              disabled={props.first}
-              onClick={props.onPrev}
-            />
-            <Button
-              icon="i-lucide-arrow-down"
-              label="下へ移動"
-              iconOnly
-              size="md"
-              disabled={props.last}
-              onClick={props.onNext}
-            />
-            <DropdownMenu
-              label="項目の操作"
-              items={[
-                {
-                  id: "add-before",
-                  label: "この上に追加",
-                  onSelect: props.onAddBefore,
-                },
-                {
-                  id: "add-after",
-                  label: "この下に追加",
-                  onSelect: props.onAddAfter,
-                },
-              ]}
-            />
-            <Button
-              icon="i-lucide-trash-2"
-              label="削除"
-              iconOnly
-              danger
-              size="md"
-              onClick={props.onRemove}
-            />
-          </div>
+    <Card as="li" className="flex min-w-0 flex-col gap-1">
+      <div className="flex items-center justify-between gap-3">
+        <span className="min-w-0 break-words text-text-secondary">{props.label}</span>
+        <div className="flex items-center gap-1 shrink-0">
+          <Button
+            icon="i-lucide-arrow-up"
+            label="上へ移動"
+            iconOnly
+            size="md"
+            disabled={props.first}
+            onClick={props.onPrev}
+          />
+          <Button
+            icon="i-lucide-arrow-down"
+            label="下へ移動"
+            iconOnly
+            size="md"
+            disabled={props.last}
+            onClick={props.onNext}
+          />
+          <DropdownMenu
+            label="項目の操作"
+            items={[
+              {
+                id: "add-before",
+                label: "この上に追加",
+                onSelect: props.onAddBefore,
+              },
+              {
+                id: "add-after",
+                label: "この下に追加",
+                onSelect: props.onAddAfter,
+              },
+            ]}
+          />
+          <Button
+            icon="i-lucide-trash-2"
+            label="削除"
+            iconOnly
+            danger
+            size="md"
+            onClick={props.onRemove}
+          />
         </div>
-        <div className="min-w-0">{props.children}</div>
       </div>
-    </div>
+      <div className="min-w-0">{props.children}</div>
+    </Card>
   );
 }
