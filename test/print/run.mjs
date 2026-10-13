@@ -1,33 +1,103 @@
+import { boundsOfColor, mmToPt, readFills, readPages } from "./pdf.mjs";
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-import { inflateSync } from "node:zlib";
 import { chromium } from "playwright";
 import { createServer } from "vite";
 
-// 描画処理で組み立てた文書を Chrome で PDF にし、ページ数と用紙サイズを確認する。
-// 各ページの画像を temp/print-check に保存するので、見た目も確認できる。
+// 描画処理で組み立てた文書を Chrome で PDF にし、次のことを確認する。
+// - ページ数と用紙の大きさ
+// - 部品の位置と大きさが、画面での表示（デザイナーで見ている位置）と mm 単位で一致すること
+// - 外部への通信がないこと、背景を切った印刷でも作成者の背景色が印刷されること
+// 各ページの PDF と画像を temp/print-check に保存するので、見た目も確認できる。
+
+// #############################################################################
+// MARK: 定数
+
 const root = fileURLToPath(new URL("./", import.meta.url));
 const outDir = fileURLToPath(new URL("../../temp/print-check/", import.meta.url));
-const mmToPt = 72 / 25.4;
+
+/** 用紙の大きさ（mm）。 */
 const papers = {
   hagaki: [100, 148],
   nagagata3: [120, 235],
 };
 
-/** PDF の圧縮された描画命令をつなげて返す。 */
-function pdfContent(pdf) {
-  const text = pdf.toString("latin1");
-  let content = "";
-  for (const match of text.matchAll(/stream\r?\n([\s\S]*?)endstream/g)) {
-    try {
-      content += inflateSync(Buffer.from(match[1], "latin1")).toString("latin1");
-    } catch {
-      // 圧縮されていない、または画像などの読めないストリームは飛ばす。
-    }
-  }
-  return content;
+/**
+ * 位置のずれの許容（mm）。Chrome は背景の塗りを CSS ピクセル単位に丸めて描くため、
+ * 部品の位置が正しくても塗りの端は最大 0.5px（約 0.13mm）ずれる。
+ */
+const toleranceMm = 0.15;
+
+/** 1mm あたりの CSS ピクセル数。 */
+const mmToPx = 96 / 25.4;
+
+// #############################################################################
+// MARK: 内部関数
+
+/**
+ * 部品ごとに見分けられる塗りの色（0〜1 の RGB）。白と黒は使わない。
+ * @param {number} index
+ * @returns {[number, number, number]}
+ */
+function markerColor(index) {
+  const n = index + 1;
+  return [Math.floor(n / 36) % 6, Math.floor(n / 6) % 6, n % 6].map(level => level / 5);
 }
+
+/**
+ * 部品に見分けるための背景色を付ける CSS。作成者の CSS より優先する。
+ * @param {number} count 部品の数
+ */
+function markerCss(count) {
+  return Array.from({ length: count }, (_, index) => {
+    const [r, g, b] = markerColor(index).map(value => Math.round(value * 255));
+    return `.atehame-element:nth-child(${index + 1}) { background: rgb(${r} ${g} ${b}) !important; }`;
+  }).join("\n");
+}
+
+/**
+ * 画面の表示での、ページごとの部品の位置（ページの左上からの mm）。
+ * @param {import("playwright").Page} page
+ */
+function measureScreen(page) {
+  return page.evaluate(
+    mmToPx =>
+      [...document.querySelectorAll(".atehame-page")].map(pageElement => {
+        const origin = pageElement.getBoundingClientRect();
+        return [...pageElement.querySelectorAll(":scope > .atehame-element")].map(element => {
+          const rect = element.getBoundingClientRect();
+          return {
+            name: element.getAttribute("data-name") ?? "",
+            left: (rect.left - origin.left) / mmToPx,
+            top: (rect.top - origin.top) / mmToPx,
+            right: (rect.right - origin.left) / mmToPx,
+            bottom: (rect.bottom - origin.top) / mmToPx,
+          };
+        });
+      }),
+    mmToPx,
+  );
+}
+
+/**
+ * 2つの位置が許容の範囲で一致することを確かめる。
+ * @param {{ left: number, top: number, right: number, bottom: number }} actual
+ * @param {{ left: number, top: number, right: number, bottom: number }} expected
+ * @param {string} label
+ */
+function assertRect(actual, expected, label) {
+  for (const side of /** @type {const} */ (["left", "top", "right", "bottom"])) {
+    const diff = Math.abs(actual[side] - expected[side]);
+    assert.ok(
+      diff <= toleranceMm,
+      `${label}: ${side} が ${actual[side].toFixed(2)}mm（期待 ${expected[side].toFixed(2)}mm）`,
+    );
+  }
+}
+
+// #############################################################################
+// MARK: 実行
 
 await mkdir(outDir, { recursive: true });
 const server = await createServer({
@@ -55,6 +125,8 @@ try {
   for (const [preset, [width, height]] of Object.entries(papers)) {
     const html = await harness.evaluate(p => window.buildPrintHtml(p), preset);
     const page = await browser.newPage();
+    const requests = [];
+    page.on("request", request => requests.push(request.url()));
     await page.setContent(html);
     await page.evaluate(() => document.fonts.ready);
 
@@ -64,23 +136,22 @@ try {
       printBackground: false,
     });
     await writeFile(`${outDir}${preset}.pdf`, pdf);
-    const text = pdf.toString("latin1");
-    const pages = text.match(/\/Type\s*\/Page\b/g) ?? [];
+    const pages = readPages(pdf);
     assert.equal(pages.length, rowCount, `${preset}: ページ数`);
-    const box = text.match(/\/MediaBox\s*\[\s*0\s+0\s+([\d.]+)\s+([\d.]+)\s*\]/);
-    assert.ok(box, `${preset}: MediaBox`);
-    assert.ok(Math.abs(Number(box[1]) - width * mmToPt) < 1, `${preset}: 幅 ${box[1]}pt`);
-    assert.ok(Math.abs(Number(box[2]) - height * mmToPt) < 1, `${preset}: 高さ ${box[2]}pt`);
+    for (const pdfPage of pages) {
+      assert.ok(Math.abs(pdfPage.width - width * mmToPt) < 1, `${preset}: 幅 ${pdfPage.width}pt`);
+      assert.ok(
+        Math.abs(pdfPage.height - height * mmToPt) < 1,
+        `${preset}: 高さ ${pdfPage.height}pt`,
+      );
+    }
 
-    // 画面表示でも外部への通信がないことと、使われたフォントを確認する。
-    const requests = [];
-    page.on("request", request => requests.push(request.url()));
+    // 画面での見た目を保存する。
     await page.setViewportSize({
       width: 1200,
       height: 1400,
     });
-    const shots = await page.locator(".atehame-page").all();
-    for (const [index, shot] of shots.entries()) {
+    for (const [index, shot] of (await page.locator(".atehame-page").all()).entries()) {
       await shot.screenshot({ path: `${outDir}${preset}-${index + 1}.png` });
     }
     const fonts = await page.evaluate(() =>
@@ -88,12 +159,51 @@ try {
         el => getComputedStyle(el).fontFamily.split(",")[0],
       ),
     );
+
+    // 部品に色を付けて PDF にし、塗りの位置を画面での位置と比べる。
+    const screen = await measureScreen(page);
+    await page.addStyleTag({
+      content: markerCss(Math.max(...screen.map(elements => elements.length))),
+    });
+    const marked = readPages(
+      await page.pdf({
+        preferCSSPageSize: true,
+        printBackground: false,
+      }),
+    );
+    for (const [pageIndex, elements] of screen.entries()) {
+      const fills = readFills(marked[pageIndex].content, marked[pageIndex].height);
+      for (const [index, element] of elements.entries()) {
+        const label = `${preset} ${pageIndex + 1}ページ「${element.name}」`;
+        const printed = boundsOfColor(fills, markerColor(index));
+        assert.ok(printed, `${label}: 印刷されていない`);
+        assertRect(printed, element, label);
+      }
+    }
+
+    // 画面での位置が、レイアウトに書いた mm のとおりであること（住所: left: 幅 - 30mm; top: 25mm; width: 14mm）。
+    const address = screen[0].find(element => element.name === "住所");
+    assert.ok(address, `${preset}: 住所の部品`);
+    assertRect(
+      address,
+      {
+        left: width - 30,
+        top: 25,
+        right: width - 16,
+        bottom: 25 + height * 0.6,
+      },
+      `${preset}: 住所の指定`,
+    );
+
     assert.deepEqual(
       requests.filter(url => !url.startsWith("data:") && url !== "about:blank"),
       [],
     );
-
-    console.log(`${preset}: ${pages.length} pages, ${box[1]}x${box[2]}pt, font=${fonts[0]}`);
+    const count = screen.reduce((sum, elements) => sum + elements.length, 0);
+    console.log(
+      `${preset}: ${pages.length} pages, ${pages[0].width}x${pages[0].height}pt, `
+        + `${count} elements within ${toleranceMm}mm, font=${fonts[0]}`,
+    );
     await page.close();
   }
 
@@ -104,11 +214,13 @@ try {
   );
   const page = await browser.newPage();
   await page.setContent(html);
-  const pdf = await page.pdf({
-    preferCSSPageSize: true,
-    printBackground: false,
-  });
-  assert.match(pdfContent(pdf), /1 0 0 rg/, "背景色が印刷される");
+  const [first] = readPages(
+    await page.pdf({
+      preferCSSPageSize: true,
+      printBackground: false,
+    }),
+  );
+  assert.ok(boundsOfColor(readFills(first.content, first.height), [1, 0, 0]), "背景色が印刷される");
   console.log("background: printed");
 } finally {
   await browser.close();
