@@ -40,7 +40,7 @@ i18n
     returnEmptyString: false,
     supportedLngs: Object.keys(supportedLanguages),
     // true にすると開発コンソールに i18next が正しく初期化されたことを示す出力が表示される: Object.keys(supportedLanguages),
-    debug: true,
+    debug: false,
 
     // デフォルトは`escapeValue: true`
     // 18next が翻訳メッセージ内のコードをエスケープし、XSS 攻撃から保護するためのもの
