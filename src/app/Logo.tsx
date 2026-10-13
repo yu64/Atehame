@@ -1,11 +1,16 @@
+import logoUrl from "@src/assets/logo.svg";
+
 // #############################################################################
 // MARK: コンポーネント
 
-/** アプリのロゴ（ひし形の印）。 */
+/**
+ * アプリのロゴ（ひし形の印）。
+ * 場所は 24px 四方で取り、ひし形の角はその外へはみ出す（画像は 34px 四方）。
+ */
 export function Logo() {
   return (
-    <div className="w-6 h-6 bg-primary flex items-center justify-center rotate-45">
-      <div className="w-3 h-3 border-2 border-white rotate-45"></div>
-    </div>
+    <span className="flex h-6 w-6 items-center justify-center">
+      <img src={logoUrl} alt="" className="h-[34px] w-[34px] max-w-none" />
+    </span>
   );
 }
