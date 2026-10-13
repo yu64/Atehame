@@ -31,21 +31,21 @@ export function HomePage() {
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6 py-8">
           <div className="md:col-span-2">
             <SelectCard
-              title="標準レイアウトを使う"
-              description="Atehameが提供するレイアウトを使用します。"
+              title="標準テンプレートを使う"
+              description="Atehameが提供するテンプレートを使用します。"
               buttonText="始める"
               onClick={() => setDialog("standard")}
             />
           </div>
           <SelectCard
-            title="レイアウトを作る"
-            description="自分でレイアウトを作成します。保存したテンプレートの編集もここから。"
+            title="テンプレートを作る"
+            description="自分でテンプレートを作成します。標準テンプレートや保存したテンプレートの編集もここから。"
             buttonText="始める"
             onClick={() => setDialog("create")}
           />
           <SelectCard
-            title="レイアウトを使う"
-            description="自分または他の人が作成したレイアウトを使用します。"
+            title="テンプレートを使う"
+            description="自分または他の人が作成したテンプレートを使用します。"
             buttonText="始める"
             onClick={() => setDialog("use")}
           />

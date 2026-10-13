@@ -1,10 +1,7 @@
+import type { Template } from "@src/features/data";
+import { StandardTemplateDialog } from "@src/features/home/StandardTemplateDialog";
 import { startUsingAtom } from "@src/features/use/data";
-import { standardTemplates } from "@src/features/use/standard";
-import { Button } from "@src/shared/ui/Button";
-import { Dialog } from "@src/shared/ui/Dialog";
-import { RadioCardGroup } from "@src/shared/ui/RadioCardGroup";
 import { useSetAtom } from "jotai";
-import { useState } from "react";
 import { navigate } from "vike/client/router";
 
 // #############################################################################
@@ -18,45 +15,25 @@ export interface Props {
 // #############################################################################
 // MARK: コンポーネント
 
-/** 標準レイアウトを使う：Atehame が用意したテンプレートから選ぶ。 */
+/** 標準テンプレートを使う：Atehame が用意したテンプレートから選ぶ。 */
 export function StandardDialog(props: Props) {
   const setUsing = useSetAtom(startUsingAtom);
-  const [selectedId, setSelectedId] = useState(standardTemplates[0]?.id);
-  const selected = standardTemplates.find(standard => standard.id === selectedId);
+
+  /** 選んだテンプレートで、CSV の読み込みへ進む。 */
+  function use(template: Template) {
+    setUsing(template);
+    props.onClose();
+    void navigate("/use/load");
+  }
 
   return (
-    <Dialog
+    <StandardTemplateDialog
       open={props.open}
       onClose={props.onClose}
-      title="標準レイアウトを使う"
+      title="標準テンプレートを使う"
       description="Atehame が用意したテンプレートから選びます。"
-      actions={
-        <Button
-          label="このテンプレートを使う"
-          variant="primary"
-          size="md"
-          disabled={!selected}
-          onClick={() => {
-            if (!selected) return;
-            setUsing(selected.create());
-            props.onClose();
-            void navigate("/use/load");
-          }}
-        />
-      }
-    >
-      <RadioCardGroup
-        name="standard-template"
-        legend="テンプレート"
-        hideLegend
-        options={standardTemplates.map(standard => ({
-          value: standard.id,
-          label: standard.title,
-          description: standard.description,
-        }))}
-        value={selectedId}
-        onChange={setSelectedId}
-      />
-    </Dialog>
+      actionLabel="このテンプレートを使う"
+      onDecide={use}
+    />
   );
 }

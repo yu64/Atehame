@@ -18,7 +18,7 @@ export interface Props {
 // #############################################################################
 // MARK: コンポーネント
 
-/** レイアウトを使う：保存したテンプレートを読み込む。 */
+/** テンプレートを使う：保存したテンプレートを読み込む。 */
 export function UseDialog(props: Props) {
   const setUsing = useSetAtom(startUsingAtom);
   const [loaded, setLoaded] = useState<Template>();
@@ -27,7 +27,7 @@ export function UseDialog(props: Props) {
     <Dialog
       open={props.open}
       onClose={props.onClose}
-      title="レイアウトを使う"
+      title="テンプレートを使う"
       description="自分または他の人が作ったテンプレートのファイルを読み込みます。"
       actions={
         <Button
