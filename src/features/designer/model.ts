@@ -137,6 +137,10 @@ export function layoutSummary(layout: Layout): LayoutSummary {
 // #############################################################################
 // MARK: 検証
 
+/**
+ * レイアウトの CSS の長さの上限（文字数）。保存したレイアウトの検証と、描画の前の安全化の両方で使う。
+ * 2つがずれると、読み込めるのに描画されないレイアウトができるため、ここの1つだけにする。
+ */
 export const maxLayoutCssLength = 100_000;
 
 const assetSchema = z

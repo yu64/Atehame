@@ -38,8 +38,6 @@ const blockedFunctions = new Set([
   "src",
 ]);
 
-export const maxCssLength = 100_000;
-
 // #############################################################################
 // MARK: 関数
 
@@ -47,12 +45,15 @@ export const maxCssLength = 100_000;
  * テンプレートの CSS から、外部への通信につながる記述を取り除く。
  * 描画先の iframe でも CSP で通信を禁止しているため、これは多層防御と、作成者への通知のための処理。
  * 正規表現ではなく構文木で判定し、解釈できない記述（Raw）は丸ごと取り除く。
+ *
+ * maxLength（文字数）を超える CSS は、解析せずにすべて取り除く。
+ * どこまで受け付けるかは呼び出し側（レイアウトの方針）が決め、ここはそれを守るだけにする。
  */
-export function sanitizeCss(source: string): SanitizedCss {
-  if (source.length > maxCssLength) {
+export function sanitizeCss(source: string, maxLength: number): SanitizedCss {
+  if (source.length > maxLength) {
     return {
       css: "",
-      warnings: [`CSS が長すぎます（${maxCssLength} 文字まで）。`],
+      warnings: [`CSS が長すぎます（${maxLength} 文字まで）。`],
     };
   }
 

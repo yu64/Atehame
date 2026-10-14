@@ -3,7 +3,7 @@ import {
   imageProperty,
   type LayoutDocument,
 } from "@src/features/designer/layoutCss";
-import { paperSizeOf } from "@src/features/designer/model";
+import { maxLayoutCssLength, paperSizeOf } from "@src/features/designer/model";
 import {
   renderElement,
   type RenderOptions,
@@ -95,7 +95,7 @@ const checks = new WeakMap<LayoutDocument, LayoutCheck>();
 function checkOf(layout: LayoutDocument): LayoutCheck {
   let check = checks.get(layout);
   if (!check) {
-    const sanitized = sanitizeCss(layout.css);
+    const sanitized = sanitizeCss(layout.css, maxLayoutCssLength);
     check = {
       css: sanitized.css,
       warnings: [...sanitized.warnings, ...missingAssetWarnings(layout)],
