@@ -1,11 +1,10 @@
 import { assetDataUrl, type Assets } from "@src/features/designer/assets/assets";
 import {
-  decodeCssString,
   type ElementRule,
-  imageProperty,
+  imageNameOf,
   parseTextTemplate,
   splitProperty,
-  textProperty,
+  textTemplateOf,
 } from "@src/features/designer/layoutCss";
 import {
   formatValue,
@@ -54,14 +53,13 @@ export function renderElement(
   element.className = "atehame-element";
   element.dataset.name = rule.name;
 
-  const image = rule.declarations.get(imageProperty);
+  const image = imageNameOf(rule);
   if (image !== undefined) {
-    renderImage(doc, element, decodeCssString(image.value) ?? "", options, assets);
+    renderImage(doc, element, image, options, assets);
     return element;
   }
 
-  const template = decodeCssString(rule.declarations.get(textProperty)?.value ?? "") ?? "";
-  const pieces = fillTemplate(template, values, options);
+  const pieces = fillTemplate(textTemplateOf(rule), values, options);
 
   const split = rule.declarations.get(splitProperty)?.value.trim();
   if (split === "char") {

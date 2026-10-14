@@ -1,9 +1,4 @@
-import {
-  decodeCssString,
-  type ElementRule,
-  imageProperty,
-  textProperty,
-} from "@src/features/designer/layoutCss";
+import { type ElementRule, imageNameOf, textTemplateOf } from "@src/features/designer/layoutCss";
 import { Button } from "@src/shared/ui/Button";
 import { Card } from "@src/shared/ui/Card";
 
@@ -37,12 +32,8 @@ export function ElementList(props: Props) {
     <ul aria-label="部品の一覧" className="flex flex-col gap-1 p-2">
       {elements.map(element => {
         const selected = element.name === props.selected;
-        const image = element.declarations.get(imageProperty)?.value;
-        const text = (
-          (image !== undefined)
-          ? `画像: ${decodeCssString(image) ?? ""}`
-          : (decodeCssString(element.declarations.get(textProperty)?.value ?? "") ?? "")
-        );
+        const image = imageNameOf(element);
+        const text = (image !== undefined ? `画像: ${image}` : textTemplateOf(element));
 
         return (
           <Card

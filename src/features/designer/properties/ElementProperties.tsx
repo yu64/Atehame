@@ -1,10 +1,11 @@
 import {
-  decodeCssString,
   type ElementRule,
   encodeCssString,
+  imageNameOf,
   imageProperty,
   splitProperty,
   textProperty,
+  textTemplateOf,
 } from "@src/features/designer/layoutCss";
 import { CssChoiceField } from "@src/features/designer/properties/CssChoiceField";
 import { CssValueField } from "@src/features/designer/properties/CssValueField";
@@ -62,7 +63,7 @@ export function ElementProperties(props: Props) {
   function set(property: string) {
     return (next: string | undefined) => props.onDeclaration(property, next);
   }
-  const isImage = value(imageProperty) !== undefined;
+  const isImage = imageNameOf(rule) !== undefined;
 
   return (
     <div className="flex flex-col gap-4 p-3">
@@ -93,7 +94,7 @@ export function ElementProperties(props: Props) {
 
       {!isImage && (
         <TextTemplateField
-          value={decodeCssString(value(textProperty) ?? "") ?? ""}
+          value={textTemplateOf(rule)}
           fields={props.fields}
           onChange={text => props.onDeclaration(textProperty, encodeCssString(text))}
         />

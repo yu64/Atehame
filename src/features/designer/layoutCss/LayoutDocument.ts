@@ -1,5 +1,4 @@
 import { type Assets, emptyAssets, type LayoutAsset } from "@src/features/designer/assets/assets";
-import { decodeCssString } from "@src/features/designer/layoutCss/cssString";
 import {
   addElementRule,
   duplicateElementRule,
@@ -12,6 +11,7 @@ import {
 } from "@src/features/designer/layoutCss/edit";
 import {
   type ElementRule,
+  imageNameOf,
   imageProperty,
   type LayoutCss,
   type PageSize,
@@ -106,9 +106,7 @@ export class LayoutDocument {
   /** 画像を参照している部品の名前。 */
   assetUsage(name: string): string[] {
     return this.elements
-      .filter(
-        element => decodeCssString(element.declarations.get(imageProperty)?.value ?? "") === name,
-      )
+      .filter(element => imageNameOf(element) === name)
       .map(element => element.name);
   }
 

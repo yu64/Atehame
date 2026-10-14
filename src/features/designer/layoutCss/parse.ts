@@ -1,3 +1,4 @@
+import { decodeCssString } from "@src/features/designer/layoutCss/cssString";
 import { lengthToMm } from "@src/shared/lib/units";
 import { type AttributeSelector, type CssNode, type Declaration, parse, type Rule } from "css-tree";
 
@@ -56,6 +57,17 @@ export interface RuleInfo {
 
 export interface ElementRule extends RuleInfo {
   name: string;
+}
+
+/** 規則が表示する画像の名前（--atehame-image）。画像の部品でなければ undefined。 */
+export function imageNameOf(rule: RuleInfo): string | undefined {
+  const value = rule.declarations.get(imageProperty)?.value;
+  return (value === undefined ? undefined : (decodeCssString(value) ?? ""));
+}
+
+/** 規則の文字のひな形（--atehame-text）。書かれていなければ空。 */
+export function textTemplateOf(rule: RuleInfo): string {
+  return decodeCssString(rule.declarations.get(textProperty)?.value ?? "") ?? "";
 }
 
 export interface LayoutCss {

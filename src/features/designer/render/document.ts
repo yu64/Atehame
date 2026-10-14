@@ -1,8 +1,4 @@
-import {
-  decodeCssString,
-  imageProperty,
-  type LayoutDocument,
-} from "@src/features/designer/layoutCss";
+import { imageNameOf, type LayoutDocument } from "@src/features/designer/layoutCss";
 import { maxLayoutCssLength, paperSizeOf } from "@src/features/designer/model";
 import {
   renderElement,
@@ -115,12 +111,7 @@ export function layoutDocumentWarnings(layout: LayoutDocument): string[] {
 
 /** 部品が参照している画像のうち、登録されていないものの警告。 */
 function missingAssetWarnings(layout: LayoutDocument): string[] {
-  const names = new Set(
-    layout.elements
-      .map(element => element.declarations.get(imageProperty)?.value)
-      .filter(value => value !== undefined)
-      .map(value => decodeCssString(value) ?? ""),
-  );
+  const names = new Set(layout.elements.map(imageNameOf).filter(name => name !== undefined));
   return [...names]
     .filter(name => !Object.hasOwn(layout.assets, name))
     .map(name => `画像「${name}」が登録されていません。`);

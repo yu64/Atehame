@@ -3,6 +3,7 @@ import {
   decodeCssString,
   duplicateElementRule,
   encodeCssString,
+  imageNameOf,
   moveElementRule,
   parseLayoutCss,
   parseTextTemplate,
@@ -11,6 +12,7 @@ import {
   renameElement,
   setDeclaration,
   templateFields,
+  textTemplateOf,
 } from "@src/features/designer/layoutCss";
 import { describe, expect, test } from "vitest";
 
@@ -87,6 +89,28 @@ describe("埋め込み", () => {
     expect(templateFields("{a}{b}{a}")).toEqual(["a", "b"]);
   });
 });
+describe("部品が表示するもの", () => {
+  /** CSS の最初の部品。 */
+  function first(css: string) {
+    return parseLayoutCss(css).elements[0];
+  }
+
+  test("文字のひな形は、--atehame-text の文字列。書かれていなければ空", () => {
+    expect(textTemplateOf(first(sample))).toBe("{氏名} 様");
+    expect(textTemplateOf(first('[data-name="a"] { left: 1mm; }'))).toBe("");
+  });
+
+  test("画像の名前は、--atehame-image の文字列。画像の部品でなければ undefined", () => {
+    expect(imageNameOf(first('[data-name="a"] { --atehame-image: "ロゴ"; }'))).toBe("ロゴ");
+    expect(imageNameOf(first(sample))).toBeUndefined();
+  });
+
+  test("文字列として読めない値は、空として扱う（画像の部品ではある）", () => {
+    expect(imageNameOf(first('[data-name="a"] { --atehame-image: logo; }'))).toBe("");
+    expect(textTemplateOf(first('[data-name="a"] { --atehame-text: red; }'))).toBe("");
+  });
+});
+
 describe("解析", () => {
   test("最上位の [data-name] だけの規則を、記述順に部品とみなす", () => {
     const layout = parseLayoutCss(sample);

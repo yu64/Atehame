@@ -14,6 +14,7 @@ export { LayoutDocument } from "@src/features/designer/layoutCss/LayoutDocument"
 export {
   type DeclarationInfo,
   type ElementRule,
+  imageNameOf,
   imageProperty,
   type LayoutCss,
   type PageSize,
@@ -22,6 +23,7 @@ export {
   type RuleInfo,
   splitProperty,
   textProperty,
+  textTemplateOf,
 } from "@src/features/designer/layoutCss/parse";
 export { removeElementRule } from "@src/features/designer/layoutCss/remove";
 export {
