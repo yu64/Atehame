@@ -1,4 +1,4 @@
-import { fromTemplateFile, parseTemplateFile, type Template } from "@src/features/data/model";
+import { readTemplateText, type Template } from "@src/features/data/model";
 import hagakiAddressUrl from "@src/features/data/standard/templates/hagaki-address.atehame.json?url";
 
 // #############################################################################
@@ -41,7 +41,7 @@ export async function loadStandardTemplate(standard: StandardTemplate): Promise<
   if (!response.ok) {
     throw new Error(`テンプレートを取得できませんでした（${response.status}）。`);
   }
-  const result = parseTemplateFile(await response.text());
+  const result = readTemplateText(await response.text());
   if (!result.ok) throw new Error(result.message);
-  return fromTemplateFile(result.file);
+  return result.template;
 }

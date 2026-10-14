@@ -8,10 +8,8 @@ export {
 export {
   createTemplate,
   defaultTransformCode,
-  fromTemplateFile,
-  type ParseResult,
   parseTemplate,
-  parseTemplateFile,
+  readTemplateText,
   serializeTemplateFile,
   type Template,
   type TemplateFile,

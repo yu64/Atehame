@@ -1,4 +1,4 @@
-import { fromTemplateFile, parseTemplateFile, type Template } from "@src/features/data";
+import { readTemplateText, type Template } from "@src/features/data";
 import { TemplateSummary } from "@src/features/use/load";
 import { fileReadErrorMessage } from "@src/shared/lib/error";
 import { formatBytes } from "@src/shared/lib/units";
@@ -44,13 +44,13 @@ export function TemplateFilePicker(props: Props) {
       setError(fileReadErrorMessage);
       return;
     }
-    const result = parseTemplateFile(text);
+    const result = readTemplateText(text);
     if (!result.ok) {
       setError(result.message);
       return;
     }
     setError(undefined);
-    props.onChange(fromTemplateFile(result.file));
+    props.onChange(result.template);
   }
 
   return (

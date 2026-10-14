@@ -115,6 +115,21 @@ export function serializeTemplateFile(file: TemplateFile): string {
 
 export type ParseResult = { ok: true; file: TemplateFile } | { ok: false; message: string };
 
+export type ReadTemplateResult = { ok: true; template: Template } | { ok: false; message: string };
+
+/**
+ * テンプレートのファイルの文字列を検証して、テンプレートを取り出す。
+ * ユーザーが選んだファイルも、標準テンプレートも、ここを通す（同じ確認をする約束）。
+ */
+export function readTemplateText(json: string): ReadTemplateResult {
+  const result = parseTemplateFile(json);
+  if (!result.ok) return result;
+  return {
+    ok: true,
+    template: fromTemplateFile(result.file),
+  };
+}
+
 /** 読み込んだ JSON をテンプレートとして検証する。他人が作ったファイルも想定する。 */
 export function parseTemplateFile(json: string): ParseResult {
   let value: unknown;

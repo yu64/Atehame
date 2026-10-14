@@ -2,6 +2,7 @@ import {
   createTemplate,
   fromTemplateFile,
   parseTemplateFile,
+  readTemplateText,
   serializeTemplateFile,
   toFileName,
   toTemplateFile,
@@ -38,6 +39,10 @@ describe("テンプレートファイル", () => {
       file,
     });
     expect(fromTemplateFile(file)).toEqual(template);
+    expect(readTemplateText(serializeTemplateFile(file))).toEqual({
+      ok: true,
+      template,
+    });
   });
 
   test("空のテンプレートは、カラムなし・既定の加工・はがきの用紙で始まる", () => {
@@ -59,6 +64,7 @@ describe("テンプレートファイル", () => {
     ],
   ])("%s場合は理由を返す", (_, json) => {
     expect(parseTemplateFile(json).ok).toBe(false);
+    expect(readTemplateText(json)).toEqual(parseTemplateFile(json));
   });
 
   test("ファイル名に使えない文字を置き換える", () => {
