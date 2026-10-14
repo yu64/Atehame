@@ -1,6 +1,7 @@
 import { acceptsFile } from "@src/shared/lib/fileAccept";
 import { describe, expect, test } from "vitest";
 
+/** 名前と種類だけのファイル。 */
 function file(name: string, type = "") {
   return {
     name,
