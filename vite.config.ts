@@ -9,7 +9,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   root: path.resolve(__dirname, "src"),
-  base: (process.env.IC ? "/Atehame" : "/"),
+  // 公開先のパス（GitHub Pages では "/リポジトリ名"）。公開のワークフローが渡す。手元では "/"。
+  base: process.env.BASE_PATH || "/",
   plugins: [UnoCSS(), tsconfigPaths(), vike()],
   resolve: {
     alias: {

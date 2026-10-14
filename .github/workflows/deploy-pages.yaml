@@ -1,0 +1,76 @@
+name: Deploy static content to Pages
+
+on:
+  # push trigger
+  push:
+    branches: ["main"]
+
+  # manual trigger
+  workflow_dispatch:
+
+# permit Github Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Node の版は package.json の engines に合わせる
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: "package.json"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      # 壊れた状態を公開しないよう、ビルドの前に確かめる
+      - name: Lint
+        run: npm run lint
+
+      - name: Check format
+        run: npm run format:check
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Unit test
+        run: npm run test:unit
+
+      # 公開先のパス（/リポジトリ名）を受け取るため、ビルドの前に置く
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Build
+        run: npm run build
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "./dist/client"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Output Status
+        run: |
+          echo "page-url = ${{ steps.deployment.outputs.page_url }}"
+          echo "base-path = ${{ steps.pages.outputs.base_path }}"
