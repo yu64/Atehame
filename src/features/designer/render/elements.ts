@@ -20,6 +20,11 @@ import type { JsonValue } from "@src/shared/lib/json";
 /** 部品に当てはめる値。加工の出力（オブジェクト）。 */
 export type Values = Record<string, JsonValue>;
 
+/** レイアウトに渡せる値（配列でないオブジェクト）か。加工の出力を当てはめる前に確かめる。 */
+export function isValues(value: JsonValue): value is Values {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 export interface RenderOptions {
   /** 値が空の埋め込みに、値の名前を薄く表示する（デザイナー用）。 */
   placeholder?: boolean;

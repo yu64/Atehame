@@ -4,9 +4,8 @@ import {
   type Template,
   transformPrelude,
 } from "@src/features/data";
-import type { Values } from "@src/features/designer";
+import { isValues, type Values } from "@src/features/designer";
 import { type ExecutionOutcome, useExecutions } from "@src/features/runtime";
-import type { JsonValue } from "@src/shared/lib/json";
 import { useMemo } from "react";
 
 // #############################################################################
@@ -86,9 +85,4 @@ function toRowResult(outcome: ExecutionOutcome | undefined, warnings: string[]):
     values: outcome.output,
     warnings,
   };
-}
-
-/** レイアウトに渡せる値（配列でないオブジェクト）か。 */
-function isValues(value: JsonValue): value is Values {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
 }

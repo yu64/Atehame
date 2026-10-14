@@ -6,6 +6,7 @@ export {
   renderPages,
 } from "@src/features/designer/render/document";
 export {
+  isValues,
   renderElement,
   type RenderOptions,
   type Values,

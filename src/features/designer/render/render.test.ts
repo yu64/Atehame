@@ -3,6 +3,7 @@ import { LayoutDocument } from "@src/features/designer/layoutCss";
 import {
   applyLayoutStyles,
   createDocumentHtml,
+  isValues,
   layoutDocumentWarnings,
   renderPage,
   renderPages,
@@ -162,6 +163,18 @@ describe("ページの描画", () => {
       "A",
       "B",
     ]);
+  });
+});
+
+describe("レイアウトに渡せる値", () => {
+  test("配列でないオブジェクトだけを受け付ける", () => {
+    expect(isValues({})).toBe(true);
+    expect(isValues({ 氏名: "山田" })).toBe(true);
+    expect(isValues([])).toBe(false);
+    expect(isValues(null)).toBe(false);
+    expect(isValues("山田")).toBe(false);
+    expect(isValues(1)).toBe(false);
+    expect(isValues(true)).toBe(false);
   });
 });
 

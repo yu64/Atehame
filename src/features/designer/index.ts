@@ -26,7 +26,7 @@ export {
   postalCodePreset,
   textPreset,
 } from "@src/features/designer/presets";
-export { printLayout, type Values } from "@src/features/designer/render";
+export { isValues, printLayout, type Values } from "@src/features/designer/render";
 export type {
   CssEditorComponent,
   ElementPreset,

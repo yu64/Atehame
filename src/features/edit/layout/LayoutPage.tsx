@@ -2,7 +2,7 @@ import { MainContent } from "@src/app/MainContent";
 import { routes } from "@src/app/routes";
 import { StepHeader } from "@src/app/StepHeader";
 import { ThemedCodeEditor as CodeEditor } from "@src/app/ThemedCodeEditor";
-import { Designer, type Values } from "@src/features/designer";
+import { Designer, isValues, type Values } from "@src/features/designer";
 import { layoutAtom } from "@src/features/edit/data";
 import { useSampleOutput } from "@src/features/edit/transform";
 import { Alert } from "@src/shared/ui/Alert";
@@ -26,9 +26,7 @@ export function LayoutPage() {
   // 加工の出力がオブジェクトの場合、そのキーを部品のパレットに、値をプレビューに使う。
   const sample = useMemo<Values | undefined>(() => {
     if (preview.status !== "success") return undefined;
-    const output = preview.output;
-    const isObject = typeof output === "object" && output !== null && !Array.isArray(output);
-    return (isObject ? (output as Values) : undefined);
+    return (isValues(preview.output) ? preview.output : undefined);
   }, [preview]);
   const fields = useMemo(() => Object.keys(sample ?? {}), [sample]);
 
