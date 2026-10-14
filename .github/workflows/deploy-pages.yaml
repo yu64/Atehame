@@ -61,6 +61,10 @@ jobs:
         env:
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
 
+      # ビルドは成功しても、ページの HTML が書き出されないことがあった（起動の仕方の判定による）
+      - name: Check output
+        run: test -f dist/client/index.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
