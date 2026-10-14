@@ -50,7 +50,7 @@ export function SchemaPage() {
         <section className="flex flex-wrap gap-4 pt-4">
           <Button
             icon="i-lucide-plus"
-            label="項目を追加"
+            label="カラムを追加"
             size="md"
             className="pl-2 pr-4"
             onClick={addField}
@@ -58,6 +58,7 @@ export function SchemaPage() {
         </section>
         <section className="mt-4">
           <EditableList
+            itemName="カラム"
             items={schema.fields}
             getKey={field => field.id}
             dataFactory={createSchemaField}

@@ -8,6 +8,8 @@ import type { Key, ReactNode } from "react";
 // MARK: 型定義
 
 export interface EditableListProps<T> {
+  /** 項目の呼び名（ボタンの文言に使う）。既定は「項目」。 */
+  itemName?: string;
   items: T[];
   getKey: (item: T) => Key;
   dataFactory: (index: number) => T;
@@ -18,6 +20,8 @@ export interface EditableListProps<T> {
 }
 
 interface ItemProps {
+  /** 項目の呼び名。 */
+  itemName: string;
   label: string;
   first: boolean;
   last: boolean;
@@ -34,6 +38,8 @@ interface ItemProps {
 
 /** 項目を追加・削除・並べ替えできる一覧。項目の中身は children で描く。 */
 export function EditableList<T>(props: EditableListProps<T>) {
+  const itemName = props.itemName ?? "項目";
+
   /** index の位置に新しい項目を追加する。 */
   function addAt(index: number) {
     props.onChange(insertAt(props.items, index, props.dataFactory(index)));
@@ -45,6 +51,7 @@ export function EditableList<T>(props: EditableListProps<T>) {
         {props.items.map((item, index) => (
           <Item
             key={props.getKey(item)}
+            itemName={itemName}
             label={props.label(item, index)}
             first={index === 0}
             last={index === props.items.length - 1}
@@ -60,7 +67,7 @@ export function EditableList<T>(props: EditableListProps<T>) {
       </ul>
       <Button
         icon="i-lucide-plus"
-        label={props.items.length === 0 ? "最初の項目を追加" : "項目を追加"}
+        label={props.items.length === 0 ? `最初の${itemName}を追加` : `${itemName}を追加`}
         size="md"
         className="w-full"
         onClick={() => addAt(props.items.length)}
@@ -96,7 +103,7 @@ function Item(props: ItemProps) {
             onClick={props.onNext}
           />
           <DropdownMenu
-            label="項目の操作"
+            label={`${props.itemName}の操作`}
             items={[
               {
                 id: "add-before",
