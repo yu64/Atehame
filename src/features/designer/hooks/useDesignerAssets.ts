@@ -2,6 +2,7 @@ import {
   type Assets,
   checkAssetLimits,
   createAsset,
+  type LayoutAsset,
   uniqueAssetName,
 } from "@src/features/designer/assets/assets";
 import {
@@ -28,8 +29,8 @@ export function useDesignerAssets() {
       for (const file of files) {
         const current = store.layout.assets;
         const result = await readAsset(file, current);
-        if (result.error) errors.push(result.error);
-        else store.setAsset(uniqueAssetName(current, file.name), result.asset!);
+        if ("error" in result) errors.push(result.error);
+        else store.setAsset(uniqueAssetName(current, file.name), result.asset);
       }
       return errors;
     },
@@ -37,8 +38,8 @@ export function useDesignerAssets() {
     replace: async (name: string, file: File): Promise<string | undefined> => {
       const { [name]: _replaced, ...others } = store.layout.assets;
       const result = await readAsset(file, others);
-      if (result.error) return result.error;
-      store.setAsset(name, result.asset!);
+      if ("error" in result) return result.error;
+      store.setAsset(name, result.asset);
       return undefined;
     },
     rename: store.renameAsset,
@@ -52,7 +53,10 @@ export function useDesignerAssets() {
 // MARK: 内部関数
 
 /** ファイルから画像を作る。できなければ理由を返す。 */
-async function readAsset(file: File, assets: Assets) {
+async function readAsset(
+  file: File,
+  assets: Assets,
+): Promise<{ asset: LayoutAsset } | { error: string }> {
   let image: Awaited<ReturnType<typeof readImageFile>>;
   try {
     image = await readImageFile(file);

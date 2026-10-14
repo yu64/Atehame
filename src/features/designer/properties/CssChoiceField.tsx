@@ -3,7 +3,7 @@ import { Select } from "@src/shared/ui/Select";
 // #############################################################################
 // MARK: 型定義
 
-export interface CssChoiceFieldProps {
+export interface Props {
   label: string;
   value: string | undefined;
   /** value が "" の選択肢は「指定しない」（宣言を取り除く）。 */
@@ -15,7 +15,7 @@ export interface CssChoiceFieldProps {
 // MARK: コンポーネント
 
 /** CSS の値を選ぶ欄。選択肢にない値が書かれている場合も、その値を選択肢に残す。 */
-export function CssChoiceField(props: CssChoiceFieldProps) {
+export function CssChoiceField(props: Props) {
   const current = props.value ?? "";
   const options = (
     (props.options.some(option => option.value === current))

@@ -1,11 +1,12 @@
 import { Button } from "@src/shared/ui/Button";
+import type { ReactNode } from "react";
 
 // #############################################################################
 // MARK: 型定義
 
 export interface Props {
   title: string;
-  description?: React.ReactNode;
+  description?: ReactNode;
   /** 未指定の場合も、ページ間で位置を揃えるため戻るボタンの領域を確保する。 */
   onBack?: () => void;
   onNext?: () => void;

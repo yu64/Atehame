@@ -1,8 +1,10 @@
+import type { ReactNode } from "react";
+
 // #############################################################################
 // MARK: 型定義
 
 export interface Props {
-  children?: React.ReactNode;
+  children?: ReactNode;
   /** 通常ページは外側でスクロール、エディターは内部でスクロールを管理する。 */
   mode?: "scroll" | "canvas";
   width?: "full" | "contained";

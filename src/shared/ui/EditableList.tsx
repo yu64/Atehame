@@ -7,7 +7,7 @@ import type { Key, ReactNode } from "react";
 // #############################################################################
 // MARK: 型定義
 
-export interface EditableListProps<T> {
+export interface Props<T> {
   /** 項目の呼び名（ボタンの文言に使う）。既定は「項目」。 */
   itemName?: string;
   items: T[];
@@ -37,7 +37,7 @@ interface ItemProps {
 // MARK: コンポーネント
 
 /** 項目を追加・削除・並べ替えできる一覧。項目の中身は children で描く。 */
-export function EditableList<T>(props: EditableListProps<T>) {
+export function EditableList<T>(props: Props<T>) {
   const itemName = props.itemName ?? "項目";
 
   /** index の位置に新しい項目を追加する。 */

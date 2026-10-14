@@ -4,7 +4,7 @@ import { Input } from "@src/shared/ui/Input";
 // #############################################################################
 // MARK: 型定義
 
-export interface CssValueFieldProps {
+export interface Props {
   label: string;
   /** CSS の値。宣言がない場合は undefined。 */
   value: string | undefined;
@@ -17,7 +17,7 @@ export interface CssValueFieldProps {
 // MARK: コンポーネント
 
 /** CSS の値をそのまま入力する欄（例: 14pt、1.5、40mm）。 */
-export function CssValueField(props: CssValueFieldProps) {
+export function CssValueField(props: Props) {
   // 値は前後の空白を除いて書くため、空白を除いて同じなら打ちかけの空白を保つ。
   const value = props.value ?? "";
   const [text, setText] = useSyncedText(value, text => text.trim() === value);

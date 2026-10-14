@@ -4,7 +4,7 @@ import { Input } from "@src/shared/ui/Input";
 // #############################################################################
 // MARK: 型定義
 
-export interface NumberFieldProps {
+export interface Props {
   label: string;
   value: number;
   step?: number;
@@ -17,7 +17,7 @@ export interface NumberFieldProps {
 // MARK: コンポーネント
 
 /** 数値の入力欄。数値として読める値だけを通知する。 */
-export function NumberField(props: NumberFieldProps) {
+export function NumberField(props: Props) {
   const [text, setText] = useSyncedText(String(props.value), text => Number(text) === props.value);
 
   return (

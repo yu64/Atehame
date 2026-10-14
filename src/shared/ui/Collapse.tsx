@@ -1,9 +1,11 @@
+import type { ReactNode } from "react";
+
 // #############################################################################
 // MARK: 型定義
 
 export interface Props {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 // #############################################################################
