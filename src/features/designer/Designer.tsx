@@ -89,6 +89,11 @@ export function Designer(props: DesignerProps) {
   );
 }
 
+/** 操作バーの下に、パレット・用紙・右の欄を横に並べる領域。Designer.Body として公開する。 */
+function DesignerBody(props: { children: ReactNode }) {
+  return <div className="flex flex-1 min-h-0">{props.children}</div>;
+}
+
 // #############################################################################
 // MARK: 内部部品
 
@@ -107,13 +112,8 @@ function DefaultLayout() {
   );
 }
 
-/** 操作バーの下に、パレット・用紙・右の欄を横に並べる領域。 */
-function DesignerBody(props: { children: ReactNode }) {
-  return <div className="flex flex-1 min-h-0">{props.children}</div>;
-}
-
 // #############################################################################
-// MARK: 部品の登録
+// MARK: 初期化
 
 // Designer.Toolbar などとして、構成の部品を差し替えられるように公開する。
 Designer.Toolbar = DesignerToolbar;

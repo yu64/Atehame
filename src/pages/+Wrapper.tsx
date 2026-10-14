@@ -2,7 +2,7 @@ import "uno.css";
 import "@src/app/i18n";
 import React from "react";
 
-/** すべてのページを包む。状態（jotai）と翻訳（i18n）を全体で使えるようにする。 */
+/** すべてのページを包む。スタイル（UnoCSS）と翻訳（i18n）を、ここで全体に読み込む。 */
 export default function Wrapper({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

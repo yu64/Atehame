@@ -42,7 +42,7 @@ export function useFixedLongestSelect(
     select.selectedIndex = originalIndex;
     select.style.width = originalWidth;
 
-    // 計測した最大幅をインラインスタイルの width として直接適用する
+    // 計測した幅を、インラインスタイルの min-width として直接適用する
     // (もし計測値が0の場合は、非表示状態なので適用しない)
     if (optimalWidth > 0) select.style.minWidth = `${optimalWidth}px`;
     else select.style.minWidth = originalMinWidth;
@@ -53,7 +53,7 @@ export function useFixedLongestSelect(
     if (!select) return;
     if (!enable) return;
 
-    //マウント時
+    // マウント時
     resize(select);
 
     const observer = new MutationObserver(() => resize(select));

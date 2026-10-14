@@ -65,7 +65,7 @@ export function ElementPalette() {
 // #############################################################################
 // MARK: 内部部品
 
-/** 部品を追加するボタン。ドラッグで用紙へ置くこともできる。 */
+/** 部品を追加するボタン。 */
 function PaletteButton(props: { icon: string; label: string; onClick: () => void }) {
   return (
     <Button

@@ -21,12 +21,15 @@ import {
 } from "@src/shared/lib/history";
 import { Store } from "@src/shared/lib/store";
 
+// #############################################################################
+// MARK: 型定義
+
 export type SidePanelTab = "properties" | "list" | "assets" | "css";
 
 export interface DesignerState {
   history: History<LayoutDocument>;
   /**
-   * 選択中の部品の ID。null なら用紙を選択している。
+   * 選択中の部品の ID。undefined なら用紙を選択している。
    * 名前を変えても、元に戻しても同じ部品を指す（state/elementIds.ts）。
    */
   selectedId: string | undefined;
@@ -44,10 +47,16 @@ export interface DesignerState {
   rects: Map<string, ElementRect>;
 }
 
+// #############################################################################
+// MARK: 関数
+
 /** 状態から、今の文書を選ぶ。 */
 export function selectLayout(state: DesignerState): LayoutDocument {
   return state.history.present;
 }
+
+// #############################################################################
+// MARK: クラス
 
 /**
  * デザイナーの状態と操作。React に依存せず、useStoreSelector で購読する。
